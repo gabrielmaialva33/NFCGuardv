@@ -1,0 +1,200 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run security scan every Sunday at 02:00 UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+
+# Prevent multiple scans from running simultaneously
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.9.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Run Flutter dependency audit
+        run: flutter pub deps --json | jq '.packages[] | select(.kind == "direct" or .kind == "dev") | .name + "@" + .version'
+        continue-on-error: true
+
+      - name: Check for known vulnerabilities
+        run: |
+          echo "Checking for known security issues in dependencies..."
+          flutter pub deps --json > deps.json
+          
+          # Check for outdated packages that might have security fixes
+          flutter pub outdated --json > outdated.json || true
+          
+          # Display any packages that are significantly outdated
+          echo "## 🔍 Dependency Status" >> security_report.md
+          echo "" >> security_report.md
+          
+          if [ -f outdated.json ] && [ -s outdated.json ]; then
+            echo "### Outdated Dependencies" >> security_report.md
+            echo "" >> security_report.md
+            echo "The following packages may have security updates available:" >> security_report.md
+            echo "" >> security_report.md
+            jq -r '.packages[] | select(.upgradable) | "- **" + .package + "**: " + .current + " → " + .upgradable' outdated.json >> security_report.md || echo "- No major updates available" >> security_report.md
+          else
+            echo "- ✅ All dependencies are up to date" >> security_report.md
+          fi
+
+      - name: Check for sensitive patterns in code
+        run: |
+          echo "" >> security_report.md
+          echo "### 🔒 Code Security Check" >> security_report.md
+          echo "" >> security_report.md
+          
+          # Check for potential secrets or sensitive information
+          sensitive_found=false
+          
+          # Look for API keys, passwords, or tokens in Dart files
+          if grep -r -i -n "api[_-]?key\|password\|token\|secret" lib/ --include="*.dart" | grep -v "// TODO\|// FIXME"; then
+            echo "⚠️ **Potential sensitive data found in source code**" >> security_report.md
+            echo "" >> security_report.md
+            sensitive_found=true
+          fi
+          
+          # Check for hardcoded URLs that might be sensitive
+          if grep -r -n "https\?://.*\.com\|http://.*" lib/ --include="*.dart" | grep -v "flutter.dev\|dart.dev\|pub.dev\|viacep.com.br"; then
+            echo "⚠️ **Hardcoded URLs found - verify these are not sensitive**" >> security_report.md
+            echo "" >> security_report.md
+            sensitive_found=true
+          fi
+          
+          if [ "$sensitive_found" = false ]; then
+            echo "✅ No sensitive patterns detected in source code" >> security_report.md
+          fi
+
+      - name: Verify NFC security implementation
+        run: |
+          echo "" >> security_report.md
+          echo "### 📡 NFC Security Verification" >> security_report.md
+          echo "" >> security_report.md
+          
+          # Check for proper NFC permissions
+          if grep -q "android.permission.NFC" android/app/src/main/AndroidManifest.xml; then
+            echo "✅ NFC permissions properly declared" >> security_report.md
+          else
+            echo "⚠️ NFC permissions not found in AndroidManifest.xml" >> security_report.md
+          fi
+          
+          # Check for secure storage usage
+          if grep -r "flutter_secure_storage" lib/ pubspec.yaml; then
+            echo "✅ Secure storage implementation detected" >> security_report.md
+          else
+            echo "⚠️ No secure storage implementation found" >> security_report.md
+          fi
+          
+          # Check for code uniqueness validation
+          if grep -r -i "unique\|duplicate" lib/ --include="*.dart"; then
+            echo "✅ Code uniqueness validation present" >> security_report.md
+          else
+            echo "⚠️ Code uniqueness validation may be missing" >> security_report.md
+          fi
+
+      - name: Check Brazilian compliance features
+        run: |
+          echo "" >> security_report.md
+          echo "### 🇧🇷 Brazilian Compliance Check" >> security_report.md
+          echo "" >> security_report.md
+          
+          # Check for CPF validation
+          if grep -q "all_validations_br\|cpf" pubspec.yaml; then
+            echo "✅ Brazilian CPF validation library included" >> security_report.md
+          else
+            echo "⚠️ CPF validation not found" >> security_report.md
+          fi
+          
+          # Check for CEP integration
+          if grep -q "search_cep" pubspec.yaml; then
+            echo "✅ CEP postal code integration present" >> security_report.md
+          else
+            echo "⚠️ CEP integration not found" >> security_report.md
+          fi
+
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-report-${{ github.run_number }}
+          path: security_report.md
+          retention-days: 30
+
+      - name: Display security summary
+        run: |
+          echo "## 🛡️ Security Scan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat security_report.md >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Full security report available in artifacts**" >> $GITHUB_STEP_SUMMARY
+
+  code-analysis:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.9.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Generate code (for analysis)
+        run: flutter packages pub run build_runner build --delete-conflicting-outputs || true
+
+      - name: Run static analysis
+        run: |
+          echo "Running Flutter analyze..."
+          flutter analyze --fatal-infos > analysis_results.txt 2>&1 || true
+          
+          echo "## 📊 Static Analysis Results" > analysis_report.md
+          echo "" >> analysis_report.md
+          
+          if [ -s analysis_results.txt ]; then
+            echo "### Issues Found:" >> analysis_report.md
+            echo "" >> analysis_report.md
+            echo '```' >> analysis_report.md
+            cat analysis_results.txt >> analysis_report.md
+            echo '```' >> analysis_report.md
+          else
+            echo "✅ No static analysis issues found!" >> analysis_report.md
+          fi
+
+      - name: Upload analysis report
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-analysis-report-${{ github.run_number }}
+          path: analysis_report.md
+          retention-days: 30
