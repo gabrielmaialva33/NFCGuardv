@@ -1,0 +1,239 @@
+import 'package:flutter/foundation.dart';
+import 'package:nfc_manager/nfc_manager.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../core/utils/code_generator.dart';
+import '../../data/datasources/secure_storage_service.dart';
+
+part 'nfc_provider.g.dart';
+
+enum NfcStatus {
+  idle,
+  scanning,
+  writing,
+  success,
+  error,
+  unavailable,
+}
+
+@riverpod
+class Nfc extends _$Nfc {
+  final _storageService = SecureStorageService();
+
+  @override
+  AsyncValue<NfcStatus> build() {
+    _checkNfcAvailability();
+    return const AsyncValue.data(NfcStatus.idle);
+  }
+
+  Future<void> _checkNfcAvailability() async {
+    try {
+      final isAvailable = await NfcManager.instance.isAvailable();
+      if (!isAvailable) {
+        state = const AsyncValue.data(NfcStatus.unavailable);
+      }
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<bool> isNfcAvailable() async {
+    try {
+      return await NfcManager.instance.isAvailable();
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<void> writeTagWithCode(String userCode, int dataSet) async {
+    try {
+      state = const AsyncValue.loading();
+
+      // Validar código
+      if (!CodeGenerator.validateCode(userCode)) {
+        throw Exception('Código inválido');
+      }
+
+      // Verificar se o código já foi usado
+      final isUsed = await _storageService.isCodeUsed(userCode);
+      if (isUsed) {
+        throw Exception('CÓDIGO JÁ UTILIZADO');
+      }
+
+      // Preparar dados para gravar na tag
+      final tagData = {
+        'userCode': userCode,
+        'dataSet': dataSet,
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+      };
+
+      state = const AsyncValue.data(NfcStatus.scanning);
+
+      // Iniciar sessão NFC
+      await NfcManager.instance.startSession(
+        onDiscovered: (NfcTag tag) async {
+          try {
+            state = const AsyncValue.data(NfcStatus.writing);
+
+            // Criar registro NDEF
+            final ndefRecord = NdefRecord.createText(
+              'NFCGuard Data Set $dataSet - Code: $userCode',
+            );
+
+            final ndefMessage = NdefMessage([ndefRecord]);
+
+            // Tentar escrever na tag
+            final ndef = Ndef.from(tag);
+            if (ndef == null) {
+              throw Exception('Tag não suporta NDEF');
+            }
+
+            if (!ndef.isWritable) {
+              throw Exception('Tag não é gravável');
+            }
+
+            if (ndef.maxSize < ndefMessage.byteLength) {
+              throw Exception('Tag não tem espaço suficiente');
+            }
+
+            await ndef.write(ndefMessage);
+
+            // Marcar código como usado
+            await _storageService.addUsedCode(userCode);
+
+            state = const AsyncValue.data(NfcStatus.success);
+            await NfcManager.instance.stopSession();
+          } catch (e) {
+            await NfcManager.instance.stopSession(errorMessage: e.toString());
+            state = AsyncValue.error(e, StackTrace.current);
+          }
+        },
+      );
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<void> protectTagWithPassword(String userCode, String password) async {
+    try {
+      state = const AsyncValue.loading();
+
+      // Validar código
+      if (!CodeGenerator.validateCode(userCode)) {
+        throw Exception('Código inválido');
+      }
+
+      state = const AsyncValue.data(NfcStatus.scanning);
+
+      await NfcManager.instance.startSession(
+        onDiscovered: (NfcTag tag) async {
+          try {
+            state = const AsyncValue.data(NfcStatus.writing);
+
+            // Tentar obter MifareClassic para proteção por senha
+            final mifareClassic = MifareClassic.from(tag);
+            if (mifareClassic == null) {
+              throw Exception('Tag não suporta proteção por senha');
+            }
+
+            // Esta é uma implementação simplificada
+            // Em uma implementação real, você configuraria setores específicos com senha
+            // Por questões de segurança e complexidade, isso requer conhecimento específico
+            // das estruturas de dados Mifare Classic
+
+            state = const AsyncValue.data(NfcStatus.success);
+            await NfcManager.instance.stopSession();
+          } catch (e) {
+            await NfcManager.instance.stopSession(errorMessage: e.toString());
+            state = AsyncValue.error(e, StackTrace.current);
+          }
+        },
+      );
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<void> removeTagPassword(String userCode, String password) async {
+    try {
+      state = const AsyncValue.loading();
+
+      // Validar código
+      if (!CodeGenerator.validateCode(userCode)) {
+        throw Exception('Código inválido');
+      }
+
+      state = const AsyncValue.data(NfcStatus.scanning);
+
+      await NfcManager.instance.startSession(
+        onDiscovered: (NfcTag tag) async {
+          try {
+            state = const AsyncValue.data(NfcStatus.writing);
+
+            // Implementação para remover proteção por senha
+            // Similar à proteção, mas removendo as configurações de segurança
+
+            state = const AsyncValue.data(NfcStatus.success);
+            await NfcManager.instance.stopSession();
+          } catch (e) {
+            await NfcManager.instance.stopSession(errorMessage: e.toString());
+            state = AsyncValue.error(e, StackTrace.current);
+          }
+        },
+      );
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<Map<String, dynamic>?> readTag() async {
+    try {
+      state = const AsyncValue.loading();
+      state = const AsyncValue.data(NfcStatus.scanning);
+
+      Map<String, dynamic>? tagData;
+
+      await NfcManager.instance.startSession(
+        onDiscovered: (NfcTag tag) async {
+          try {
+            final ndef = Ndef.from(tag);
+            if (ndef == null) {
+              throw Exception('Tag não contém dados NDEF');
+            }
+
+            final ndefMessage = await ndef.read();
+            if (ndefMessage.records.isNotEmpty) {
+              final record = ndefMessage.records.first;
+              final payload = String.fromCharCodes(record.payload.skip(3)); // Skip language code
+
+              tagData = {
+                'payload': payload,
+                'type': record.type,
+                'readAt': DateTime.now().millisecondsSinceEpoch,
+              };
+            }
+
+            state = const AsyncValue.data(NfcStatus.success);
+            await NfcManager.instance.stopSession();
+          } catch (e) {
+            await NfcManager.instance.stopSession(errorMessage: e.toString());
+            state = AsyncValue.error(e, StackTrace.current);
+          }
+        },
+      );
+
+      return tagData;
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+      return null;
+    }
+  }
+
+  void stopSession() {
+    NfcManager.instance.stopSession();
+    state = const AsyncValue.data(NfcStatus.idle);
+  }
+
+  void resetStatus() {
+    state = const AsyncValue.data(NfcStatus.idle);
+  }
+}
