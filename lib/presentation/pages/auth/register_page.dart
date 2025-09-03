@@ -252,7 +252,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             ],
             validator: (value) {
               if (value?.isEmpty ?? true) return 'CPF é obrigatório';
-              if (!AllValidationsBr.isCpf(value!)) {
+              if (!value!.isCpf) {
                 return AppConstants.invalidCpfMessage;
               }
               return null;
@@ -268,7 +268,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             ),
             validator: (value) {
               if (value?.isEmpty ?? true) return 'Email é obrigatório';
-              if (!AllValidationsBr.isEmail(value!)) return 'Email inválido';
+              if (!value!.isEmail) return 'Email inválido';
               return null;
             },
           ),
@@ -310,7 +310,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
-            value: _sexoSelecionado,
+            initialValue: _sexoSelecionado,
             decoration: const InputDecoration(
               labelText: 'Sexo',
               prefixIcon: Icon(Icons.wc),
