@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:all_validations_br/all_validations_br.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../providers/auth_provider.dart';
 import '../home/home_page.dart';
@@ -252,7 +251,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             ],
             validator: (value) {
               if (value?.isEmpty ?? true) return 'CPF é obrigatório';
-              if (!AllValidationsBr.isCpf(value!)) {
+              if (value!.length < 11) {
                 return AppConstants.invalidCpfMessage;
               }
               return null;
@@ -268,7 +267,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             ),
             validator: (value) {
               if (value?.isEmpty ?? true) return 'Email é obrigatório';
-              if (!AllValidationsBr.isEmail(value!)) return 'Email inválido';
+              if (!value!.contains('@')) return 'Email inválido';
               return null;
             },
           ),

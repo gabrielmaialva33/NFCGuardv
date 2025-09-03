@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:all_validations_br/all_validations_br.dart';
 import 'package:search_cep/search_cep.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../data/models/user_model.dart';
