@@ -5,14 +5,23 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:nfc_guard/main.dart';
 
 void main() {
   testWidgets('NFCGuard app loads', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const NFCGuardApp());
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: NFCGuardApp(),
+      ),
+    );
+
+    // Wait for the app to build completely
+    await tester.pumpAndSettle();
 
     // Verify that our app loads with NFCGuard splash screen
     expect(find.text('NFCGuard'), findsOneWidget);
