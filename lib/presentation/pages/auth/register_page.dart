@@ -268,7 +268,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             ),
             validator: (value) {
               if (value?.isEmpty ?? true) return 'Email é obrigatório';
-              if (!value!.isEmail) return 'Email inválido';
+              if (!AllValidationsBr.isEmail(value!)) return 'Email inválido';
               return null;
             },
           ),

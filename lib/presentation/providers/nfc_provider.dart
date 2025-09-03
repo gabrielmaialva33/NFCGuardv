@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../core/utils/code_generator.dart';
