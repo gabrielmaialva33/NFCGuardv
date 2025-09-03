@@ -171,18 +171,24 @@ class HomePage extends ConsumerWidget {
   }
 
   void _writeNfcTag(BuildContext context, int dataSet) {
-    _showCodeDialog(context, 'Gravar tag com dados $dataSet');
+    _showCodeDialog(context, 'Gravar tag com dados $dataSet', (code) {
+      _executeNfcWrite(context, code, dataSet);
+    });
   }
 
   void _protectNfcTag(BuildContext context) {
-    _showCodeDialog(context, 'Proteger tag com senha');
+    _showCodeDialog(context, 'Proteger tag com senha', (code) {
+      _showPasswordDialog(context, code, true);
+    });
   }
 
   void _removeNfcPassword(BuildContext context) {
-    _showCodeDialog(context, 'Remover senha da tag');
+    _showCodeDialog(context, 'Remover senha da tag', (code) {
+      _showPasswordDialog(context, code, false);
+    });
   }
 
-  void _showCodeDialog(BuildContext context, String operation) {
+  void _showCodeDialog(BuildContext context, String operation, Function(String) onCodeConfirmed) {
     final codeController = TextEditingController();
     
     showDialog(
@@ -215,7 +221,7 @@ class HomePage extends ConsumerWidget {
               final code = codeController.text;
               if (code.length == 8) {
                 Navigator.of(context).pop();
-                _processNfcOperation(context, operation, code);
+                onCodeConfirmed(code);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -231,12 +237,196 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  void _processNfcOperation(BuildContext context, String operation, String code) {
-    // Por enquanto, apenas mostrar que seria executada a operação NFC
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$operation - Código: $code\n(Funcionalidade NFC será implementada)'),
-        duration: const Duration(seconds: 3),
+  void _executeNfcWrite(BuildContext context, String code, int dataSet) async {
+    final nfcNotifier = ref.read(nfcProvider.notifier);
+    
+    // Primeiro verificar se NFC está disponível
+    final isAvailable = await nfcNotifier.isNfcAvailable();
+    if (!isAvailable) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('NFC não está disponível neste dispositivo')),
+      );
+      return;
+    }
+
+    // Mostrar dialog de instrução
+    _showNfcInstructionDialog(context, 'Aproxime o dispositivo da tag NFC');
+
+    // Executar gravação
+    await nfcNotifier.writeTagWithCode(code, dataSet);
+  }
+
+  void _showPasswordDialog(BuildContext context, String code, bool isProtecting) {
+    final passwordController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(isProtecting ? 'Proteger Tag' : 'Remover Proteção'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(isProtecting 
+                ? 'Digite uma senha para proteger a tag:' 
+                : 'Digite a senha atual da tag:'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                hintText: 'Senha',
+                counterText: '',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final password = passwordController.text;
+              if (password.isNotEmpty) {
+                Navigator.of(context).pop();
+                await _executePasswordOperation(context, code, password, isProtecting);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Senha é obrigatória')),
+                );
+              }
+            },
+            child: const Text('Continuar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _executePasswordOperation(
+    BuildContext context, 
+    String code, 
+    String password, 
+    bool isProtecting
+  ) async {
+    final nfcNotifier = ref.read(nfcProvider.notifier);
+    
+    final isAvailable = await nfcNotifier.isNfcAvailable();
+    if (!isAvailable) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('NFC não está disponível neste dispositivo')),
+      );
+      return;
+    }
+
+    _showNfcInstructionDialog(context, 'Aproxime o dispositivo da tag NFC');
+
+    if (isProtecting) {
+      await nfcNotifier.protectTagWithPassword(code, password);
+    } else {
+      await nfcNotifier.removeTagPassword(code, password);
+    }
+  }
+
+  void _showNfcInstructionDialog(BuildContext context, String instruction) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Consumer(
+        builder: (context, ref, child) {
+          final nfcState = ref.watch(nfcProvider);
+          
+          return AlertDialog(
+            title: Text(instruction),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.nfc,
+                  size: 64,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(height: 16),
+                nfcState.when(
+                  data: (status) {
+                    switch (status) {
+                      case NfcStatus.scanning:
+                        return const Text('Procurando tag NFC...');
+                      case NfcStatus.writing:
+                        return const Text('Gravando dados na tag...');
+                      case NfcStatus.success:
+                        return const Text('Operação realizada com sucesso!');
+                      case NfcStatus.error:
+                        return const Text('Erro na operação NFC');
+                      case NfcStatus.unavailable:
+                        return const Text('NFC não disponível');
+                      default:
+                        return const Text('Preparando...');
+                    }
+                  },
+                  loading: () => const Text('Preparando...'),
+                  error: (error, _) => Text('Erro: $error'),
+                ),
+                const SizedBox(height: 16),
+                nfcState.when(
+                  data: (status) {
+                    if (status == NfcStatus.success) {
+                      return const Icon(Icons.check_circle, color: Colors.green, size: 48);
+                    } else if (status == NfcStatus.error) {
+                      return const Icon(Icons.error, color: Colors.red, size: 48);
+                    }
+                    return const CircularProgressIndicator();
+                  },
+                  loading: () => const CircularProgressIndicator(),
+                  error: (_, __) => const Icon(Icons.error, color: Colors.red, size: 48),
+                ),
+              ],
+            ),
+            actions: nfcState.when(
+              data: (status) {
+                if (status == NfcStatus.success || status == NfcStatus.error || status == NfcStatus.unavailable) {
+                  return [
+                    ElevatedButton(
+                      onPressed: () {
+                        ref.read(nfcProvider.notifier).resetStatus();
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ];
+                }
+                return [
+                  TextButton(
+                    onPressed: () {
+                      ref.read(nfcProvider.notifier).stopSession();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancelar'),
+                  ),
+                ];
+              },
+              loading: () => [
+                TextButton(
+                  onPressed: () {
+                    ref.read(nfcProvider.notifier).stopSession();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancelar'),
+                ),
+              ],
+              error: (_, __) => [
+                ElevatedButton(
+                  onPressed: () {
+                    ref.read(nfcProvider.notifier).resetStatus();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
