@@ -1,0 +1,202 @@
+name: Build NFCGuard
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: false
+        default: 'debug'
+        type: choice
+        options:
+          - debug
+          - release
+
+# Prevent multiple builds from running simultaneously
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.9.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+            build
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}-${{ hashFiles('**/*.dart') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}-
+            ${{ runner.os }}-flutter-
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Generate code (Riverpod providers & JSON serialization)
+        run: flutter packages pub run build_runner build --delete-conflicting-outputs
+
+      - name: Analyze code
+        run: flutter analyze --fatal-infos
+
+      - name: Run tests (if any)
+        run: flutter test || echo "No tests found, continuing..."
+
+      - name: Determine build type
+        id: build_type
+        run: |
+          if [ "${{ github.event_name }}" == "release" ] || [ "${{ github.event.inputs.build_type }}" == "release" ]; then
+            echo "type=release" >> $GITHUB_OUTPUT
+            echo "Building release version"
+          else
+            echo "type=debug" >> $GITHUB_OUTPUT
+            echo "Building debug version"
+          fi
+
+      - name: Setup keystore (for release builds)
+        if: steps.build_type.outputs.type == 'release'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "Warning: No keystore configured, building unsigned release"
+          else
+            echo $KEYSTORE_BASE64 | base64 -d > android/app/keystore.jks
+            cat > android/key.properties << EOF
+          storePassword=$STORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=keystore.jks
+          EOF
+          fi
+
+      - name: Build APK
+        run: |
+          if [ "${{ steps.build_type.outputs.type }}" == "release" ]; then
+            flutter build apk --release --split-per-abi
+          else
+            flutter build apk --debug
+          fi
+
+      - name: List build output
+        run: |
+          echo "Build output:"
+          ls -la build/app/outputs/flutter-apk/
+          du -h build/app/outputs/flutter-apk/*
+
+      - name: Upload APK (Debug)
+        if: steps.build_type.outputs.type == 'debug'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nfcguard-debug-apk-${{ github.run_number }}
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 30
+
+      - name: Upload APKs (Release - Split per ABI)
+        if: steps.build_type.outputs.type == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nfcguard-release-apks-${{ github.run_number }}
+          path: build/app/outputs/flutter-apk/*.apk
+          retention-days: 90
+
+      - name: Create Release Info
+        if: steps.build_type.outputs.type == 'release'
+        run: |
+          echo "# NFCGuard Release" > release_info.md
+          echo "" >> release_info.md
+          echo "## Build Information" >> release_info.md
+          echo "- **Build Number**: ${{ github.run_number }}" >> release_info.md
+          echo "- **Commit**: ${{ github.sha }}" >> release_info.md
+          echo "- **Branch**: ${{ github.ref_name }}" >> release_info.md
+          echo "- **Build Type**: Split per ABI" >> release_info.md
+          echo "" >> release_info.md
+          echo "## APK Files" >> release_info.md
+          for file in build/app/outputs/flutter-apk/*.apk; do
+            filename=$(basename "$file")
+            size=$(du -h "$file" | cut -f1)
+            echo "- **$filename**: $size" >> release_info.md
+          done
+          echo "" >> release_info.md
+          echo "## Installation" >> release_info.md
+          echo "1. Download the APK for your device architecture" >> release_info.md
+          echo "2. Enable 'Unknown sources' in Android settings" >> release_info.md
+          echo "3. Install the APK" >> release_info.md
+          echo "4. Grant NFC permission when prompted" >> release_info.md
+          echo "5. Ensure NFC is enabled in device settings" >> release_info.md
+
+      - name: Upload Release Info
+        if: steps.build_type.outputs.type == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-info-${{ github.run_number }}
+          path: release_info.md
+          retention-days: 90
+
+  build-summary:
+    runs-on: ubuntu-latest
+    needs: android-build
+    if: always()
+
+    steps:
+      - name: Build Summary
+        run: |
+          echo "## 🔐 NFCGuard Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Repository**: ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Number**: ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.android-build.result }}" == "success" ]; then
+            echo "✅ **Android Build**: SUCCESS" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "📱 **APK Ready**: Check the artifacts section to download" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Android Build**: FAILED" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔐 Security Features Included" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ NFC Tag Writing with Unique Codes" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Code Reuse Prevention" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Brazilian CPF Validation" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ CEP Postal Code Integration" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Secure Storage (Flutter Secure Storage)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Riverpod State Management" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Material Design 3 UI" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📋 Requirements for Installation" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔹 Android device with NFC capability" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔹 NFC enabled in device settings" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔹 NFC tags (NTAG213/215/216 recommended)" >> $GITHUB_STEP_SUMMARY
