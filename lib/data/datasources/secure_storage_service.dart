@@ -8,14 +8,7 @@ class SecureStorageService {
   factory SecureStorageService() => _instance;
   SecureStorageService._internal();
 
-  final _secureStorage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
-    iOptions: IOSOptions(
-      accessibility: KeychainItemAccessibility.first_unlock_this_device,
-    ),
-  );
+  final _secureStorage = const FlutterSecureStorage();
 
   Future<void> saveUser(UserModel user) async {
     final userJson = json.encode(user.toJson());

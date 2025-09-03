@@ -42,11 +42,11 @@ class Auth extends _$Auth {
       state = const AsyncValue.loading();
 
       // Validações
-      if (!AllValidationsBr.isCpf(cpf)) {
+      if (!cpf.isCpf) {
         throw Exception(AppConstants.invalidCpfMessage);
       }
 
-      if (!AllValidationsBr.isEmail(email)) {
+      if (!email.isEmail) {
         throw Exception('Email inválido');
       }
 
@@ -107,18 +107,17 @@ class Auth extends _$Auth {
   Future<Map<String, String>?> searchCep(String cep) async {
     try {
       final viaCepSearchCep = ViaCepSearchCep();
-      final infoCep = await viaCepSearchCep.searchInfoByCep(cep: cep);
+      final result = await viaCepSearchCep.searchInfoByCep(cep: cep);
 
-      if (infoCep.hasError) {
-        return null;
-      }
-
-      return {
-        'endereco': infoCep.logradouro ?? '',
-        'bairro': infoCep.bairro ?? '',
-        'cidade': infoCep.localidade ?? '',
-        'uf': infoCep.uf ?? '',
-      };
+      return result.fold(
+        (error) => null,
+        (infoCep) => {
+          'endereco': infoCep.logradouro ?? '',
+          'bairro': infoCep.bairro ?? '',
+          'cidade': infoCep.localidade ?? '',
+          'uf': infoCep.uf ?? '',
+        },
+      );
     } catch (e) {
       if (kDebugMode) {
         print('Erro ao buscar CEP: $e');
