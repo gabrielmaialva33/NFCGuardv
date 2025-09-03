@@ -42,11 +42,11 @@ class Auth extends _$Auth {
       state = const AsyncValue.loading();
 
       // Validações
-      if (!cpf.isCpf) {
+      if (!AllValidationsBr.isCpf(cpf)) {
         throw Exception(AppConstants.invalidCpfMessage);
       }
 
-      if (!email.isEmail) {
+      if (!AllValidationsBr.isEmail(email)) {
         throw Exception('Email inválido');
       }
 

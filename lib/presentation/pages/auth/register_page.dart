@@ -252,7 +252,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             ],
             validator: (value) {
               if (value?.isEmpty ?? true) return 'CPF é obrigatório';
-              if (!value!.isCpf) {
+              if (!AllValidationsBr.isCpf(value!)) {
                 return AppConstants.invalidCpfMessage;
               }
               return null;
