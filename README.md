@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <img src=".github/assets/nfc.png" alt="NFCGuard" width="200">
+  <img src="https://github.com/gabrielmaialva33/nfc-guard/blob/main/.github/assets/sensor.png" alt="NFCGuard" width="200">
   <br>
   NFCGuard - Secure NFC Tag Writer with Unique Code Protection 🔐
   <br>
