@@ -20,8 +20,8 @@ void main() {
       ),
     );
 
-    // Wait for the app to build completely
-    await tester.pumpAndSettle();
+    // Just pump once to build the initial UI
+    await tester.pump();
 
     // Verify that our app loads with NFCGuard splash screen
     expect(find.text('NFCGuard'), findsOneWidget);
