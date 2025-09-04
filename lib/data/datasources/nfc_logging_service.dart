@@ -19,7 +19,7 @@ class NfcLoggingService {
       final user = _client.auth.currentUser;
       if (user == null) {
         if (kDebugMode) {
-          print('Cannot log NFC operation: user not authenticated');
+          debugPrint('Cannot log NFC operation: user not authenticated');
         }
         return;
       }
@@ -34,7 +34,7 @@ class NfcLoggingService {
       });
 
       if (kDebugMode) {
-        print(
+        debugPrint(
           'NFC operation logged: ${operationType.name} - Success: $success',
         );
       }
