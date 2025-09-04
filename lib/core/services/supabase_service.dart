@@ -13,11 +13,16 @@ class SupabaseService {
 
   /// Initialize Supabase
   static Future<void> initialize() async {
-    await Supabase.initialize(
-      url: SupabaseConfig.supabaseUrl,
-      anonKey: SupabaseConfig.supabaseAnonKey,
-      debug: false, // Set to true for development
-    );
+    final url = await EnvironmentConfig.getSupabaseUrl();
+    final key = await EnvironmentConfig.getSupabaseAnonKey();
+    
+    if (url != null && key != null) {
+      await Supabase.initialize(
+        url: url,
+        anonKey: key,
+        debug: false, // Set to true for development
+      );
+    }
   }
 
   /// Check if user is authenticated

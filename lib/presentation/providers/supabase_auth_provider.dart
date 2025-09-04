@@ -165,26 +165,26 @@ class SupabaseAuth extends _$SupabaseAuth {
       );
 
       if (authResponse.user != null) {
-        // Create profile in Supabase
+        // Create profile in Supabase using sanitized data
         await SupabaseService.client.from('profiles').insert({
           'id': authResponse.user!.id,
-          'full_name': fullName,
+          'full_name': sanitizedName,
           'cpf': cpf.replaceAll(RegExp(r'[^0-9]'), ''),
-          'email': email,
-          'phone': phone,
+          'email': sanitizedEmail,
+          'phone': sanitizedPhone,
           'birth_date': birthDate.toIso8601String(),
           'gender': gender,
           'eight_digit_code': eightDigitCode,
           'created_at': DateTime.now().toIso8601String(),
         });
 
-        // Create local user model
+        // Create local user model using sanitized data
         final user = UserModel(
           id: authResponse.user!.id,
-          fullName: fullName,
+          fullName: sanitizedName,
           cpf: cpf.replaceAll(RegExp(r'[^0-9]'), ''),
-          email: email,
-          phone: phone,
+          email: sanitizedEmail,
+          phone: sanitizedPhone,
           birthDate: birthDate,
           gender: gender,
           zipCode: '',
