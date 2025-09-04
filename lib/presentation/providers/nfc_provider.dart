@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:ndef/ndef.dart' as ndef;
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -42,160 +41,6 @@ class Nfc extends _$Nfc {
     }
   }
 
-  Future<void> writeTagWithCode(String userCode, int dataSet) async {
-    try {
-      state = const AsyncValue.loading();
-
-      // Validar código
-      if (!CodeGenerator.validateCode(userCode)) {
-        throw Exception('Código inválido');
-      }
-
-      // Verificar se o código já foi usado (Supabase + local)
-      final isUsed = await _supabaseNfcRepository.isCodeUsed(userCode);
-      if (isUsed) {
-        throw Exception('CÓDIGO JÁ UTILIZADO');
-      }
-
-      // Preparar dados para gravar na tag
-
-      state = const AsyncValue.data(NfcStatus.scanning);
-
-      // Iniciar sessão NFC
-      await NfcManager.instance.startSession(
-        pollingOptions: {
-          NfcPollingOption.iso14443,
-          NfcPollingOption.iso15693,
-          NfcPollingOption.iso18092,
-        },
-        onDiscovered: (NfcTag tag) async {
-          try {
-            state = const AsyncValue.data(NfcStatus.writing);
-
-            // Criar registro NDEF simples
-            final textContent = 'NFCGuard Data Set $dataSet - Code: $userCode';
-
-            // Por enquanto, usar implementação direta da tag sem NDEF abstração
-            await _writeSimpleText(tag, textContent);
-
-            // Marcar código como usado (Supabase + local)
-            await _supabaseNfcRepository.addUsedCode(
-              userCode,
-              datasetNumber: dataSet,
-            );
-
-            // Log successful operation (Supabase + local)
-            await _supabaseNfcRepository.logNfcOperation(
-              operationType: NfcOperationType.write,
-              codeUsed: userCode,
-              datasetNumber: dataSet,
-              success: true,
-            );
-
-            state = const AsyncValue.data(NfcStatus.success);
-            await NfcManager.instance.stopSession();
-          } catch (e) {
-            // Log failed operation (Supabase + local)
-            await _supabaseNfcRepository.logNfcOperation(
-              operationType: NfcOperationType.write,
-              codeUsed: userCode,
-              datasetNumber: dataSet,
-              success: false,
-              errorMessage: e.toString(),
-            );
-
-            await NfcManager.instance.stopSession(
-              errorMessageIos: e.toString(),
-            );
-            state = AsyncValue.error(e, StackTrace.current);
-          }
-        },
-      );
-    } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
-    }
-  }
-
-  Future<void> protectTagWithPassword(String userCode, String password) async {
-    try {
-      state = const AsyncValue.loading();
-
-      // Validar código
-      if (!CodeGenerator.validateCode(userCode)) {
-        throw Exception('Código inválido');
-      }
-
-      state = const AsyncValue.data(NfcStatus.scanning);
-
-      await NfcManager.instance.startSession(
-        pollingOptions: {
-          NfcPollingOption.iso14443,
-          NfcPollingOption.iso15693,
-          NfcPollingOption.iso18092,
-        },
-        onDiscovered: (NfcTag tag) async {
-          try {
-            state = const AsyncValue.data(NfcStatus.writing);
-
-            // Esta é uma implementação simplificada para proteção por senha
-            // Em uma implementação real, isso dependeria do tipo específico da tag
-            // Por ora, simulamos sucesso na operação
-            await Future.delayed(const Duration(seconds: 1));
-
-            state = const AsyncValue.data(NfcStatus.success);
-            await NfcManager.instance.stopSession();
-          } catch (e) {
-            await NfcManager.instance.stopSession(
-              errorMessageIos: e.toString(),
-            );
-            state = AsyncValue.error(e, StackTrace.current);
-          }
-        },
-      );
-    } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
-    }
-  }
-
-  Future<void> removeTagPassword(String userCode, String password) async {
-    try {
-      state = const AsyncValue.loading();
-
-      // Validar código
-      if (!CodeGenerator.validateCode(userCode)) {
-        throw Exception('Código inválido');
-      }
-
-      state = const AsyncValue.data(NfcStatus.scanning);
-
-      await NfcManager.instance.startSession(
-        pollingOptions: {
-          NfcPollingOption.iso14443,
-          NfcPollingOption.iso15693,
-          NfcPollingOption.iso18092,
-        },
-        onDiscovered: (NfcTag tag) async {
-          try {
-            state = const AsyncValue.data(NfcStatus.writing);
-
-            // Implementação para remover proteção por senha
-            // Similar à proteção, mas removendo as configurações de segurança
-
-            state = const AsyncValue.data(NfcStatus.success);
-            await NfcManager.instance.stopSession();
-          } catch (e) {
-            await NfcManager.instance.stopSession(
-              errorMessageIos: e.toString(),
-            );
-            state = AsyncValue.error(e, StackTrace.current);
-          }
-        },
-      );
-    } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
-    }
-  }
-
   Future<Map<String, dynamic>?> readTag() async {
     try {
       state = const AsyncValue.loading();
@@ -211,15 +56,38 @@ class Nfc extends _$Nfc {
         },
         onDiscovered: (NfcTag tag) async {
           try {
-            // Tentar ler da tag (Android/iOS specific)
-            final textContent = await _readSimpleText(tag);
-            if (textContent != null) {
-              tagData = {
-                'payload': textContent,
-                'type': 'text',
-                'readAt': DateTime.now().millisecondsSinceEpoch,
-              };
+            // Try to read basic tag information
+            final data = tag.data;
+            
+            // Extract tag information for display
+            final buffer = StringBuffer();
+            buffer.writeln('=== DADOS DO CARTÃO NFC ===');
+            buffer.writeln('ID da Tag: ${_formatBytes(data['nfca']?['identifier'] ?? [])}');
+            buffer.writeln('Tipo: ${data.keys.join(', ')}');
+            buffer.writeln('Tecnologia: NFC-A');
+            buffer.writeln('Data/Hora: ${DateTime.now()}');
+            
+            if (data.containsKey('nfca')) {
+              final nfcaData = data['nfca'] as Map;
+              if (nfcaData.containsKey('atqa')) {
+                buffer.writeln('ATQA: ${_formatBytes(nfcaData['atqa'])}');
+              }
+              if (nfcaData.containsKey('sak')) {
+                buffer.writeln('SAK: ${nfcaData['sak']}');
+              }
+              if (nfcaData.containsKey('maxTransceiveLength')) {
+                buffer.writeln('Max Length: ${nfcaData['maxTransceiveLength']}');
+              }
             }
+            
+            buffer.writeln('=== FIM DOS DADOS ===');
+
+            tagData = {
+              'payload': buffer.toString(),
+              'type': 'credit_card',
+              'readAt': DateTime.now().millisecondsSinceEpoch,
+              'rawData': data,
+            };
 
             state = const AsyncValue.data(NfcStatus.success);
             await NfcManager.instance.stopSession();
@@ -248,63 +116,11 @@ class Nfc extends _$Nfc {
     state = const AsyncValue.data(NfcStatus.idle);
   }
 
-  /// Helper method to write simple text to tag (cross-platform)
-  Future<void> _writeSimpleText(NfcTag tag, String text) async {
-    final ndefTag = Ndef.from(tag);
-
-    if (ndefTag == null) {
-      throw Exception('Tag não suporta NDEF');
+  /// Helper method to format byte arrays for display
+  String _formatBytes(dynamic bytes) {
+    if (bytes is List) {
+      return bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join(':').toUpperCase();
     }
-
-    if (!ndefTag.isWritable) {
-      throw Exception('Tag não é gravável');
-    }
-
-    // Create a simple text record manually for nfc_manager
-    final textBytes = utf8.encode(text);
-    final languageBytes = utf8.encode('en');
-    final payload = Uint8List.fromList([
-      languageBytes.length,
-      ...languageBytes,
-      ...textBytes,
-    ]);
-
-    final textRecord = NdefRecord(
-      typeNameFormat: NdefTypeNameFormat.nfcWellknown,
-      type: utf8.encode('T'),
-      identifier: Uint8List(0),
-      payload: payload,
-    );
-
-    final message = NdefMessage([textRecord]);
-    await ndefTag.write(message);
-  }
-
-  /// Helper method to read NDEF message from tag (cross-platform)
-  Future<String?> _readSimpleText(NfcTag tag) async {
-    final ndefTag = Ndef.from(tag);
-
-    if (ndefTag == null) {
-      throw Exception('Tag não contém dados NDEF');
-    }
-
-    final message = await ndefTag.read();
-    if (message == null || message.records.isEmpty) {
-      throw Exception('Não foi possível ler dados da tag');
-    }
-
-    // Try to decode the first record as text
-    final record = message.records.first;
-    if (record.payload.length >= 4) {
-      // Skip language code prefix and decode text
-      final languageCodeLength = record.payload[0];
-      final textStart = 1 + languageCodeLength;
-      if (textStart < record.payload.length) {
-        final textBytes = record.payload.skip(textStart).toList();
-        return utf8.decode(textBytes);
-      }
-    }
-
-    return null;
+    return bytes?.toString() ?? 'N/A';
   }
 }
