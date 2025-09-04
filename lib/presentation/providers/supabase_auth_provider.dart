@@ -277,7 +277,7 @@ class SupabaseAuth extends _$SupabaseAuth {
 
       // Check in Supabase first, then fallback to local
       try {
-        final response = await _supabaseService
+        await _supabaseService
             .from('used_codes')
             .select('code')
             .eq('code', code)

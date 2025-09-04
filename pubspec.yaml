@@ -91,9 +91,6 @@ dev_dependencies:
   test: ^1.24.0
   mockito: ^5.4.0
   mocktail: ^1.0.0
-  integration_test:
-    sdk: flutter
-  patrol: ^3.0.0
   
   # Code coverage
   coverage: ^1.6.0

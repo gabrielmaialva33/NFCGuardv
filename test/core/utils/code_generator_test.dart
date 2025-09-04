@@ -122,11 +122,10 @@ void main() {
 
       test('should handle leading zeros correctly', () {
         // Generate codes that might start with zero
-        bool foundLeadingZero = false;
         for (int i = 0; i < 50; i++) {
           final code = CodeGenerator.generateUniqueCode();
           if (code.startsWith('0')) {
-            foundLeadingZero = true;
+            // Found a leading zero - this is valid
             expect(CodeGenerator.validateCode(code), isTrue);
             expect(code.length, equals(8));
           }
