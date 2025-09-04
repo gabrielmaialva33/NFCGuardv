@@ -74,26 +74,11 @@ class Nfc extends _$Nfc {
           try {
             state = const AsyncValue.data(NfcStatus.writing);
 
-            // Criar registro NDEF
-            final textBytes = utf8.encode('NFCGuard Data Set $dataSet - Code: $userCode');
-            final languageBytes = utf8.encode('en');
-            final payload = Uint8List.fromList([
-              languageBytes.length,
-              ...languageBytes,
-              ...textBytes,
-            ]);
+            // Criar registro NDEF simples
+            final textContent = 'NFCGuard Data Set $dataSet - Code: $userCode';
             
-            final ndefRecord = NdefRecord(
-              typeNameFormat: TypeNameFormat.nfcWellKnown,
-              type: Uint8List.fromList([84]), // 'T' for text
-              identifier: Uint8List(0),
-              payload: payload,
-            );
-
-            final ndefMessage = NdefMessage(records: [ndefRecord]);
-
-            // Tentar escrever na tag (Android/iOS specific)
-            await _writeNdefMessage(tag, ndefMessage);
+            // Por enquanto, usar implementação direta da tag sem NDEF abstração
+            await _writeSimpleText(tag, textContent);
 
             // Marcar código como usado
             await _storageService.addUsedCode(userCode);

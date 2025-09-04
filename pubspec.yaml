@@ -58,6 +58,11 @@ dependencies:
   # Local Storage
   shared_preferences: ^2.2.2
 
+  # Trial Security
+  device_info_plus: ^10.1.0
+  ntp: ^2.0.0
+  crypto: ^3.0.3
+
   # JSON
   json_annotation: ^4.8.1
 
