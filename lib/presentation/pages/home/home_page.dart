@@ -247,16 +247,20 @@ class _HomePageState extends ConsumerState<HomePage> {
     // Primeiro verificar se NFC está disponível
     final isAvailable = await nfcNotifier.isNfcAvailable();
     if (!isAvailable) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('NFC não está disponível neste dispositivo'),
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('NFC não está disponível neste dispositivo'),
+          ),
+        );
+      }
       return;
     }
 
     // Mostrar dialog de instrução
-    _showNfcInstructionDialog(context, 'Aproxime o dispositivo da tag NFC');
+    if (mounted) {
+      _showNfcInstructionDialog(context, 'Aproxime o dispositivo da tag NFC');
+    }
 
     // Executar gravação
     await nfcNotifier.writeTagWithCode(code, dataSet);
@@ -331,15 +335,19 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     final isAvailable = await nfcNotifier.isNfcAvailable();
     if (!isAvailable) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('NFC não está disponível neste dispositivo'),
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('NFC não está disponível neste dispositivo'),
+          ),
+        );
+      }
       return;
     }
 
-    _showNfcInstructionDialog(context, 'Aproxime o dispositivo da tag NFC');
+    if (mounted) {
+      _showNfcInstructionDialog(context, 'Aproxime o dispositivo da tag NFC');
+    }
 
     if (isProtecting) {
       await nfcNotifier.protectTagWithPassword(code, password);
