@@ -12,7 +12,7 @@ import 'package:search_cep/search_cep.dart';
 
 import 'auth_provider_test.mocks.dart';
 
-@GenerateMocks([SecureStorageService, ViaCepSearchCep, CodeGenerator])
+@GenerateMocks([SecureStorageService, ViaCepSearchCep, CodeGenerator, ViaCepInfo])
 void main() {
   late ProviderContainer container;
   late MockSecureStorageService mockStorageService;
@@ -228,31 +228,25 @@ void main() {
     group('ZIP Code Search', () {
       test('should search ZIP code successfully', () async {
         // Arrange
-        final mockAddressInfo = MockAddressInfo();
+        final mockAddressInfo = MockViaCepInfo();
         when(mockAddressInfo.logradouro).thenReturn('Rua das Flores');
         when(mockAddressInfo.bairro).thenReturn('Centro');
         when(mockAddressInfo.localidade).thenReturn('São Paulo');
         when(mockAddressInfo.uf).thenReturn('SP');
-
-        final authNotifier = container.read(authProvider.notifier);
 
         // Note: This test would need proper mocking setup for ViaCepSearchCep
         // For now, we test the error handling path
       });
 
       test('should handle ZIP code search errors gracefully', () async {
-        final authNotifier = container.read(authProvider.notifier);
-
         // Act
-        final result = await authNotifier.searchZipCode('invalid');
+        final result = await container.read(authProvider.notifier).searchZipCode('invalid');
 
         // Assert - should not throw and return null for invalid ZIP
         expect(result, isNull);
       });
 
       test('should handle valid ZIP code format', () async {
-        final authNotifier = container.read(authProvider.notifier);
-
         // Note: Real implementation would mock ViaCepSearchCep
         // Testing with actual service would require network calls
         const validZipCode = '01234567';

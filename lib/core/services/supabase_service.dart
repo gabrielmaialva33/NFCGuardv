@@ -55,4 +55,33 @@ class SupabaseService {
 
   /// Subscribe to auth changes
   Stream<AuthState> get authStateChanges => client.auth.onAuthStateChange;
+
+  /// Sign up with email and password
+  Future<AuthResponse> signUp({
+    required String email,
+    required String password,
+    Map<String, dynamic>? data,
+  }) async {
+    return await client.auth.signUp(
+      email: email,
+      password: password,
+      data: data,
+    );
+  }
+
+  /// Sign in with email and password
+  Future<AuthResponse> signIn({
+    required String email,
+    required String password,
+  }) async {
+    return await client.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
+  }
+
+  /// Sign out current user
+  Future<void> signOut() async {
+    await client.auth.signOut();
+  }
 }

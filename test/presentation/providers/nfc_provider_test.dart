@@ -328,7 +328,6 @@ void main() {
         // Expected state transitions:
         // idle -> loading -> scanning -> writing -> success/error
 
-        final nfcNotifier = container.read(nfcProvider.notifier);
         expect(container.read(nfcProvider).value, equals(NfcStatus.idle));
 
         // Note: Full state transition testing would require complex async mocking

@@ -8,7 +8,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../core/utils/code_generator.dart';
 import '../../data/datasources/nfc_logging_service.dart';
-import '../../data/datasources/secure_storage_service.dart';
 import '../../data/repositories/supabase_nfc_repository.dart';
 
 part 'nfc_provider.g.dart';
@@ -17,8 +16,6 @@ enum NfcStatus { idle, scanning, writing, success, error, unavailable }
 
 @riverpod
 class Nfc extends _$Nfc {
-  final _storageService = SecureStorageService();
-  final _loggingService = NfcLoggingService();
   final _supabaseNfcRepository = SupabaseNfcRepository();
 
   @override

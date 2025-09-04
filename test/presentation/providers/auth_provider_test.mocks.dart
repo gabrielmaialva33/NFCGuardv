@@ -117,6 +117,50 @@ class MockSecureStorageService extends _i1.Mock
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
           as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> storeValue(String? key, String? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#storeValue, [key, value]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  _i5.Future<String?> getValue(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getValue, [key]),
+            returnValue: _i5.Future<String?>.value(),
+          )
+          as _i5.Future<String?>);
+
+  @override
+  _i5.Future<void> deleteKey(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteKey, [key]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  _i5.Future<bool> hasKey(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#hasKey, [key]),
+            returnValue: _i5.Future<bool>.value(false),
+          )
+          as _i5.Future<bool>);
+
+  @override
+  _i5.Future<Map<String, String>> getAllValues() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAllValues, []),
+            returnValue: _i5.Future<Map<String, String>>.value(
+              <String, String>{},
+            ),
+          )
+          as _i5.Future<Map<String, String>>);
 }
 
 /// A class which mocks [ViaCepSearchCep].
@@ -220,4 +264,67 @@ class MockCodeGenerator extends _i1.Mock implements _i11.CodeGenerator {
   MockCodeGenerator() {
     _i1.throwOnMissingStub(this);
   }
+}
+
+/// A class which mocks [ViaCepInfo].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockViaCepInfo extends _i1.Mock implements _i10.ViaCepInfo {
+  MockViaCepInfo() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  set cep(String? _cep) => super.noSuchMethod(
+    Invocation.setter(#cep, _cep),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  set logradouro(String? _logradouro) => super.noSuchMethod(
+    Invocation.setter(#logradouro, _logradouro),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  set complemento(String? _complemento) => super.noSuchMethod(
+    Invocation.setter(#complemento, _complemento),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  set bairro(String? _bairro) => super.noSuchMethod(
+    Invocation.setter(#bairro, _bairro),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  set localidade(String? _localidade) => super.noSuchMethod(
+    Invocation.setter(#localidade, _localidade),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  set uf(String? _uf) => super.noSuchMethod(
+    Invocation.setter(#uf, _uf),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  set unidade(String? _unidade) => super.noSuchMethod(
+    Invocation.setter(#unidade, _unidade),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  set ibge(String? _ibge) => super.noSuchMethod(
+    Invocation.setter(#ibge, _ibge),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  set gia(String? _gia) => super.noSuchMethod(
+    Invocation.setter(#gia, _gia),
+    returnValueForMissingStub: null,
+  );
 }

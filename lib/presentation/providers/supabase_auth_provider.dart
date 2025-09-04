@@ -9,7 +9,6 @@ import '../../core/utils/code_generator.dart';
 import '../../data/datasources/secure_storage_service.dart';
 import '../../data/models/user_model.dart';
 import '../../data/repositories/supabase_auth_repository.dart';
-import '../../data/repositories/supabase_nfc_repository.dart';
 import '../../domain/entities/user_entity.dart';
 
 part 'supabase_auth_provider.g.dart';
@@ -18,7 +17,6 @@ part 'supabase_auth_provider.g.dart';
 class SupabaseAuth extends _$SupabaseAuth {
   final _storageService = SecureStorageService();
   final _authRepository = SupabaseAuthRepository();
-  final _nfcRepository = SupabaseNfcRepository();
 
   @override
   AsyncValue<UserEntity?> build() {
@@ -44,7 +42,7 @@ class SupabaseAuth extends _$SupabaseAuth {
   Future<void> _loadUser() async {
     try {
       // First check if there's a Supabase session
-      final supabaseUser = _supabaseService.currentUser;
+      final supabaseUser = SupabaseService.instance.currentUser;
       if (supabaseUser != null) {
         await _syncUserFromSupabase(supabaseUser);
         return;
@@ -61,7 +59,7 @@ class SupabaseAuth extends _$SupabaseAuth {
   Future<void> _syncUserFromSupabase(User supabaseUser) async {
     try {
       // Try to get user profile from Supabase
-      final profileResponse = await _supabaseService
+      final profileResponse = await SupabaseService.client
           .from('profiles')
           .select()
           .eq('id', supabaseUser.id)
@@ -129,7 +127,7 @@ class SupabaseAuth extends _$SupabaseAuth {
       String eightDigitCode = CodeGenerator.generateUniqueCode();
 
       // Sign up with Supabase
-      final authResponse = await _supabaseService.signUp(
+      final authResponse = await SupabaseService.instance.signUp(
         email: email,
         password: password,
         data: {
@@ -144,7 +142,7 @@ class SupabaseAuth extends _$SupabaseAuth {
 
       if (authResponse.user != null) {
         // Create profile in Supabase
-        await _supabaseService.from('profiles').insert({
+        await SupabaseService.client.from('profiles').insert({
           'id': authResponse.user!.id,
           'full_name': fullName,
           'cpf': cpf.replaceAll(RegExp(r'[^0-9]'), ''),
@@ -190,7 +188,7 @@ class SupabaseAuth extends _$SupabaseAuth {
     try {
       state = const AsyncValue.loading();
 
-      final authResponse = await _supabaseService.signIn(
+      final authResponse = await SupabaseService.instance.signIn(
         email: email,
         password: password,
       );
@@ -218,9 +216,9 @@ class SupabaseAuth extends _$SupabaseAuth {
       if (currentUser == null) throw Exception('Usuário não encontrado');
 
       // Update in Supabase
-      final supabaseUser = _supabaseService.currentUser;
+      final supabaseUser = SupabaseService.instance.currentUser;
       if (supabaseUser != null) {
-        await _supabaseService
+        await SupabaseService.client
             .from('profiles')
             .update({
               'zip_code': zipCode,
@@ -281,7 +279,7 @@ class SupabaseAuth extends _$SupabaseAuth {
 
       // Check in Supabase first, then fallback to local
       try {
-        await _supabaseService
+        await SupabaseService.client
             .from('used_codes')
             .select('code')
             .eq('code', code)
@@ -307,9 +305,9 @@ class SupabaseAuth extends _$SupabaseAuth {
   Future<void> markCodeAsUsed(String code) async {
     try {
       // Mark in Supabase
-      final supabaseUser = _supabaseService.currentUser;
+      final supabaseUser = SupabaseService.instance.currentUser;
       if (supabaseUser != null) {
-        await _supabaseService.from('used_codes').insert({
+        await SupabaseService.client.from('used_codes').insert({
           'code': code,
           'user_id': supabaseUser.id,
           'used_at': DateTime.now().toIso8601String(),
@@ -328,7 +326,7 @@ class SupabaseAuth extends _$SupabaseAuth {
   /// Logs out the current user and clears stored data
   Future<void> logout() async {
     try {
-      await _supabaseService.signOut();
+      await SupabaseService.instance.signOut();
       await _storageService.clearStorage();
       state = const AsyncValue.data(null);
     } catch (e) {

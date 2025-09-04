@@ -103,6 +103,50 @@ class MockSecureStorageService extends _i1.Mock
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> storeValue(String? key, String? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#storeValue, [key, value]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<String?> getValue(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getValue, [key]),
+            returnValue: _i3.Future<String?>.value(),
+          )
+          as _i3.Future<String?>);
+
+  @override
+  _i3.Future<void> deleteKey(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteKey, [key]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<bool> hasKey(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#hasKey, [key]),
+            returnValue: _i3.Future<bool>.value(false),
+          )
+          as _i3.Future<bool>);
+
+  @override
+  _i3.Future<Map<String, String>> getAllValues() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAllValues, []),
+            returnValue: _i3.Future<Map<String, String>>.value(
+              <String, String>{},
+            ),
+          )
+          as _i3.Future<Map<String, String>>);
 }
 
 /// A class which mocks [NfcLoggingService].

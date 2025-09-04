@@ -62,4 +62,30 @@ class SecureStorageService {
   Future<void> clearStorage() async {
     await _secureStorage.deleteAll();
   }
+
+  /// Store a generic key-value pair
+  Future<void> storeValue(String key, String value) async {
+    await _secureStorage.write(key: key, value: value);
+  }
+
+  /// Get a generic value by key
+  Future<String?> getValue(String key) async {
+    return await _secureStorage.read(key: key);
+  }
+
+  /// Delete a specific key
+  Future<void> deleteKey(String key) async {
+    await _secureStorage.delete(key: key);
+  }
+
+  /// Check if a key exists
+  Future<bool> hasKey(String key) async {
+    final value = await _secureStorage.read(key: key);
+    return value != null;
+  }
+
+  /// Get all stored keys
+  Future<Map<String, String>> getAllValues() async {
+    return await _secureStorage.readAll();
+  }
 }
