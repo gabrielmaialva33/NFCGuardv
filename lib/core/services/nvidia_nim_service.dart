@@ -85,15 +85,21 @@ Analise este CPF brasileiro para validação e detecção de fraude:
 
 CPF: $cpf
 
+IMPORTANTE: Execute uma validação matemática PRECISA dos dígitos verificadores antes de qualquer análise.
+
 Forneça uma análise completa incluindo:
-1. Validação matemática do CPF (dígitos verificadores)
-2. Detecção de padrões fraudulentos comuns:
-   - CPFs sequenciais (111.111.111-11, 123.456.789-01, etc.)
-   - CPFs com padrões repetitivos
-   - CPFs em listas de fraudes conhecidas
-   - Anomalias estatísticas nos dígitos
-3. Score de confiabilidade (0-100)
-4. Recomendação de ação (ACEITAR, REVISAR, REJEITAR)
+1. Validação matemática rigorosa do CPF usando o algoritmo oficial brasileiro
+2. Detecção APENAS de padrões claramente fraudulentos:
+   - CPFs com todos os dígitos iguais (111.111.111-11, 000.000.000-00)
+   - CPFs sequenciais óbvios como 123.456.789-XX ou 987.654.321-XX
+   - NÃO considere fraudulento CPFs que apenas tenham alguns dígitos repetidos naturalmente
+3. Score de confiabilidade baseado na validade matemática real
+4. Recomendação baseada apenas na validação matemática e fraudes óbvias
+
+CRITÉRIOS:
+- Se matematicamente válido E sem padrões óbvios de fraude = ACEITAR (score 85-95)
+- Se matematicamente válido MAS com padrões suspeitos = REVISAR (score 60-80)  
+- Se matematicamente inválido OU fraude óbvia = REJEITAR (score 0-30)
 
 Responda APENAS em formato JSON válido:
 {
@@ -170,24 +176,33 @@ Responda APENAS em formato JSON válido:
   bool _hasCommonFraudPatterns(String cpf) {
     cpf = cpf.replaceAll(RegExp(r'[^0-9]'), '');
     
-    // Lista de CPFs inválidos conhecidos
+    // Lista de CPFs inválidos conhecidos (todos os dígitos iguais)
     final invalidCpfs = [
       '00000000000', '11111111111', '22222222222', '33333333333',
       '44444444444', '55555555555', '66666666666', '77777777777',
-      '88888888888', '99999999999', '12345678901', '01234567890'
+      '88888888888', '99999999999'
     ];
     
     if (invalidCpfs.contains(cpf)) return true;
     
-    // Verifica sequências
-    bool isSequential = true;
-    for (int i = 1; i < cpf.length; i++) {
+    // Verifica apenas sequências óbvias nos primeiros 9 dígitos
+    bool isObviousSequential = true;
+    for (int i = 1; i < 9; i++) { // Apenas os primeiros 9 dígitos
       if (int.parse(cpf[i]) != int.parse(cpf[i-1]) + 1) {
-        isSequential = false;
+        isObviousSequential = false;
         break;
       }
     }
     
-    return isSequential;
+    // Verifica sequências decrescentes
+    bool isDescendingSequential = true;
+    for (int i = 1; i < 9; i++) {
+      if (int.parse(cpf[i]) != int.parse(cpf[i-1]) - 1) {
+        isDescendingSequential = false;
+        break;
+      }
+    }
+    
+    return isObviousSequential || isDescendingSequential;
   }
 }
