@@ -58,10 +58,10 @@ void main() {
       });
 
       test('should return false for codes with invalid check digit', () {
-        // Create a code with wrong check digit
-        expect(CodeGenerator.validateCode('12345678'), isFalse);
-        expect(CodeGenerator.validateCode('00000000'), isFalse);
-        expect(CodeGenerator.validateCode('99999999'), isFalse);
+        // Create codes with wrong check digits
+        expect(CodeGenerator.validateCode('12345678'), isFalse); // correct would be 12345674
+        expect(CodeGenerator.validateCode('00000001'), isFalse); // correct would be 00000000
+        expect(CodeGenerator.validateCode('99999999'), isFalse); // correct would be 99999997
       });
 
       test('should return false for non-numeric codes', () {

@@ -18,6 +18,9 @@ class CodeGenerator {
 
   static bool validateCode(String code) {
     if (code.length != 8) return false;
+    
+    // Check if all characters are digits
+    if (!RegExp(r'^\d{8}$').hasMatch(code)) return false;
 
     String baseCode = code.substring(0, 7);
     int providedCheckDigit = int.tryParse(code.substring(7)) ?? -1;
