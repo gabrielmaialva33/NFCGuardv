@@ -55,7 +55,7 @@ class NfcLoggingService {
       final user = _client.auth.currentUser;
       if (user == null) return [];
 
-      var query = _supabaseService
+      var query = _client
           .from('nfc_operations')
           .select('*')
           .eq('user_id', user.id)
@@ -84,7 +84,7 @@ class NfcLoggingService {
       final user = _client.auth.currentUser;
       if (user == null) return {};
 
-      final response = await _supabaseService
+      final response = await _client
           .from('nfc_operations')
           .select('operation_type, success')
           .eq('user_id', user.id);

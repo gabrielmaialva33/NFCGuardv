@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../home/home_page.dart';
-import '../nvidia_nim_demo_page.dart';
 import '../cpf_fraud_analysis_page.dart';
 import 'register_page.dart';
 
@@ -43,11 +42,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     ).push(MaterialPageRoute(builder: (context) => const RegisterPage()));
   }
 
-  void _navigateToNvidiaDemo() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const NvidiaNimDemoPage()),
-    );
-  }
 
   void _navigateToCpfFraudAnalysis() {
     Navigator.of(context).push(
