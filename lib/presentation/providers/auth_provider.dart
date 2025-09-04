@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:search_cep/search_cep.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/utils/code_generator.dart';
 import '../../data/datasources/secure_storage_service.dart';
 import '../../data/models/user_model.dart';
+import '../../data/repositories/supabase_auth_repository.dart';
 import '../../domain/entities/user_entity.dart';
 
 part 'auth_provider.g.dart';
@@ -13,19 +15,95 @@ part 'auth_provider.g.dart';
 @riverpod
 class Auth extends _$Auth {
   final _storageService = SecureStorageService();
+  final _authRepository = SupabaseAuthRepository();
+  final _supabaseClient = Supabase.instance.client;
 
   @override
   AsyncValue<UserEntity?> build() {
-    _loadUser();
+    _initializeAuth();
     return const AsyncValue.loading();
   }
 
-  Future<void> _loadUser() async {
+  /// Initialize authentication and check for existing session
+  Future<void> _initializeAuth() async {
     try {
-      final user = await _storageService.getUser();
-      state = AsyncValue.data(user);
+      // Listen to auth state changes
+      _supabaseClient.auth.onAuthStateChange.listen((data) {
+        _handleAuthStateChange(data);
+      });
+
+      // Check if user is already logged in
+      final currentUser = _supabaseClient.auth.currentUser;
+      if (currentUser != null) {
+        await _loadUserProfile(currentUser.id);
+      } else {
+        state = const AsyncValue.data(null);
+      }
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  /// Handle Supabase auth state changes
+  void _handleAuthStateChange(AuthState authState) async {
+    final event = authState.event;
+    final user = authState.session?.user;
+
+    switch (event) {
+      case AuthChangeEvent.signedIn:
+        if (user != null) {
+          await _loadUserProfile(user.id);
+        }
+        break;
+      case AuthChangeEvent.signedOut:
+        await _storageService.clearStorage();
+        state = const AsyncValue.data(null);
+        break;
+      case AuthChangeEvent.tokenRefreshed:
+        // Token refreshed - user stays logged in
+        break;
+      default:
+        break;
+    }
+  }
+
+  /// Load user profile from Supabase
+  Future<void> _loadUserProfile(String userId) async {
+    try {
+      final userProfile = await _authRepository.getUserProfile(userId);
+      if (userProfile != null) {
+        await _storageService.saveUser(userProfile);
+        state = AsyncValue.data(userProfile);
+      } else {
+        state = const AsyncValue.data(null);
+      }
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  /// Sign in with email and password
+  Future<void> signIn({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      state = const AsyncValue.loading();
+      
+      final response = await _authRepository.signIn(
+        email: email,
+        password: password,
+      );
+
+      if (response.user != null) {
+        // User profile will be loaded through auth state change listener
+        return;
+      } else {
+        throw Exception('Falha no login');
+      }
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
     }
   }
 
@@ -42,7 +120,7 @@ class Auth extends _$Auth {
     try {
       state = const AsyncValue.loading();
 
-      // Basic validations for now
+      // Basic validations
       if (cpf.length < 11) {
         throw Exception(AppConstants.invalidCpfMessage);
       }
@@ -54,28 +132,27 @@ class Auth extends _$Auth {
       // Generate unique 8-digit code
       String eightDigitCode = CodeGenerator.generateUniqueCode();
 
-      // Create user with basic data (without address yet)
-      final user = UserModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        fullName: fullName,
-        cpf: cpf.replaceAll(RegExp(r'[^0-9]'), ''),
+      // Prepare user data
+      final userData = {
+        'full_name': fullName,
+        'cpf': cpf.replaceAll(RegExp(r'[^0-9]'), ''),
+        'phone': phone,
+        'birth_date': birthDate.toIso8601String().split('T')[0],
+        'gender': gender,
+        'user_code': eightDigitCode,
+      };
+
+      // Sign up with Supabase
+      await _authRepository.signUp(
         email: email,
-        phone: phone,
-        birthDate: birthDate,
-        gender: gender,
-        zipCode: '',
-        address: '',
-        neighborhood: '',
-        city: '',
-        state: '',
-        eightDigitCode: eightDigitCode,
-        createdAt: DateTime.now(),
+        password: password,
+        userData: userData,
       );
 
-      await _storageService.saveUser(user);
-      state = AsyncValue.data(user);
+      // User profile will be loaded through auth state change listener
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
     }
   }
 
@@ -163,10 +240,16 @@ class Auth extends _$Auth {
   /// Logs out the current user and clears stored data
   Future<void> logout() async {
     try {
-      await _storageService.clearStorage();
-      state = const AsyncValue.data(null);
+      await _authRepository.signOut();
+      // Auth state change listener will handle clearing storage and updating state
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }
   }
+
+  /// Get current user session
+  User? get currentUser => _supabaseClient.auth.currentUser;
+  
+  /// Check if user is authenticated
+  bool get isAuthenticated => _supabaseClient.auth.currentUser != null;
 }
