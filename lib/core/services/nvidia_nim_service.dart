@@ -1,13 +1,21 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-import '../constants/app_constants.dart';
+import '../config/environment_config.dart';
+import '../security/network_security.dart';
 
 class NvidiaNimService {
-  static const String _baseUrl = AppConstants.nvidiaApiUrl;
-  static const String _apiKey = AppConstants.nvidiaApiKey;
-  static const String _model = AppConstants.bestModel;
+  static final _secureClient = NetworkSecurity.createSecureClient();
+  
+  Future<String> _getApiKey() async {
+    final apiKey = await EnvironmentConfig.getNvidiaApiKey();
+    if (apiKey == null || apiKey.isEmpty) {
+      throw Exception('NVIDIA API key not configured. Use EnvironmentConfig.setNvidiaApiKey()');
+    }
+    return apiKey;
+  }
 
   Future<String> generateResponse({
     required String prompt,
@@ -16,39 +24,94 @@ class NvidiaNimService {
     int maxTokens = 4096,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse(_baseUrl),
-        headers: {
-          'Authorization': 'Bearer $_apiKey',
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: json.encode({
-          'model': _model,
-          'messages': [
-            {'role': 'user', 'content': prompt},
-          ],
-          'temperature': temperature,
-          'top_p': topP,
-          'frequency_penalty': 0,
-          'presence_penalty': 0,
-          'max_tokens': maxTokens,
-          'stream': false,
-        }),
+      // Input validation and sanitization
+      if (prompt.isEmpty || prompt.length > 10000) {
+        throw ArgumentError('Invalid prompt length');
+      }
+      
+      final sanitizedPrompt = _sanitizePrompt(prompt);
+      final apiKey = await _getApiKey();
+      final baseUrl = EnvironmentConfig.getNvidiaApiUrl();
+      final model = EnvironmentConfig.getBestModel();
+
+      // Validate URL before making request
+      if (!NetworkSecurity.isAllowedUrl(baseUrl)) {
+        throw Exception('URL não permitida para requisição');
+      }
+
+      final headers = {
+        'Authorization': 'Bearer $apiKey',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...NetworkSecurity.getSecurityHeaders(),
+      };
+
+      final requestBody = {
+        'model': model,
+        'messages': [
+          {'role': 'user', 'content': sanitizedPrompt},
+        ],
+        'temperature': temperature.clamp(0.0, 2.0),
+        'top_p': topP.clamp(0.0, 1.0),
+        'frequency_penalty': 0,
+        'presence_penalty': 0,
+        'max_tokens': maxTokens.clamp(1, 8192),
+        'stream': false,
+      };
+
+      final response = await _secureClient.post(
+        Uri.parse(baseUrl),
+        headers: headers,
+        body: json.encode(requestBody),
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return data['choices'][0]['message']['content'];
+        final content = data['choices']?[0]?['message']?['content'];
+        if (content == null) {
+          throw Exception('Resposta inválida da API');
+        }
+        return _sanitizeResponse(content);
       } else {
-        throw Exception('Erro na API NVIDIA: ${response.statusCode}');
+        final sanitizedError = NetworkSecurity.sanitizeErrorMessage(
+          'API NVIDIA error: ${response.statusCode} - ${response.body}'
+        );
+        throw Exception(sanitizedError);
       }
     } catch (e) {
-      throw Exception('Erro ao conectar com NVIDIA NIM: $e');
+      final sanitizedError = NetworkSecurity.sanitizeErrorMessage(e.toString());
+      throw Exception(sanitizedError);
     }
   }
 
+  /// Sanitizes prompts to prevent injection attacks
+  String _sanitizePrompt(String prompt) {
+    // Remove potential injection patterns
+    return prompt
+        .replaceAll(RegExp(r'<script[^>]*>.*?</script>', caseSensitive: false), '')
+        .replaceAll(RegExp(r'javascript:', caseSensitive: false), '')
+        .replaceAll(RegExp(r'data:', caseSensitive: false), '')
+        .replaceAll(RegExp(r'vbscript:', caseSensitive: false), '')
+        .trim();
+  }
+
+  /// Sanitizes API responses
+  String _sanitizeResponse(String response) {
+    // Remove any potential sensitive data from responses
+    return response
+        .replaceAll(RegExp(r'nvapi-[A-Za-z0-9_-]+'), '[API_KEY_REDACTED]')
+        .replaceAll(RegExp(r'sbp_[A-Za-z0-9_-]+'), '[SUPABASE_KEY_REDACTED]')
+        .trim();
+  }
+
   Future<String> analyzeSecurityCode(String code) async {
+    // Validate and sanitize input
+    if (code.isEmpty || code.length > 20) {
+      throw ArgumentError('Código inválido');
+    }
+
+    final sanitizedCode = code.replaceAll(RegExp(r'[^A-Za-z0-9]'), '');
+    
     const prompt = '''
 Analise este código de segurança NFC e forneça insights sobre:
 1. Força da segurança
@@ -57,7 +120,7 @@ Analise este código de segurança NFC e forneça insights sobre:
 
 Código: ''';
 
-    return await generateResponse(prompt: '$prompt$code');
+    return await generateResponse(prompt: '$prompt$sanitizedCode');
   }
 
   Future<String> generateSecureCode({

@@ -1,6 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../core/config/supabase_config.dart';
+import '../../core/config/environment_config.dart';
 import '../../core/services/supabase_service.dart';
 import '../models/user_model.dart';
 
@@ -69,7 +69,7 @@ class SupabaseAuthRepository {
   Future<UserModel?> getUserProfile(String userId) async {
     try {
       final response = await _client
-          .from(SupabaseConfig.usersTable)
+          .from('users')
           .select()
           .eq('id', userId)
           .single();
@@ -85,7 +85,7 @@ class SupabaseAuthRepository {
     String userId,
     Map<String, dynamic> data,
   ) async {
-    await _client.from(SupabaseConfig.usersTable).update(data).eq('id', userId);
+    await _client.from('users').update(data).eq('id', userId);
   }
 
   /// Create user profile in database
@@ -112,7 +112,7 @@ class SupabaseAuthRepository {
       'trial_mode': userData['trial_mode'] ?? false,
     };
 
-    await _client.from(SupabaseConfig.usersTable).insert(userProfile);
+    await _client.from('users').insert(userProfile);
   }
 
   /// Check if email exists

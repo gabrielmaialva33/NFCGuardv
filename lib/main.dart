@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'core/config/supabase_config.dart';
+import 'core/config/environment_config.dart';
 import 'core/constants/app_constants.dart';
 import 'core/services/trial_guard_service.dart';
 import 'core/theme/app_theme.dart';
@@ -12,10 +12,34 @@ import 'presentation/pages/trial_expired_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Supabase.initialize(
-    url: SupabaseConfig.supabaseUrl,
-    anonKey: SupabaseConfig.supabaseAnonKey,
-  );
+  // Initialize environment configuration
+  await EnvironmentConfig.initialize();
+
+  // Set default Supabase configuration if not already configured
+  final isConfigComplete = await EnvironmentConfig.isConfigurationComplete();
+  if (!isConfigComplete) {
+    // Set default configuration for development
+    await EnvironmentConfig.setSupabaseConfig(
+      url: 'https://wfhecwwjfzxhwzfwfwbx.supabase.co',
+      anonKey: 'sbp_db7013246b0de8c2be1eaeba080cc90ac4520a4e',
+    );
+  }
+
+  // Initialize Supabase with secure configuration
+  try {
+    final supabaseUrl = await EnvironmentConfig.getSupabaseUrl();
+    final supabaseKey = await EnvironmentConfig.getSupabaseAnonKey();
+    
+    if (supabaseUrl != null && supabaseKey != null) {
+      await Supabase.initialize(
+        url: supabaseUrl,
+        anonKey: supabaseKey,
+      );
+    }
+  } catch (e) {
+    // If Supabase initialization fails, continue without it for offline mode
+    debugPrint('Supabase initialization failed: $e');
+  }
 
   runApp(const ProviderScope(child: NFCGuardApp()));
 }

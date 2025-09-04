@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Production configuration -->
+    <domain-config cleartextTrafficPermitted="false">
+        <!-- Trusted domains with certificate pinning -->
+        <domain includeSubdomains="true">supabase.co</domain>
+        <domain includeSubdomains="true">integrate.api.nvidia.com</domain>
+        <domain includeSubdomains="true">viacep.com.br</domain>
+        <domain includeSubdomains="false">pool.ntp.org</domain>
+        
+        <!-- Certificate pinning for critical services -->
+        <pin-set expiration="2026-01-01">
+            <!-- Supabase certificate pins (example - replace with actual) -->
+            <pin digest="SHA256">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</pin>
+            <!-- NVIDIA API certificate pins (example - replace with actual) -->
+            <pin digest="SHA256">BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=</pin>
+            <!-- Backup certificate pin -->
+            <pin digest="SHA256">CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC=</pin>
+        </pin-set>
+        
+        <!-- Enhanced trust anchors -->
+        <trust-anchors>
+            <certificates src="system"/>
+            <!-- Custom certificates can be added here if needed -->
+        </trust-anchors>
+    </domain-config>
+
+    <!-- Debug configuration - allow localhost and HTTP for development -->
+    <debug-overrides>
+        <domain-config cleartextTrafficPermitted="true">
+            <domain includeSubdomains="true">localhost</domain>
+            <domain includeSubdomains="true">127.0.0.1</domain>
+            <domain includeSubdomains="true">10.0.2.2</domain>
+            <domain includeSubdomains="true">192.168.1.1</domain>
+        </domain-config>
+    </debug-overrides>
+    
+    <!-- Base configuration - deny all cleartext by default -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+</network-security-config>

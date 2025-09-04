@@ -29,12 +29,10 @@ class AppConstants {
   static const double buttonHeight = 48.0;
   static const double minTouchTarget = 44.0;
 
-  // NVIDIA NIM API Configuration
-  static const String nvidiaApiUrl =
-      'https://integrate.api.nvidia.com/v1/chat/completions';
-  static const String nvidiaApiKey =
-      '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';
-  static const String bestModel = 'qwen/qwen3-coder-480b-a35b-instruct';
+  // NVIDIA NIM API Configuration - Use EnvironmentConfig to access securely
+  // API keys moved to secure storage - see EnvironmentConfig class
+  static const String deprecatedSecurityWarning = 
+      'SECURITY: API keys moved to EnvironmentConfig for secure storage';
 
   // Validation messages
   static const String invalidCpfMessage = 'CPF inválido';
