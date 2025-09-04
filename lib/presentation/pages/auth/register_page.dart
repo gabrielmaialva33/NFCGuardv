@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../providers/auth_provider.dart';
+import '../../widgets/brazilian_cpf_field.dart';
+import '../../widgets/brazilian_cep_field.dart';
 import '../home/home_page.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
@@ -34,7 +36,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   DateTime? _dataNascimento;
   String _sexoSelecionado = 'M';
   bool _isPasswordVisible = false;
-  bool _isLoadingCep = false;
+  bool _isCpfValid = false;
   int _currentPage = 0;
 
   @override
@@ -53,39 +55,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     super.dispose();
   }
 
-  Future<void> _searchCep() async {
-    final cep = _cepController.text.replaceAll(RegExp(r'[^0-9]'), '');
-    if (cep.length == 8) {
-      setState(() => _isLoadingCep = true);
-
-      try {
-        final authNotifier = ref.read(authProvider.notifier);
-        final addressInfo = await authNotifier.searchZipCode(cep);
-
-        if (addressInfo != null) {
-          _enderecoController.text = addressInfo['address'] ?? '';
-          _bairroController.text = addressInfo['neighborhood'] ?? '';
-          _cidadeController.text = addressInfo['city'] ?? '';
-          _ufController.text = addressInfo['stateCode'] ?? '';
-        } else {
-          if (mounted) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('CEP não encontrado')));
-          }
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Erro ao buscar CEP')));
-        }
-      } finally {
-        if (mounted) {
-          setState(() => _isLoadingCep = false);
-        }
-      }
-    }
+  void _onAddressFound(Map<String, String> address) {
+    _enderecoController.text = address['address'] ?? '';
+    _bairroController.text = address['neighborhood'] ?? '';
+    _cidadeController.text = address['city'] ?? '';
+    _ufController.text = address['stateCode'] ?? '';
   }
 
   Future<void> _selectDate() async {
@@ -237,24 +211,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             },
           ),
           const SizedBox(height: 16),
-          TextFormField(
+          BrazilianCpfField(
             controller: _cpfController,
-            decoration: const InputDecoration(
-              labelText: 'CPF',
-              prefixIcon: Icon(Icons.assignment_ind),
-              hintText: '000.000.000-00',
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(11),
-            ],
-            validator: (value) {
-              if (value?.isEmpty ?? true) return 'CPF é obrigatório';
-              if (value!.length < 11) {
-                return AppConstants.invalidCpfMessage;
-              }
-              return null;
+            onValidationChange: (isValid) {
+              setState(() => _isCpfValid = isValid);
             },
           ),
           const SizedBox(height: 16),
@@ -356,43 +316,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _cepController,
-                  decoration: const InputDecoration(
-                    labelText: 'CEP',
-                    prefixIcon: Icon(Icons.location_on),
-                    hintText: '00000-000',
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(8),
-                  ],
-                  onChanged: (value) {
-                    if (value.length == 8) _searchCep();
-                  },
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) return 'CEP é obrigatório';
-                    if (value!.length < 8) return 'CEP deve ter 8 dígitos';
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(width: 8),
-              IconButton(
-                onPressed: _isLoadingCep ? null : _searchCep,
-                icon: _isLoadingCep
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.search),
-              ),
-            ],
+          BrazilianCepField(
+            controller: _cepController,
+            onAddressFound: _onAddressFound,
           ),
           const SizedBox(height: 16),
           TextFormField(
