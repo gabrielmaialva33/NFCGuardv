@@ -282,11 +282,17 @@ flutter packages pub run build_runner build --delete-conflicting-outputs
 Create necessary configuration files:
 
 ```dart
+// lib/core/config/supabase_config.dart
+class SupabaseConfig {
+  static const String supabaseUrl = 'YOUR_SUPABASE_URL';
+  static const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+}
+
 // lib/core/config/app_config.dart
 class AppConfig {
-  static const String apiBaseUrl = 'YOUR_API_URL';
   static const String cepApiUrl = 'https://viacep.com.br/ws/';
   static const bool enableDebugMode = false;
+  static const bool enableNfcLogging = true;
 }
 ```
 

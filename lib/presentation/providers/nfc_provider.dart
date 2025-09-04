@@ -1,4 +1,7 @@
 import 'package:nfc_manager/nfc_manager.dart';
+import 'package:nfc_manager/nfc_manager_android.dart';
+import 'package:nfc_manager/nfc_manager_ios.dart';
+import 'package:nfc_manager/ndef_record.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../core/utils/code_generator.dart';
@@ -60,6 +63,11 @@ class Nfc extends _$Nfc {
 
       // Iniciar sessão NFC
       await NfcManager.instance.startSession(
+        pollingOptions: {
+          NfcPollingOption.iso14443,
+          NfcPollingOption.iso15693,
+          NfcPollingOption.iso18092,
+        },
         onDiscovered: (NfcTag tag) async {
           try {
             state = const AsyncValue.data(NfcStatus.writing);
@@ -71,21 +79,8 @@ class Nfc extends _$Nfc {
 
             final ndefMessage = NdefMessage([ndefRecord]);
 
-            // Tentar escrever na tag
-            final ndef = Ndef.from(tag);
-            if (ndef == null) {
-              throw Exception('Tag não suporta NDEF');
-            }
-
-            if (!ndef.isWritable) {
-              throw Exception('Tag não é gravável');
-            }
-
-            if (ndef.maxSize < ndefMessage.byteLength) {
-              throw Exception('Tag não tem espaço suficiente');
-            }
-
-            await ndef.write(ndefMessage);
+            // Tentar escrever na tag (Android/iOS specific)
+            await _writeNdefMessage(tag, ndefMessage);
 
             // Marcar código como usado
             await _storageService.addUsedCode(userCode);
@@ -110,7 +105,9 @@ class Nfc extends _$Nfc {
               errorMessage: e.toString(),
             );
             
-            await NfcManager.instance.stopSession(errorMessage: e.toString());
+            await NfcManager.instance.stopSession(
+              errorMessageIos: e.toString(),
+            );
             state = AsyncValue.error(e, StackTrace.current);
           }
         },
@@ -132,6 +129,11 @@ class Nfc extends _$Nfc {
       state = const AsyncValue.data(NfcStatus.scanning);
 
       await NfcManager.instance.startSession(
+        pollingOptions: {
+          NfcPollingOption.iso14443,
+          NfcPollingOption.iso15693,
+          NfcPollingOption.iso18092,
+        },
         onDiscovered: (NfcTag tag) async {
           try {
             state = const AsyncValue.data(NfcStatus.writing);
@@ -144,7 +146,9 @@ class Nfc extends _$Nfc {
             state = const AsyncValue.data(NfcStatus.success);
             await NfcManager.instance.stopSession();
           } catch (e) {
-            await NfcManager.instance.stopSession(errorMessage: e.toString());
+            await NfcManager.instance.stopSession(
+              errorMessageIos: e.toString(),
+            );
             state = AsyncValue.error(e, StackTrace.current);
           }
         },
@@ -166,6 +170,11 @@ class Nfc extends _$Nfc {
       state = const AsyncValue.data(NfcStatus.scanning);
 
       await NfcManager.instance.startSession(
+        pollingOptions: {
+          NfcPollingOption.iso14443,
+          NfcPollingOption.iso15693,
+          NfcPollingOption.iso18092,
+        },
         onDiscovered: (NfcTag tag) async {
           try {
             state = const AsyncValue.data(NfcStatus.writing);
@@ -176,7 +185,9 @@ class Nfc extends _$Nfc {
             state = const AsyncValue.data(NfcStatus.success);
             await NfcManager.instance.stopSession();
           } catch (e) {
-            await NfcManager.instance.stopSession(errorMessage: e.toString());
+            await NfcManager.instance.stopSession(
+              errorMessageIos: e.toString(),
+            );
             state = AsyncValue.error(e, StackTrace.current);
           }
         },
@@ -194,14 +205,15 @@ class Nfc extends _$Nfc {
       Map<String, dynamic>? tagData;
 
       await NfcManager.instance.startSession(
+        pollingOptions: {
+          NfcPollingOption.iso14443,
+          NfcPollingOption.iso15693,
+          NfcPollingOption.iso18092,
+        },
         onDiscovered: (NfcTag tag) async {
           try {
-            final ndef = Ndef.from(tag);
-            if (ndef == null) {
-              throw Exception('Tag não contém dados NDEF');
-            }
-
-            final ndefMessage = await ndef.read();
+            // Tentar ler da tag (Android/iOS specific)
+            final ndefMessage = await _readNdefMessage(tag);
             if (ndefMessage.records.isNotEmpty) {
               final record = ndefMessage.records.first;
               final payload = String.fromCharCodes(
@@ -218,7 +230,9 @@ class Nfc extends _$Nfc {
             state = const AsyncValue.data(NfcStatus.success);
             await NfcManager.instance.stopSession();
           } catch (e) {
-            await NfcManager.instance.stopSession(errorMessage: e.toString());
+            await NfcManager.instance.stopSession(
+              errorMessageIos: e.toString(),
+            );
             state = AsyncValue.error(e, StackTrace.current);
           }
         },
