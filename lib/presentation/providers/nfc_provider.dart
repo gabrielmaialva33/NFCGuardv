@@ -96,8 +96,8 @@ class Nfc extends _$Nfc {
             state = const AsyncValue.data(NfcStatus.success);
             await NfcManager.instance.stopSession();
           } catch (e) {
-            // Log failed operation
-            await _loggingService.logNfcOperation(
+            // Log failed operation (Supabase + local)
+            await _supabaseNfcRepository.logNfcOperation(
               operationType: NfcOperationType.write,
               codeUsed: userCode,
               datasetNumber: dataSet,
