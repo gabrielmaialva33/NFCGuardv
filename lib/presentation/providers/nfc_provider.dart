@@ -286,12 +286,12 @@ class Nfc extends _$Nfc {
       throw Exception('Tag não contém dados NDEF');
     }
 
-    final records = await ndef.read();
-    if (records == null || records.isEmpty) {
+    final message = await ndef.read();
+    if (message == null || message.records.isEmpty) {
       throw Exception('Não foi possível ler dados da tag');
     }
     
-    final record = records.first;
+    final record = message.records.first;
     if (record.payload.length < 4) {
       throw Exception('Formato de dados inválido');
     }
