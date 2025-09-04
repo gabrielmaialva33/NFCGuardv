@@ -230,8 +230,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             ),
             validator: (value) {
               if (value?.isEmpty ?? true) return 'Nome é obrigatório';
-              if (value!.split(' ').length < 2)
+              if (value!.split(' ').length < 2) {
                 return 'Digite nome e sobrenome';
+              }
               return null;
             },
           ),
