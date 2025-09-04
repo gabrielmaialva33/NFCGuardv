@@ -6,78 +6,22 @@ part 'user_model.g.dart';
 
 @JsonSerializable()
 class UserModel extends UserEntity {
-  @JsonKey(name: 'nome_completo')
-  @override
-  final String fullName;
-
-  @JsonKey(name: 'telefone')
-  @override
-  final String phone;
-
-  @JsonKey(name: 'data_nascimento')
-  @override
-  final DateTime birthDate;
-
-  @JsonKey(name: 'sexo')
-  @override
-  final String gender;
-
-  @JsonKey(name: 'cep')
-  @override
-  final String zipCode;
-
-  @JsonKey(name: 'endereco')
-  @override
-  final String address;
-
-  @JsonKey(name: 'bairro')
-  @override
-  final String neighborhood;
-
-  @JsonKey(name: 'cidade')
-  @override
-  final String city;
-
-  @JsonKey(name: 'uf')
-  @override
-  final String state;
-
-  @JsonKey(name: 'codigo_8_digitos')
-  @override
-  final String eightDigitCode;
-
-  @JsonKey(name: 'created_at')
-  @override
-  final DateTime createdAt;
-
   const UserModel({
     required super.id,
-    required this.fullName,
+    @JsonKey(name: 'full_name') required super.fullName,
     required super.cpf,
     required super.email,
-    required this.phone,
-    required this.birthDate,
-    required this.gender,
-    required this.zipCode,
-    required this.address,
-    required this.neighborhood,
-    required this.city,
-    required this.state,
-    required this.eightDigitCode,
-    required this.createdAt,
-  }) : super(
-          fullName: fullName,
-          phone: phone,
-          birthDate: birthDate,
-          gender: gender,
-          zipCode: zipCode,
-          address: address,
-          neighborhood: neighborhood,
-          city: city,
-          state: state,
-          eightDigitCode: eightDigitCode,
-          createdAt: createdAt,
-        );
+    required super.phone,
+    @JsonKey(name: 'birth_date') required super.birthDate,
+    required super.gender,
+    @JsonKey(name: 'zip_code') required super.zipCode,
+    required super.address,
+    required super.neighborhood,
+    required super.city,
+    required super.state,
+    @JsonKey(name: 'eight_digit_code') required super.eightDigitCode,
+    @JsonKey(name: 'created_at') required super.createdAt,
+  });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
