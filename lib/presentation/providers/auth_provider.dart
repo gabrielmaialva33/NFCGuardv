@@ -115,10 +115,11 @@ class Auth extends _$Auth {
     try {
       state = const AsyncValue.loading();
 
-      final response = await _authRepository.signIn(
-        email: email,
-        password: password,
-      );
+      // Add timeout for sign in
+      final response = await Future.any([
+        _authRepository.signIn(email: email, password: password),
+        Future.delayed(const Duration(seconds: 15), () => throw Exception('Timeout de conexão - verifique sua internet')),
+      ]);
 
       if (response.user != null) {
         // User profile will be loaded through auth state change listener
@@ -127,6 +128,9 @@ class Auth extends _$Auth {
         throw Exception('Falha no login');
       }
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Sign in error: $e');
+      }
       state = AsyncValue.error(e, StackTrace.current);
       rethrow;
     }
