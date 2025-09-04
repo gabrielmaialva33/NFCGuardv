@@ -10,8 +10,6 @@ import 'nfc_logging_service_test.mocks.dart';
 @GenerateMocks([
   SupabaseService,
   User,
-  SupabaseQueryBuilder,
-  SupabaseFilterBuilder,
 ])
 void main() {
   late NfcLoggingService service;

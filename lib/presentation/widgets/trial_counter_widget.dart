@@ -82,11 +82,11 @@ class _TrialCounterWidgetState extends State<TrialCounterWidget> {
 
   Color _getBackgroundColor(BuildContext context) {
     if (_remainingDays <= 0) {
-      return Colors.red.withOpacity(0.1);
+      return Colors.red.withValues(alpha: 0.1);
     } else if (_remainingDays == 1) {
-      return Colors.orange.withOpacity(0.1);
+      return Colors.orange.withValues(alpha: 0.1);
     } else {
-      return Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3);
+      return Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3);
     }
   }
 

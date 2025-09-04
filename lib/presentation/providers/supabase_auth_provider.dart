@@ -283,9 +283,8 @@ class SupabaseAuth extends _$SupabaseAuth {
             .eq('code', code)
             .single();
 
-        if (response != null) {
-          throw Exception(AppConstants.codeAlreadyUsedMessage);
-        }
+        // If we reach here, the code exists (single() would throw if not found)
+        throw Exception(AppConstants.codeAlreadyUsedMessage);
       } catch (e) {
         // If Supabase check fails, check locally
         final isUsed = await _storageService.isCodeUsed(code);

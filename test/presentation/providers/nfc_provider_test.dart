@@ -12,13 +12,8 @@ import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
 import 'nfc_provider_test.mocks.dart';
 
 @GenerateMocks([
-  NfcManager,
   SecureStorageService,
   NfcLoggingService,
-  NfcTag,
-  Ndef,
-  NdefMessage,
-  NdefRecord,
 ])
 void main() {
   late ProviderContainer container;
