@@ -27,20 +27,32 @@ class Auth extends _$Auth {
   /// Initialize authentication and check for existing session
   Future<void> _initializeAuth() async {
     try {
-      // Listen to auth state changes
-      _supabaseClient.auth.onAuthStateChange.listen((data) {
-        _handleAuthStateChange(data);
-      });
-
-      // Check if user is already logged in
-      final currentUser = _supabaseClient.auth.currentUser;
-      if (currentUser != null) {
-        await _loadUserProfile(currentUser.id);
-      } else {
-        state = const AsyncValue.data(null);
-      }
+      // Add timeout for network operations
+      await Future.any([
+        _performAuthInit(),
+        Future.delayed(const Duration(seconds: 10), () => throw Exception('Timeout de conexão')),
+      ]);
     } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
+      if (kDebugMode) {
+        debugPrint('Auth initialization error: $e');
+      }
+      // Set null user state instead of error to allow offline usage
+      state = const AsyncValue.data(null);
+    }
+  }
+
+  Future<void> _performAuthInit() async {
+    // Listen to auth state changes
+    _supabaseClient.auth.onAuthStateChange.listen((data) {
+      _handleAuthStateChange(data);
+    });
+
+    // Check if user is already logged in
+    final currentUser = _supabaseClient.auth.currentUser;
+    if (currentUser != null) {
+      await _loadUserProfile(currentUser.id);
+    } else {
+      state = const AsyncValue.data(null);
     }
   }
 
