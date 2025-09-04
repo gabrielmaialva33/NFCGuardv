@@ -230,6 +230,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           TextFormField(
             controller: _telefoneController,
             keyboardType: TextInputType.phone,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(11),
+              _PhoneInputFormatter(),
+            ],
             decoration: const InputDecoration(
               labelText: 'Telefone',
               prefixIcon: Icon(Icons.phone),
@@ -237,6 +242,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             ),
             validator: (value) {
               if (value?.isEmpty ?? true) return 'Telefone é obrigatório';
+              final cleanPhone = value!.replaceAll(RegExp(r'[^0-9]'), '');
+              if (cleanPhone.length < 10) return 'Telefone deve ter pelo menos 10 dígitos';
               return null;
             },
           ),
@@ -381,6 +388,33 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _PhoneInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final newText = newValue.text;
+    if (newText.isEmpty) return newValue;
+
+    final digitsOnly = newText.replaceAll(RegExp(r'[^0-9]'), '');
+    String formatted = '';
+
+    if (digitsOnly.length <= 2) {
+      formatted = '($digitsOnly';
+    } else if (digitsOnly.length <= 7) {
+      formatted = '(${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2)}';
+    } else {
+      formatted = '(${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2, 7)}-${digitsOnly.substring(7)}';
+    }
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
 }
