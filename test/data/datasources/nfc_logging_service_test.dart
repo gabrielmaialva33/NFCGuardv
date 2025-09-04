@@ -1,27 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 import 'package:nfc_guard/data/datasources/nfc_logging_service.dart';
-import 'package:nfc_guard/data/datasources/supabase_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'nfc_logging_service_test.mocks.dart';
-
-@GenerateMocks([SupabaseService, User, SupabaseQueryBuilder, SupabaseFilterBuilder])
 void main() {
   late NfcLoggingService service;
-  late MockSupabaseService mockSupabaseService;
-  late MockUser mockUser;
-  late MockSupabaseQueryBuilder mockQueryBuilder;
-  late MockSupabaseFilterBuilder mockFilterBuilder;
 
   setUp(() {
-    mockSupabaseService = MockSupabaseService();
-    mockUser = MockUser();
-    mockQueryBuilder = MockSupabaseQueryBuilder();
-    mockFilterBuilder = MockSupabaseFilterBuilder();
-
-    // Initialize service with mocked dependencies
     service = NfcLoggingService();
   });
 
