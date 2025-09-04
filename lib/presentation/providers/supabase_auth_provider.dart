@@ -93,7 +93,7 @@ class SupabaseAuth extends _$SupabaseAuth {
       state = AsyncValue.data(user);
     } catch (e) {
       if (kDebugMode) {
-        print('Error syncing user from Supabase: $e');
+        debugPrint('Error syncing user from Supabase: $e');
       }
       // Fallback to local storage if Supabase sync fails
       final user = await _storageService.getUser();
@@ -263,7 +263,7 @@ class SupabaseAuth extends _$SupabaseAuth {
       );
     } catch (e) {
       if (kDebugMode) {
-        print('Error searching ZIP code: $e');
+        debugPrint('Error searching ZIP code: $e');
       }
       return null;
     }
@@ -318,7 +318,7 @@ class SupabaseAuth extends _$SupabaseAuth {
       await _storageService.addUsedCode(code);
     } catch (e) {
       if (kDebugMode) {
-        print('Error marking code as used: $e');
+        debugPrint('Error marking code as used: $e');
       }
     }
   }

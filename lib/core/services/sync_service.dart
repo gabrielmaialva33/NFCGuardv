@@ -31,7 +31,7 @@ class SyncService {
       
       return true;
     } catch (e) {
-      if (kDebugMode) print('Full sync failed: $e');
+      if (kDebugMode) debugPrint('Full sync failed: $e');
       return false;
     }
   }
@@ -41,7 +41,7 @@ class SyncService {
     try {
       await _nfcRepository.syncLocalDataToSupabase();
     } catch (e) {
-      if (kDebugMode) print('Failed to sync local to Supabase: $e');
+      if (kDebugMode) debugPrint('Failed to sync local to Supabase: $e');
     }
   }
 
@@ -50,7 +50,7 @@ class SyncService {
     try {
       await _nfcRepository.syncSupabaseDataToLocal();
     } catch (e) {
-      if (kDebugMode) print('Failed to sync Supabase to local: $e');
+      if (kDebugMode) debugPrint('Failed to sync Supabase to local: $e');
     }
   }
 
@@ -86,7 +86,7 @@ class SyncService {
 
       return backup;
     } catch (e) {
-      if (kDebugMode) print('Failed to create backup: $e');
+      if (kDebugMode) debugPrint('Failed to create backup: $e');
       return null;
     }
   }
@@ -111,7 +111,7 @@ class SyncService {
       
       return true;
     } catch (e) {
-      if (kDebugMode) print('Failed to restore from backup: $e');
+      if (kDebugMode) debugPrint('Failed to restore from backup: $e');
       return false;
     }
   }
@@ -124,7 +124,7 @@ class SyncService {
       
       return json.encode(backup);
     } catch (e) {
-      if (kDebugMode) print('Failed to export user data: $e');
+      if (kDebugMode) debugPrint('Failed to export user data: $e');
       return null;
     }
   }
@@ -135,7 +135,7 @@ class SyncService {
       final Map<String, dynamic> backup = json.decode(jsonData);
       return await restoreFromBackup(backup);
     } catch (e) {
-      if (kDebugMode) print('Failed to import user data: $e');
+      if (kDebugMode) debugPrint('Failed to import user data: $e');
       return false;
     }
   }

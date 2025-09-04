@@ -61,7 +61,7 @@ class SupabaseNfcRepository {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Failed to sync used code to Supabase: $e');
+        debugPrint('Failed to sync used code to Supabase: $e');
       }
     }
   }
@@ -112,7 +112,7 @@ class SupabaseNfcRepository {
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       if (kDebugMode) {
-        print('Failed to fetch used codes from Supabase: $e');
+        debugPrint('Failed to fetch used codes from Supabase: $e');
       }
       return [];
     }
@@ -146,7 +146,7 @@ class SupabaseNfcRepository {
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       if (kDebugMode) {
-        print('Failed to fetch NFC logs from Supabase: $e');
+        debugPrint('Failed to fetch NFC logs from Supabase: $e');
       }
       return [];
     }
@@ -180,7 +180,7 @@ class SupabaseNfcRepository {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Failed to sync local data to Supabase: $e');
+        debugPrint('Failed to sync local data to Supabase: $e');
       }
     }
   }
@@ -203,7 +203,7 @@ class SupabaseNfcRepository {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Failed to sync Supabase data to local: $e');
+        debugPrint('Failed to sync Supabase data to local: $e');
       }
     }
   }
@@ -226,7 +226,7 @@ class SupabaseNfcRepository {
       });
     } catch (e) {
       if (kDebugMode) {
-        print('Failed to store trial data: $e');
+        debugPrint('Failed to store trial data: $e');
       }
     }
   }
@@ -263,7 +263,7 @@ class SupabaseNfcRepository {
           .eq('device_fingerprint', deviceFingerprint);
     } catch (e) {
       if (kDebugMode) {
-        print('Failed to update trial last check: $e');
+        debugPrint('Failed to update trial last check: $e');
       }
     }
   }

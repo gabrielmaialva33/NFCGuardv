@@ -139,10 +139,25 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   },
                 ),
                 const SizedBox(height: 32),
-                ElevatedButton(onPressed: _login, child: const Text('Entrar')),
+                ElevatedButton(
+                  onPressed: _login,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text('Entrar'),
+                ),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: _navigateToRegister,
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFF67B7BE), // Tom turquesa suave da paleta
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
                   child: const Text('Não tem conta? Cadastre-se'),
                 ),
                 const SizedBox(height: 16),
@@ -151,8 +166,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   icon: const Icon(Icons.security),
                   label: const Text('Análise Anti-Fraude CPF'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.error,
-                    foregroundColor: Theme.of(context).colorScheme.onError,
+                    backgroundColor: const Color(0xFF5DACE8), // Azul harmonioso baseado na paleta cool
+                    foregroundColor: Colors.white,
+                    elevation: 2,
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   ),
                 ),
               ],

@@ -123,7 +123,7 @@ class Auth extends _$Auth {
       );
     } catch (e) {
       if (kDebugMode) {
-        print('Error searching ZIP code: $e');
+        debugPrint('Error searching ZIP code: $e');
       }
       return null;
     }
@@ -155,7 +155,7 @@ class Auth extends _$Auth {
       await _storageService.addUsedCode(code);
     } catch (e) {
       if (kDebugMode) {
-        print('Error marking code as used: $e');
+        debugPrint('Error marking code as used: $e');
       }
     }
   }

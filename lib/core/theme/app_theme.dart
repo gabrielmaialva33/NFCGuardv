@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Paleta de cores personalizada para NFCGuard
-  static const Color _primaryBlue = Color(0xFF1976D2);
-  static const Color _secondaryBlue = Color(0xFF42A5F5);
-  static const Color _accentGreen = Color(0xFF4CAF50);
+  // Paleta de cores harmoniosa para NFCGuard inspirada em tons frios e profissionais
+  static const Color _primaryBlue = Color(0xFF3C9EFE); // Azul oceano mais suave
+  static const Color _secondaryTeal = Color(0xFF5DACE8); // Azul-verde harmonioso
+  static const Color _accentTurquoise = Color(0xFF47ACA6); // Turquesa profissional
   static const Color _errorRed = Color(0xFFE53935);
   
   static ThemeData get lightTheme {
@@ -12,9 +12,9 @@ class AppTheme {
       brightness: Brightness.light,
       primary: _primaryBlue,
       onPrimary: Colors.white,
-      secondary: _secondaryBlue,
+      secondary: _secondaryTeal,
       onSecondary: Colors.white,
-      tertiary: _accentGreen,
+      tertiary: _accentTurquoise,
       onTertiary: Colors.white,
       error: _errorRed,
       onError: Colors.white,
@@ -93,12 +93,12 @@ class AppTheme {
   static ThemeData get darkTheme {
     const darkColorScheme = ColorScheme(
       brightness: Brightness.dark,
-      primary: Color(0xFF90CAF9),
-      onPrimary: Color(0xFF0D47A1),
-      secondary: Color(0xFF81C784),
-      onSecondary: Color(0xFF1B5E20),
-      tertiary: Color(0xFFA5D6A7),
-      onTertiary: Color(0xFF2E7D32),
+      primary: _primaryBlue,
+      onPrimary: Colors.white,
+      secondary: _secondaryTeal,
+      onSecondary: Colors.white,
+      tertiary: _accentTurquoise,
+      onTertiary: Colors.white,
       error: Color(0xFFEF5350),
       onError: Color(0xFFB71C1C),
       surface: Color(0xFF121212),
