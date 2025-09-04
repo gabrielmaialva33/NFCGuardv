@@ -258,7 +258,7 @@ void main() {
         when(
           mockStorage.write(
             key: AppConstants.userDataKey,
-            value: any(named: 'value'),
+            value: anyNamed('value'),
           ),
         ).thenThrow(Exception('Storage write failed'));
 
