@@ -57,18 +57,14 @@ class Nfc extends _$Nfc {
         onDiscovered: (NfcTag tag) async {
           try {
             // Try to read basic tag information
-            final data = tag.data;
+            final data = tag.data as Map<String, dynamic>;
             
             // Extract tag information for display
             final buffer = StringBuffer();
             buffer.writeln('=== DADOS DO CARTÃO NFC ===');
-            buffer.writeln('ID da Tag: ${_formatBytes(data['nfca']?['identifier'] ?? [])}');
-            buffer.writeln('Tipo: ${data.keys.join(', ')}');
-            buffer.writeln('Tecnologia: NFC-A');
-            buffer.writeln('Data/Hora: ${DateTime.now()}');
-            
             if (data.containsKey('nfca')) {
-              final nfcaData = data['nfca'] as Map;
+              final nfcaData = data['nfca'] as Map<String, dynamic>;
+              buffer.writeln('ID da Tag: ${_formatBytes(nfcaData['identifier'] ?? [])}');
               if (nfcaData.containsKey('atqa')) {
                 buffer.writeln('ATQA: ${_formatBytes(nfcaData['atqa'])}');
               }
@@ -79,7 +75,9 @@ class Nfc extends _$Nfc {
                 buffer.writeln('Max Length: ${nfcaData['maxTransceiveLength']}');
               }
             }
-            
+            buffer.writeln('Tipo: ${data.keys.join(', ')}');
+            buffer.writeln('Tecnologia: NFC');
+            buffer.writeln('Data/Hora: ${DateTime.now()}');
             buffer.writeln('=== FIM DOS DADOS ===');
 
             tagData = {
