@@ -82,15 +82,31 @@ class Auth extends _$Auth {
   /// Load user profile from Supabase
   Future<void> _loadUserProfile(String userId) async {
     try {
-      final userProfile = await _authRepository.getUserProfile(userId);
+      // Add timeout for profile loading
+      final userProfile = await Future.any([
+        _authRepository.getUserProfile(userId),
+        Future.delayed(const Duration(seconds: 8), () => null),
+      ]);
+      
       if (userProfile != null) {
         await _storageService.saveUser(userProfile);
         state = AsyncValue.data(userProfile);
       } else {
-        state = const AsyncValue.data(null);
+        // Try to load from local storage as fallback
+        final cachedUser = await _storageService.getUser();
+        state = AsyncValue.data(cachedUser);
       }
     } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
+      if (kDebugMode) {
+        debugPrint('Profile loading error: $e');
+      }
+      // Try to load from local storage as fallback
+      try {
+        final cachedUser = await _storageService.getUser();
+        state = AsyncValue.data(cachedUser);
+      } catch (localError) {
+        state = const AsyncValue.data(null);
+      }
     }
   }
 
