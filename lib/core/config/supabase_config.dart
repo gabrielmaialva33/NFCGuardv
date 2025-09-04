@@ -1,11 +1,8 @@
-import '../security/network_security.dart';
 import 'environment_config.dart';
 
 class SupabaseConfig {
   // NFCGuard Supabase Project Configuration
   // SECURITY: Credentials moved to EnvironmentConfig for secure storage
-  static const String _deprecatedCredentialWarning = 
-      'SECURITY: Use EnvironmentConfig.getSupabaseUrl() and getSupabaseAnonKey() instead';
   
   /// Get Supabase URL securely
   static Future<String> getSupabaseUrl() async {
