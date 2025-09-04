@@ -72,7 +72,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
             Text(
               'Gravação segura de tags NFC',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.8),
+                color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.8),
               ),
             ),
             const SizedBox(height: 48),
