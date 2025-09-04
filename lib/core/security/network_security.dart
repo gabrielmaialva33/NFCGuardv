@@ -138,13 +138,13 @@ class _SecureHttpClient extends http.BaseClient {
   }
 }
 
-/// Validation result class
-class ValidationResult {
+/// Network validation result class  
+class NetworkValidationResult {
   final bool isValid;
   final String message;
   final String? sanitizedValue;
 
-  ValidationResult({
+  NetworkValidationResult({
     required this.isValid,
     required this.message,
     this.sanitizedValue,

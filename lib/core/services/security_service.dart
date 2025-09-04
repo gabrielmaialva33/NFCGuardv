@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../config/environment_config.dart';
 import '../security/network_security.dart';
-import '../utils/input_validator.dart';
+import '../utils/input_validator.dart' as validator;
 
 /// Central security service for application-wide security initialization and checks
 class SecurityService {
@@ -80,21 +80,21 @@ class SecurityService {
   static bool get isInitialized => _isInitialized;
   
   /// Validate input for security-sensitive operations
-  static ValidationResult validateSecurityInput(String input, String type) {
+  static validator.ValidationResult validateSecurityInput(String input, String type) {
     switch (type.toLowerCase()) {
       case 'email':
-        return InputValidator.validateEmail(input);
+        return validator.InputValidator.validateEmail(input);
       case 'name':
-        return InputValidator.validateName(input);
+        return validator.InputValidator.validateName(input);
       case 'phone':
-        return InputValidator.validatePhone(input);
+        return validator.InputValidator.validatePhone(input);
       case 'password':
-        return InputValidator.validatePassword(input);
+        return validator.InputValidator.validatePassword(input);
       case 'zipcode':
       case 'cep':
-        return InputValidator.validateZipCode(input);
+        return validator.InputValidator.validateZipCode(input);
       default:
-        return ValidationResult(
+        return validator.ValidationResult(
           isValid: false,
           message: 'Tipo de validação desconhecido',
         );

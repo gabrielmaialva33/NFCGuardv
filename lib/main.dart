@@ -12,18 +12,8 @@ import 'presentation/pages/trial_expired_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize environment configuration
+  // Initialize environment configuration from .env file
   await EnvironmentConfig.initialize();
-
-  // Set default Supabase configuration if not already configured
-  final isConfigComplete = await EnvironmentConfig.isConfigurationComplete();
-  if (!isConfigComplete) {
-    // Set default configuration for development
-    await EnvironmentConfig.setSupabaseConfig(
-      url: 'https://wfhecwwjfzxhwzfwfwbx.supabase.co',
-      anonKey: 'sbp_db7013246b0de8c2be1eaeba080cc90ac4520a4e',
-    );
-  }
 
   // Initialize Supabase with secure configuration
   try {

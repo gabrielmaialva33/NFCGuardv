@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Secure environment configuration management
@@ -23,27 +24,37 @@ class EnvironmentConfig {
       'https://integrate.api.nvidia.com/v1/chat/completions';
   static const String _defaultBestModel = 'qwen/qwen3-coder-480b-a35b-instruct';
 
-  /// Initialize configuration from environment variables or secure storage
+  /// Initialize configuration from .env file and environment variables
   static Future<void> initialize() async {
     try {
-      // Try to load from environment variables first (for development)
-      const nvidiaKey = String.fromEnvironment('NVIDIA_API_KEY');
-      const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
-      const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+      // Load .env file
+      await dotenv.load(fileName: ".env");
+      
+      // Get values from .env or environment variables
+      final nvidiaKey = dotenv.env['NVIDIA_API_KEY'] ?? const String.fromEnvironment('NVIDIA_API_KEY');
+      final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? const String.fromEnvironment('SUPABASE_URL');
+      final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? const String.fromEnvironment('SUPABASE_ANON_KEY');
 
-      // Store in secure storage if environment variables are provided
-      if (nvidiaKey.isNotEmpty) {
+      // Store in secure storage if values are provided
+      if (nvidiaKey != null && nvidiaKey.isNotEmpty) {
         await _secureStorage.write(key: _nvidiaApiKeyKey, value: nvidiaKey);
       }
-      if (supabaseUrl.isNotEmpty) {
+      if (supabaseUrl != null && supabaseUrl.isNotEmpty) {
         await _secureStorage.write(key: _supabaseUrlKey, value: supabaseUrl);
       }
-      if (supabaseAnonKey.isNotEmpty) {
+      if (supabaseAnonKey != null && supabaseAnonKey.isNotEmpty) {
         await _secureStorage.write(key: _supabaseAnonKeyKey, value: supabaseAnonKey);
+      }
+      
+      if (kDebugMode) {
+        debugPrint('✅ Environment configuration loaded successfully');
+        debugPrint('📋 NVIDIA API Key: ${nvidiaKey != null && nvidiaKey.isNotEmpty ? "✓ Loaded" : "❌ Missing"}');
+        debugPrint('📋 Supabase URL: ${supabaseUrl != null && supabaseUrl.isNotEmpty ? "✓ Loaded" : "❌ Missing"}');
+        debugPrint('📋 Supabase Key: ${supabaseAnonKey != null && supabaseAnonKey.isNotEmpty ? "✓ Loaded" : "❌ Missing"}');
       }
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('Environment config initialization error: $e');
+        debugPrint('❌ Environment config initialization error: $e');
       }
     }
   }
