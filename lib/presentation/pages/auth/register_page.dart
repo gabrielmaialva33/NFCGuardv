@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/constants/app_constants.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/brazilian_cpf_field.dart';
 import '../../widgets/brazilian_cep_field.dart';
@@ -36,7 +35,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   DateTime? _dataNascimento;
   String _sexoSelecionado = 'M';
   bool _isPasswordVisible = false;
-  bool _isCpfValid = false;
   int _currentPage = 0;
 
   @override
@@ -213,9 +211,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           const SizedBox(height: 16),
           BrazilianCpfField(
             controller: _cpfController,
-            onValidationChange: (isValid) {
-              setState(() => _isCpfValid = isValid);
-            },
           ),
           const SizedBox(height: 16),
           TextFormField(

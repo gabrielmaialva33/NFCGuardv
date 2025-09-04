@@ -505,7 +505,7 @@ class NfcWavesPainter extends CustomPainter {
       final radius = maxRadius * waveProgress;
       final opacity = (1.0 - waveProgress);
       
-      paint.color = color.withValues(alpha: color.opacity * opacity);
+      paint.color = color.withValues(alpha: color.a * opacity);
       canvas.drawCircle(center, radius, paint);
     }
   }
