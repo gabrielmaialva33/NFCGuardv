@@ -43,9 +43,8 @@ dependencies:
   riverpod_annotation: ^2.3.3
 
   # NFC
-  nfc_manager: ^3.5.0
-  nfc_manager_ndef: ^1.0.1
-  ndef_record: ^1.2.1
+  nfc_manager: ^4.0.2
+  ndef: ^0.3.4
 
   # Brazilian Validations
   all_validations_br: ^3.0.0
