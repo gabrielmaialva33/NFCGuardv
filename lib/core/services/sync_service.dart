@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
+
 import '../../data/datasources/secure_storage_service.dart';
 import '../../data/repositories/supabase_auth_repository.dart';
 import '../../data/repositories/supabase_nfc_repository.dart';
@@ -29,7 +31,7 @@ class SyncService {
       
       return true;
     } catch (e) {
-      print('Full sync failed: $e');
+      if (kDebugMode) print('Full sync failed: $e');
       return false;
     }
   }
@@ -39,7 +41,7 @@ class SyncService {
     try {
       await _nfcRepository.syncLocalDataToSupabase();
     } catch (e) {
-      print('Failed to sync local to Supabase: $e');
+      if (kDebugMode) print('Failed to sync local to Supabase: $e');
     }
   }
 
@@ -48,7 +50,7 @@ class SyncService {
     try {
       await _nfcRepository.syncSupabaseDataToLocal();
     } catch (e) {
-      print('Failed to sync Supabase to local: $e');
+      if (kDebugMode) print('Failed to sync Supabase to local: $e');
     }
   }
 
@@ -84,7 +86,7 @@ class SyncService {
 
       return backup;
     } catch (e) {
-      print('Failed to create backup: $e');
+      if (kDebugMode) print('Failed to create backup: $e');
       return null;
     }
   }
@@ -109,7 +111,7 @@ class SyncService {
       
       return true;
     } catch (e) {
-      print('Failed to restore from backup: $e');
+      if (kDebugMode) print('Failed to restore from backup: $e');
       return false;
     }
   }
@@ -122,7 +124,7 @@ class SyncService {
       
       return json.encode(backup);
     } catch (e) {
-      print('Failed to export user data: $e');
+      if (kDebugMode) print('Failed to export user data: $e');
       return null;
     }
   }
@@ -133,7 +135,7 @@ class SyncService {
       final Map<String, dynamic> backup = json.decode(jsonData);
       return await restoreFromBackup(backup);
     } catch (e) {
-      print('Failed to import user data: $e');
+      if (kDebugMode) print('Failed to import user data: $e');
       return false;
     }
   }
