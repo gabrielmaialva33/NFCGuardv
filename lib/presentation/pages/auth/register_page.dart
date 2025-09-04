@@ -60,13 +60,13 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
       try {
         final authNotifier = ref.read(authProvider.notifier);
-        final addressInfo = await authNotifier.searchCep(cep);
+        final addressInfo = await authNotifier.searchZipCode(cep);
 
         if (addressInfo != null) {
-          _enderecoController.text = addressInfo['endereco'] ?? '';
-          _bairroController.text = addressInfo['bairro'] ?? '';
-          _cidadeController.text = addressInfo['cidade'] ?? '';
-          _ufController.text = addressInfo['uf'] ?? '';
+          _enderecoController.text = addressInfo['address'] ?? '';
+          _bairroController.text = addressInfo['neighborhood'] ?? '';
+          _cidadeController.text = addressInfo['city'] ?? '';
+          _ufController.text = addressInfo['stateCode'] ?? '';
         } else {
           if (mounted) {
             ScaffoldMessenger.of(
