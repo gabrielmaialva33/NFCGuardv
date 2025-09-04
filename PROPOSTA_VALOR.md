@@ -11,26 +11,30 @@
 ## 🎯 **FUNCIONALIDADES CONFORME ESCOPO PDF**
 
 ### **1. ✅ Sistema de Login/Cadastro**
+
 - **Cadastro completo** - Nome, CPF, email, telefone, data nascimento, sexo
 - **Busca CEP automática** - Digite CEP, preenche endereço completo
 - **Validação CPF real** - Com cálculo de dígito verificador
 - **Código único de 8 dígitos** - Gerado automaticamente após cadastro
 
 ### **2. ✅ Tela de Gravação NFC**
+
 - **8 botões "Gravar tag com dados 1-8"** - Exatamente como solicitado
 - **Botão "Proteger tag com senha"** - Funcionalidade de segurança
 - **Botão "Remover senha da tag"** - Desbloqueio de tags
 - **Interface intuitiva** - Fácil de usar e navegar
 
 ### **3. ✅ Sistema de Validação**
+
 - **Solicita código de 8 dígitos** - Antes de cada operação
 - **Validação matemática** - Como CPF, com dígito verificador
 - **Verificação anti-duplicação** - Impede reutilização de códigos
 - **Mensagens de erro** - "CÓDIGO INVÁLIDO" e "CÓDIGO JÁ UTILIZADO"
 
 ### **4. ✅ Qualidade Técnica Extra**
+
 - **Flutter moderno** - App nativo Android + iOS
-- **Armazenamento seguro** - Dados protegidos no dispositivo  
+- **Armazenamento seguro** - Dados protegidos no dispositivo
 - **Supabase integrado** - Backup em nuvem (tier gratuito)
 - **Interface responsiva** - Funciona em qualquer tamanho de tela
 

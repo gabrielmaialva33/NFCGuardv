@@ -16,6 +16,7 @@ class SupabaseConfig {
 ```
 
 **Where to find your anon key:**
+
 1. Go to your Supabase dashboard: https://app.supabase.com/project/wfhecwwjfzxhwzfwfwbx
 2. Navigate to Settings → API
 3. Copy the `anon public` key
@@ -30,6 +31,7 @@ supabase db push
 ```
 
 This will create:
+
 - `profiles` table for user data
 - `used_codes` table for tracking used NFC codes
 - `nfc_operations` table for operation logging
@@ -105,6 +107,7 @@ The app uses a hybrid approach:
 3. **Sync**: Automatic synchronization when online
 
 ### Benefits:
+
 - ✅ Works offline
 - ✅ Cloud backup and sync
 - ✅ Real-time updates
@@ -114,30 +117,39 @@ The app uses a hybrid approach:
 ## 🎯 Provider Integration
 
 ### Authentication
+
 ```dart
 // Use the new Supabase-integrated auth provider
 final authProvider = SupabaseAuthProvider();
 
 // Sign up
-await authProvider.register(
-  fullName: 'João Silva',
-  cpf: '12345678901',
-  email: 'joao@example.com',
-  phone: '11987654321',
-  birthDate: DateTime(1990, 1, 1),
-  gender: 'Masculino',
-  password: 'securePassword123',
+await
+authProvider.register
+(
+fullName: 'João Silva',
+cpf: '12345678901',
+email: 'joao@example.com',
+phone: '11987654321',
+birthDate: DateTime(1990, 1, 1),
+gender: 'Masculino',
+password: 'securePassword123',
 );
 
 // Sign in
 await authProvider.signIn(
-  email: 'joao@example.com',
-  password: 'securePassword123',
+email: 'joao@example.com',
+password:
+'
+securePassword123
+'
+,
 );
 ```
 
 ### NFC Operations
+
 The NFC provider now automatically logs operations to Supabase:
+
 - ✅ Write operations with success/failure
 - ✅ Protection operations
 - ✅ Code usage tracking
@@ -146,6 +158,7 @@ The NFC provider now automatically logs operations to Supabase:
 ## 🔐 Security Considerations
 
 ### Environment Variables (Recommended)
+
 For production, consider using environment variables:
 
 ```dart
@@ -163,11 +176,13 @@ class SupabaseConfig {
 ```
 
 Then build with:
+
 ```bash
 flutter build apk --dart-define=SUPABASE_URL=your-url --dart-define=SUPABASE_ANON_KEY=your-key
 ```
 
 ### Data Protection
+
 - Passwords are handled securely by Supabase Auth
 - CPF and personal data are encrypted at rest
 - All database connections use SSL/TLS
@@ -176,11 +191,13 @@ flutter build apk --dart-define=SUPABASE_URL=your-url --dart-define=SUPABASE_ANO
 ## 🚀 Testing
 
 ### Local Development
+
 1. Start Supabase locally: `supabase start`
 2. Access Supabase Studio: http://localhost:54323
 3. View email testing: http://localhost:54324
 
 ### Production Checklist
+
 - [ ] Update `supabaseAnonKey` with real value
 - [ ] Configure SMTP for email notifications
 - [ ] Set up proper backup procedures
@@ -190,12 +207,14 @@ flutter build apk --dart-define=SUPABASE_URL=your-url --dart-define=SUPABASE_ANO
 ## 📊 Analytics & Monitoring
 
 The app now logs detailed NFC operations:
+
 - Operation success/failure rates
 - Most common error types
 - User activity patterns
 - Code usage statistics
 
 Access this data through:
+
 1. Supabase Dashboard → Database → Tables
 2. SQL queries on `nfc_operations` table
 3. Built-in analytics in the app (future feature)
@@ -205,19 +224,24 @@ Access this data through:
 ### Common Issues
 
 **Error: "Invalid API key"**
+
 - Ensure you've updated the `supabaseAnonKey` in the config
 
 **Error: "Table doesn't exist"**
+
 - Run `supabase db push` to apply migrations
 
 **Authentication not working**
+
 - Check if email confirmations are properly configured
 - Verify SMTP settings in Supabase dashboard
 
 ### Support
+
 For issues specific to this integration:
+
 1. Check the Supabase logs in the dashboard
-2. Review Flutter console for error messages  
+2. Review Flutter console for error messages
 3. Verify network connectivity for API calls
 
 ---

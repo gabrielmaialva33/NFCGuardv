@@ -63,7 +63,7 @@ class NfcLoggingService {
           .limit(limit);
 
       if (since != null) {
-        query = query.filter('created_at', 'gte', since.toIso8601String());
+        query = query.gte('created_at', since.toIso8601String());
       }
 
       final response = await query;

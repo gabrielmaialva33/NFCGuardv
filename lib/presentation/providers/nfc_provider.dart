@@ -1,5 +1,6 @@
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
+import 'package:ndef_record/ndef_record.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../core/utils/code_generator.dart';
@@ -252,53 +253,33 @@ class Nfc extends _$Nfc {
     state = const AsyncValue.data(NfcStatus.idle);
   }
 
-  /// Helper method to write NDEF message to tag (handles Android/iOS differences)
+  /// Helper method to write NDEF message to tag (cross-platform)
   Future<void> _writeNdefMessage(NfcTag tag, NdefMessage ndefMessage) async {
-    // Try Android first
-    final ndefAndroid = NdefAndroid.from(tag);
-    if (ndefAndroid != null) {
-      if (!ndefAndroid.isWritable) {
-        throw Exception('Tag não é gravável');
-      }
-      
-      final maxSize = await ndefAndroid.getMaxSize();
-      if (maxSize < ndefMessage.byteLength) {
-        throw Exception('Tag não tem espaço suficiente');
-      }
-      
-      await ndefAndroid.write(ndefMessage);
-      return;
+    final ndef = Ndef.from(tag);
+    
+    if (ndef == null) {
+      throw Exception('Tag não suporta NDEF');
     }
 
-    // Try iOS
-    final ndefIos = NdefIos.from(tag);
-    if (ndefIos != null) {
-      final status = await ndefIos.getStatus();
-      if (status != NdefStatusIos.readWrite) {
-        throw Exception('Tag não é gravável');
-      }
-      
-      await ndefIos.write(ndefMessage);
-      return;
+    if (!ndef.isWritable) {
+      throw Exception('Tag não é gravável');
     }
 
-    throw Exception('Tag não suporta NDEF');
+    if (ndef.maxSize < ndefMessage.byteLength) {
+      throw Exception('Tag não tem espaço suficiente');
+    }
+
+    await ndef.write(ndefMessage);
   }
 
-  /// Helper method to read NDEF message from tag (handles Android/iOS differences)
+  /// Helper method to read NDEF message from tag (cross-platform)
   Future<NdefMessage> _readNdefMessage(NfcTag tag) async {
-    // Try Android first
-    final ndefAndroid = NdefAndroid.from(tag);
-    if (ndefAndroid != null) {
-      return await ndefAndroid.read();
+    final ndef = Ndef.from(tag);
+    
+    if (ndef == null) {
+      throw Exception('Tag não contém dados NDEF');
     }
 
-    // Try iOS
-    final ndefIos = NdefIos.from(tag);
-    if (ndefIos != null) {
-      return await ndefIos.read();
-    }
-
-    throw Exception('Tag não contém dados NDEF');
+    return await ndef.read();
   }
 }
