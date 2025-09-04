@@ -5,8 +5,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/utils/code_generator.dart';
+import '../../core/services/supabase_service.dart';
 import '../../data/datasources/secure_storage_service.dart';
-import '../../data/datasources/supabase_service.dart';
+import '../../data/repositories/supabase_auth_repository.dart';
+import '../../data/repositories/supabase_nfc_repository.dart';
 import '../../data/models/user_model.dart';
 import '../../domain/entities/user_entity.dart';
 
@@ -15,7 +17,8 @@ part 'supabase_auth_provider.g.dart';
 @riverpod
 class SupabaseAuth extends _$SupabaseAuth {
   final _storageService = SecureStorageService();
-  final _supabaseService = SupabaseService.instance;
+  final _authRepository = SupabaseAuthRepository();
+  final _nfcRepository = SupabaseNfcRepository();
 
   @override
   AsyncValue<UserEntity?> build() {
@@ -25,7 +28,7 @@ class SupabaseAuth extends _$SupabaseAuth {
   }
 
   void _listenToAuthChanges() {
-    _supabaseService.authStateChanges.listen((data) {
+    _authRepository.authStateChanges.listen((data) {
       final AuthChangeEvent event = data.event;
       final Session? session = data.session;
 
@@ -33,6 +36,7 @@ class SupabaseAuth extends _$SupabaseAuth {
         _syncUserFromSupabase(session.user);
       } else if (event == AuthChangeEvent.signedOut) {
         state = const AsyncValue.data(null);
+        _storageService.clearStorage();
       }
     });
   }

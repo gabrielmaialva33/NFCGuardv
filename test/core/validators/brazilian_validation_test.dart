@@ -560,7 +560,7 @@ void main() {
 
         // Create 10 concurrent validation requests
         for (int i = 0; i < 10; i++) {
-          futures.add(Future(() => validations.cpf('11144477735')));
+          futures.add(Future(() => AllValidations.isCpf('11144477735')));
         }
 
         expect(() => Future.wait(futures), returnsNormally);
