@@ -152,12 +152,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   child: const Text('Não tem conta? Cadastre-se'),
                 ),
                 const SizedBox(height: 16),
-                OutlinedButton.icon(
-                  onPressed: _navigateToNvidiaDemo,
-                  icon: const Icon(Icons.smart_toy),
-                  label: const Text('Demo NVIDIA NIM'),
-                ),
-                const SizedBox(height: 8),
                 ElevatedButton.icon(
                   onPressed: _navigateToCpfFraudAnalysis,
                   icon: const Icon(Icons.security),

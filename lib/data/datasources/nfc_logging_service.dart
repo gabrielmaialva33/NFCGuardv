@@ -16,7 +16,7 @@ class NfcLoggingService {
     String? errorMessage,
   }) async {
     try {
-      final user = _supabaseService.currentUser;
+      final user = _client.auth.currentUser;
       if (user == null) {
         if (kDebugMode) {
           print('Cannot log NFC operation: user not authenticated');
@@ -24,7 +24,7 @@ class NfcLoggingService {
         return;
       }
 
-      await _supabaseService.from('nfc_operations').insert({
+      await _client.from('nfc_operations').insert({
         'user_id': user.id,
         'operation_type': operationType.name,
         'code_used': codeUsed,
@@ -52,7 +52,7 @@ class NfcLoggingService {
     DateTime? since,
   }) async {
     try {
-      final user = _supabaseService.currentUser;
+      final user = _client.auth.currentUser;
       if (user == null) return [];
 
       var query = _supabaseService
@@ -81,7 +81,7 @@ class NfcLoggingService {
   /// Gets operation statistics for the current user
   Future<Map<String, int>> getOperationStatistics() async {
     try {
-      final user = _supabaseService.currentUser;
+      final user = _client.auth.currentUser;
       if (user == null) return {};
 
       final response = await _supabaseService
