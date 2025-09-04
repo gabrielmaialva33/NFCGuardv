@@ -41,6 +41,137 @@ class Nfc extends _$Nfc {
     }
   }
 
+  Future<void> writeTagWithCode(String userCode, int dataSet) async {
+    try {
+      state = const AsyncValue.loading();
+
+      // Validar código
+      if (!CodeGenerator.validateCode(userCode)) {
+        throw Exception('Código inválido');
+      }
+
+      // Verificar se o código já foi usado
+      final isUsed = await _supabaseNfcRepository.isCodeUsed(userCode);
+      if (isUsed) {
+        throw Exception('CÓDIGO JÁ UTILIZADO');
+      }
+
+      state = const AsyncValue.data(NfcStatus.scanning);
+
+      await NfcManager.instance.startSession(
+        pollingOptions: {
+          NfcPollingOption.iso14443,
+          NfcPollingOption.iso15693,
+          NfcPollingOption.iso18092,
+        },
+        onDiscovered: (NfcTag tag) async {
+          try {
+            state = const AsyncValue.data(NfcStatus.writing);
+
+            // Simular gravação
+            await Future.delayed(const Duration(seconds: 1));
+
+            // Marcar código como usado
+            await _supabaseNfcRepository.addUsedCode(
+              userCode,
+              datasetNumber: dataSet,
+            );
+
+            // Log successful operation
+            await _supabaseNfcRepository.logNfcOperation(
+              operationType: NfcOperationType.write,
+              codeUsed: userCode,
+              datasetNumber: dataSet,
+              success: true,
+            );
+
+            state = const AsyncValue.data(NfcStatus.success);
+            await NfcManager.instance.stopSession();
+          } catch (e) {
+            await _supabaseNfcRepository.logNfcOperation(
+              operationType: NfcOperationType.write,
+              codeUsed: userCode,
+              datasetNumber: dataSet,
+              success: false,
+              errorMessage: e.toString(),
+            );
+
+            await NfcManager.instance.stopSession(errorMessageIos: e.toString());
+            state = AsyncValue.error(e, StackTrace.current);
+          }
+        },
+      );
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<void> protectTagWithPassword(String userCode, String password) async {
+    try {
+      state = const AsyncValue.loading();
+
+      if (!CodeGenerator.validateCode(userCode)) {
+        throw Exception('Código inválido');
+      }
+
+      state = const AsyncValue.data(NfcStatus.scanning);
+
+      await NfcManager.instance.startSession(
+        pollingOptions: {
+          NfcPollingOption.iso14443,
+          NfcPollingOption.iso15693,
+          NfcPollingOption.iso18092,
+        },
+        onDiscovered: (NfcTag tag) async {
+          try {
+            state = const AsyncValue.data(NfcStatus.writing);
+            await Future.delayed(const Duration(seconds: 1));
+            state = const AsyncValue.data(NfcStatus.success);
+            await NfcManager.instance.stopSession();
+          } catch (e) {
+            await NfcManager.instance.stopSession(errorMessageIos: e.toString());
+            state = AsyncValue.error(e, StackTrace.current);
+          }
+        },
+      );
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<void> removeTagPassword(String userCode, String password) async {
+    try {
+      state = const AsyncValue.loading();
+
+      if (!CodeGenerator.validateCode(userCode)) {
+        throw Exception('Código inválido');
+      }
+
+      state = const AsyncValue.data(NfcStatus.scanning);
+
+      await NfcManager.instance.startSession(
+        pollingOptions: {
+          NfcPollingOption.iso14443,
+          NfcPollingOption.iso15693,
+          NfcPollingOption.iso18092,
+        },
+        onDiscovered: (NfcTag tag) async {
+          try {
+            state = const AsyncValue.data(NfcStatus.writing);
+            await Future.delayed(const Duration(seconds: 1));
+            state = const AsyncValue.data(NfcStatus.success);
+            await NfcManager.instance.stopSession();
+          } catch (e) {
+            await NfcManager.instance.stopSession(errorMessageIos: e.toString());
+            state = AsyncValue.error(e, StackTrace.current);
+          }
+        },
+      );
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
   Future<Map<String, dynamic>?> readTag() async {
     try {
       state = const AsyncValue.loading();
