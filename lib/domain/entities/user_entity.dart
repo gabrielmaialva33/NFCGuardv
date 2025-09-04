@@ -1,66 +1,66 @@
 class UserEntity {
   final String id;
-  final String nomeCompleto;
+  final String fullName;
   final String cpf;
   final String email;
-  final String telefone;
-  final DateTime dataNascimento;
-  final String sexo;
-  final String cep;
-  final String endereco;
-  final String bairro;
-  final String cidade;
-  final String uf;
-  final String codigo8Digitos;
+  final String phone;
+  final DateTime birthDate;
+  final String gender;
+  final String zipCode;
+  final String address;
+  final String neighborhood;
+  final String city;
+  final String state;
+  final String eightDigitCode;
   final DateTime createdAt;
 
   const UserEntity({
     required this.id,
-    required this.nomeCompleto,
+    required this.fullName,
     required this.cpf,
     required this.email,
-    required this.telefone,
-    required this.dataNascimento,
-    required this.sexo,
-    required this.cep,
-    required this.endereco,
-    required this.bairro,
-    required this.cidade,
-    required this.uf,
-    required this.codigo8Digitos,
+    required this.phone,
+    required this.birthDate,
+    required this.gender,
+    required this.zipCode,
+    required this.address,
+    required this.neighborhood,
+    required this.city,
+    required this.state,
+    required this.eightDigitCode,
     required this.createdAt,
   });
 
   UserEntity copyWith({
     String? id,
-    String? nomeCompleto,
+    String? fullName,
     String? cpf,
     String? email,
-    String? telefone,
-    DateTime? dataNascimento,
-    String? sexo,
-    String? cep,
-    String? endereco,
-    String? bairro,
-    String? cidade,
-    String? uf,
-    String? codigo8Digitos,
+    String? phone,
+    DateTime? birthDate,
+    String? gender,
+    String? zipCode,
+    String? address,
+    String? neighborhood,
+    String? city,
+    String? state,
+    String? eightDigitCode,
     DateTime? createdAt,
   }) {
     return UserEntity(
       id: id ?? this.id,
-      nomeCompleto: nomeCompleto ?? this.nomeCompleto,
+      fullName: fullName ?? this.fullName,
       cpf: cpf ?? this.cpf,
       email: email ?? this.email,
-      telefone: telefone ?? this.telefone,
-      dataNascimento: dataNascimento ?? this.dataNascimento,
-      sexo: sexo ?? this.sexo,
-      cep: cep ?? this.cep,
-      endereco: endereco ?? this.endereco,
-      bairro: bairro ?? this.bairro,
-      cidade: cidade ?? this.cidade,
-      uf: uf ?? this.uf,
-      codigo8Digitos: codigo8Digitos ?? this.codigo8Digitos,
+      phone: phone ?? this.phone,
+      birthDate: birthDate ?? this.birthDate,
+      gender: gender ?? this.gender,
+      zipCode: zipCode ?? this.zipCode,
+      address: address ?? this.address,
+      neighborhood: neighborhood ?? this.neighborhood,
+      city: city ?? this.city,
+      state: state ?? this.state,
+      eightDigitCode: eightDigitCode ?? this.eightDigitCode,
       createdAt: createdAt ?? this.createdAt,
     );
   }
