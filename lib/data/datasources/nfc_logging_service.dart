@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 
-import 'supabase_service.dart';
+import '../../core/services/supabase_service.dart';
 
 enum NfcOperationType { write, protect, unprotect }
 
 class NfcLoggingService {
-  final _supabaseService = SupabaseService.instance;
+  static final _client = SupabaseService.client;
 
   /// Logs an NFC operation to Supabase for analytics and security
   Future<void> logNfcOperation({
