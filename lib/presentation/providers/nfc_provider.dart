@@ -275,7 +275,9 @@ class Nfc extends _$Nfc {
       payload: payload,
     );
 
-    await ndef.write(textRecord);
+    // Use the message format that the API expects
+    final message = NdefMessage(records: [textRecord]);
+    await ndef.write(message);
   }
 
   /// Helper method to read NDEF message from tag (cross-platform)
