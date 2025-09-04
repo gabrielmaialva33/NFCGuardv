@@ -36,7 +36,7 @@ android {
             if (keystorePropertiesFile.exists()) {
                 val keystoreProperties = java.util.Properties()
                 keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
-                
+
                 keyAlias = keystoreProperties["keyAlias"] as String
                 keyPassword = keystoreProperties["keyPassword"] as String
                 storeFile = file(keystoreProperties["storeFile"] as String)
@@ -53,7 +53,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            
+
             // Use release signing if available, otherwise fall back to debug
             val releaseSigningConfig = signingConfigs.getByName("release")
             signingConfig = if (releaseSigningConfig.storeFile?.exists() == true) {

@@ -111,8 +111,10 @@
 ### State Management & Architecture
 
 - **[Riverpod](https://riverpod.dev/)** 2.4.9 - Reactive state management
-- **[riverpod_annotation](https://pub.dev/packages/riverpod_annotation)** 2.3.3 - Code generation annotations
-- **[riverpod_generator](https://pub.dev/packages/riverpod_generator)** 2.3.9 - Provider code generation
+- **[riverpod_annotation](https://pub.dev/packages/riverpod_annotation)** 2.3.3 - Code generation
+  annotations
+- **[riverpod_generator](https://pub.dev/packages/riverpod_generator)** 2.3.9 - Provider code
+  generation
 
 ### NFC & Hardware
 
@@ -122,20 +124,25 @@
 
 ### Brazilian Localization
 
-- **[all_validations_br](https://pub.dev/packages/all_validations_br)** 3.0.0 - Brazilian document validation
-- **[search_cep](https://pub.dev/packages/search_cep)** 4.0.2 - Brazilian postal code API integration
+- **[all_validations_br](https://pub.dev/packages/all_validations_br)** 3.0.0 - Brazilian document
+  validation
+- **[search_cep](https://pub.dev/packages/search_cep)** 4.0.2 - Brazilian postal code API
+  integration
 - **Portuguese Localization** - Full app translation and formatting
 
 ### Data & Storage
 
-- **[flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage)** 9.0.0 - Encrypted key-value storage
-- **[shared_preferences](https://pub.dev/packages/shared_preferences)** 2.2.2 - Local preferences storage
+- **[flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage)** 9.0.0 - Encrypted
+  key-value storage
+- **[shared_preferences](https://pub.dev/packages/shared_preferences)** 2.2.2 - Local preferences
+  storage
 - **[http](https://pub.dev/packages/http)** 1.1.0 - HTTP client for API calls
 
 ### Development Tools
 
 - **[build_runner](https://pub.dev/packages/build_runner)** 2.4.7 - Code generation automation
-- **[json_annotation](https://pub.dev/packages/json_annotation)** 4.8.1 - JSON serialization annotations
+- **[json_annotation](https://pub.dev/packages/json_annotation)** 4.8.1 - JSON serialization
+  annotations
 - **[json_serializable](https://pub.dev/packages/json_serializable)** 6.7.1 - JSON code generation
 - **[flutter_lints](https://pub.dev/packages/flutter_lints)** 5.0.0 - Dart/Flutter linting rules
 
@@ -146,7 +153,8 @@
 ### Prerequisites
 
 - **[Flutter SDK](https://flutter.dev/docs/get-started/install)** 3.9.0+
-- **[Android Studio](https://developer.android.com/studio)** or **[VS Code](https://code.visualstudio.com/)**
+- **[Android Studio](https://developer.android.com/studio)** or *
+  *[VS Code](https://code.visualstudio.com/)**
 - **[Git](https://git-scm.com/)**
 - **NFC-enabled Device** (Android/iOS with NFC support)
 
@@ -210,10 +218,10 @@ flutter build ios --release
 
 ```xml
 <!-- Required for NFC functionality -->
-<uses-permission android:name="android.permission.NFC" />
-<uses-feature android:name="android.hardware.nfc" android:required="true" />
+<uses-permission android:name="android.permission.NFC" /><uses-feature
+android:name="android.hardware.nfc" android:required="true" />
 
-<!-- Optional: for enhanced NFC features -->
+    <!-- Optional: for enhanced NFC features -->
 <uses-permission android:name="android.permission.NFC_PREFERRED_PAYMENT_INFO" />
 ```
 
@@ -221,30 +229,33 @@ flutter build ios --release
 
 ```xml
 <!-- Info.plist -->
-<key>NFCReaderUsageDescription</key>
-<string>This app uses NFC to write secure tags with unique codes</string>
+<key>NFCReaderUsageDescription</key><string>This app uses NFC to write secure tags with unique
+codes
+</string>
 
-<!-- Required NFC entitlements -->
-<key>com.apple.developer.nfc.readersession.formats</key>
-<array>
-    <string>NDEF</string>
-    <string>TAG</string>
+    <!-- Required NFC entitlements -->
+<key>com.apple.developer.nfc.readersession.formats</key><array>
+<string>NDEF</string>
+<string>TAG</string>
 </array>
 ```
 
 ### Code Generation Setup
 
 1. **Watch for Changes** (Development):
+
 ```bash
 flutter packages pub run build_runner watch
 ```
 
 2. **One-time Generation**:
+
 ```bash
 flutter packages pub run build_runner build
 ```
 
 3. **Clean and Rebuild**:
+
 ```bash
 flutter packages pub run build_runner clean
 flutter packages pub run build_runner build --delete-conflicting-outputs
@@ -293,18 +304,21 @@ class AppConfig {
 ### Code Management
 
 **Code Generation**:
+
 - Automatically generates 8-character codes
 - Validates uniqueness against stored history
 - Prevents code replication and reuse
 - Encrypts codes in secure storage
 
 **Code Validation**:
+
 - Real-time validation during generation
 - Checks against previously used codes
 - Validates format and structure
 - Provides instant feedback
 
 **Usage Tracking**:
+
 - Records all generated codes
 - Tracks write timestamps
 - Prevents duplicate usage
@@ -326,12 +340,14 @@ class AppConfig {
 ### Brazilian Features
 
 **CPF Validation**:
+
 - Real-time CPF format validation
 - Mathematical verification
 - Error handling with Portuguese messages
 - Integration with user authentication
 
 **CEP Integration**:
+
 - Automatic address lookup
 - Postal code validation
 - Brazilian address formatting
@@ -360,7 +376,7 @@ flutter test integration_test/
 ### NFC Testing Requirements
 
 - **Physical Device**: NFC functionality requires real hardware
-- **NFC Tags**: Various tag types for compatibility testing  
+- **NFC Tags**: Various tag types for compatibility testing
 - **Test Environment**: Isolated test codes to prevent conflicts
 - **Mock Services**: Unit tests with mocked NFC operations
 

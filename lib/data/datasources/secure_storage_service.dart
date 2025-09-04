@@ -1,11 +1,16 @@
 import 'dart:convert';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../models/user_model.dart';
+
 import '../../core/constants/app_constants.dart';
+import '../models/user_model.dart';
 
 class SecureStorageService {
-  static final SecureStorageService _instance = SecureStorageService._internal();
+  static final SecureStorageService _instance =
+      SecureStorageService._internal();
+
   factory SecureStorageService() => _instance;
+
   SecureStorageService._internal();
 
   final _secureStorage = const FlutterSecureStorage();
@@ -18,20 +23,23 @@ class SecureStorageService {
   Future<UserModel?> getUser() async {
     final userJson = await _secureStorage.read(key: AppConstants.userDataKey);
     if (userJson == null) return null;
-    
+
     final userMap = json.decode(userJson) as Map<String, dynamic>;
     return UserModel.fromJson(userMap);
   }
 
   Future<void> saveUsedCodes(List<String> codes) async {
     final codesJson = json.encode(codes);
-    await _secureStorage.write(key: AppConstants.usedCodesKey, value: codesJson);
+    await _secureStorage.write(
+      key: AppConstants.usedCodesKey,
+      value: codesJson,
+    );
   }
 
   Future<List<String>> getUsedCodes() async {
     final codesJson = await _secureStorage.read(key: AppConstants.usedCodesKey);
     if (codesJson == null) return [];
-    
+
     final codesList = json.decode(codesJson) as List;
     return codesList.cast<String>();
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/constants/app_constants.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/nfc_provider.dart';
@@ -48,9 +49,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             ? _buildMainContent(context, user)
             : const Center(child: Text('Usuário não encontrado')),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text('Erro: $error'),
-        ),
+        error: (error, stack) => Center(child: Text('Erro: $error')),
       ),
     );
   }
@@ -146,13 +145,11 @@ class _HomePageState extends ConsumerState<HomePage> {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: color ?? Theme.of(context).colorScheme.primary,
-        foregroundColor: color != null 
-            ? Colors.white 
+        foregroundColor: color != null
+            ? Colors.white
             : Theme.of(context).colorScheme.onPrimary,
         padding: const EdgeInsets.all(16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -160,8 +157,8 @@ class _HomePageState extends ConsumerState<HomePage> {
           Icon(
             Icons.nfc,
             size: 32,
-            color: color != null 
-                ? Colors.white 
+            color: color != null
+                ? Colors.white
                 : Theme.of(context).colorScheme.onPrimary,
           ),
           const SizedBox(height: 8),
@@ -193,9 +190,13 @@ class _HomePageState extends ConsumerState<HomePage> {
     });
   }
 
-  void _showCodeDialog(BuildContext context, String operation, Function(String) onCodeConfirmed) {
+  void _showCodeDialog(
+    BuildContext context,
+    String operation,
+    Function(String) onCodeConfirmed,
+  ) {
     final codeController = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -229,9 +230,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 onCodeConfirmed(code);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Código deve ter 8 dígitos'),
-                  ),
+                  const SnackBar(content: Text('Código deve ter 8 dígitos')),
                 );
               }
             },
@@ -244,12 +243,14 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void _executeNfcWrite(BuildContext context, String code, int dataSet) async {
     final nfcNotifier = ref.read(nfcProvider.notifier);
-    
+
     // Primeiro verificar se NFC está disponível
     final isAvailable = await nfcNotifier.isNfcAvailable();
     if (!isAvailable) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('NFC não está disponível neste dispositivo')),
+        const SnackBar(
+          content: Text('NFC não está disponível neste dispositivo'),
+        ),
       );
       return;
     }
@@ -261,9 +262,13 @@ class _HomePageState extends ConsumerState<HomePage> {
     await nfcNotifier.writeTagWithCode(code, dataSet);
   }
 
-  void _showPasswordDialog(BuildContext context, String code, bool isProtecting) {
+  void _showPasswordDialog(
+    BuildContext context,
+    String code,
+    bool isProtecting,
+  ) {
     final passwordController = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -271,9 +276,11 @@ class _HomePageState extends ConsumerState<HomePage> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(isProtecting 
-                ? 'Digite uma senha para proteger a tag:' 
-                : 'Digite a senha atual da tag:'),
+            Text(
+              isProtecting
+                  ? 'Digite uma senha para proteger a tag:'
+                  : 'Digite a senha atual da tag:',
+            ),
             const SizedBox(height: 16),
             TextField(
               controller: passwordController,
@@ -295,7 +302,12 @@ class _HomePageState extends ConsumerState<HomePage> {
               final password = passwordController.text;
               if (password.isNotEmpty) {
                 Navigator.of(context).pop();
-                await _executePasswordOperation(context, code, password, isProtecting);
+                await _executePasswordOperation(
+                  context,
+                  code,
+                  password,
+                  isProtecting,
+                );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Senha é obrigatória')),
@@ -310,17 +322,19 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   Future<void> _executePasswordOperation(
-    BuildContext context, 
-    String code, 
-    String password, 
-    bool isProtecting
+    BuildContext context,
+    String code,
+    String password,
+    bool isProtecting,
   ) async {
     final nfcNotifier = ref.read(nfcProvider.notifier);
-    
+
     final isAvailable = await nfcNotifier.isNfcAvailable();
     if (!isAvailable) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('NFC não está disponível neste dispositivo')),
+        const SnackBar(
+          content: Text('NFC não está disponível neste dispositivo'),
+        ),
       );
       return;
     }
@@ -341,7 +355,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       builder: (context) => Consumer(
         builder: (context, ref, child) {
           final nfcState = ref.watch(nfcProvider);
-          
+
           return AlertDialog(
             title: Text(instruction),
             content: Column(
@@ -377,20 +391,31 @@ class _HomePageState extends ConsumerState<HomePage> {
                 nfcState.when(
                   data: (status) {
                     if (status == NfcStatus.success) {
-                      return const Icon(Icons.check_circle, color: Colors.green, size: 48);
+                      return const Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                        size: 48,
+                      );
                     } else if (status == NfcStatus.error) {
-                      return const Icon(Icons.error, color: Colors.red, size: 48);
+                      return const Icon(
+                        Icons.error,
+                        color: Colors.red,
+                        size: 48,
+                      );
                     }
                     return const CircularProgressIndicator();
                   },
                   loading: () => const CircularProgressIndicator(),
-                  error: (_, __) => const Icon(Icons.error, color: Colors.red, size: 48),
+                  error: (_, __) =>
+                      const Icon(Icons.error, color: Colors.red, size: 48),
                 ),
               ],
             ),
             actions: nfcState.when(
               data: (status) {
-                if (status == NfcStatus.success || status == NfcStatus.error || status == NfcStatus.unavailable) {
+                if (status == NfcStatus.success ||
+                    status == NfcStatus.error ||
+                    status == NfcStatus.unavailable) {
                   return [
                     ElevatedButton(
                       onPressed: () {

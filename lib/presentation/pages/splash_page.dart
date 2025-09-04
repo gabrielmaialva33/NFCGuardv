@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/auth_provider.dart';
+
 import '../../core/constants/app_constants.dart';
+import '../providers/auth_provider.dart';
 import 'auth/login_page.dart';
 import 'home/home_page.dart';
 
@@ -22,13 +23,14 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   void _navigateAfterDelay() {
     Future.delayed(const Duration(seconds: 2), () {
       final authState = ref.read(authProvider);
-      
+
       if (mounted) {
         authState.when(
           data: (user) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => user != null ? const HomePage() : const LoginPage(),
+                builder: (context) =>
+                    user != null ? const HomePage() : const LoginPage(),
               ),
             );
           },

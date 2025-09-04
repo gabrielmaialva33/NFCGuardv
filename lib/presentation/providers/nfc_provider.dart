@@ -1,18 +1,12 @@
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 import '../../core/utils/code_generator.dart';
 import '../../data/datasources/secure_storage_service.dart';
 
 part 'nfc_provider.g.dart';
 
-enum NfcStatus {
-  idle,
-  scanning,
-  writing,
-  success,
-  error,
-  unavailable,
-}
+enum NfcStatus { idle, scanning, writing, success, error, unavailable }
 
 @riverpod
 class Nfc extends _$Nfc {
@@ -191,7 +185,9 @@ class Nfc extends _$Nfc {
             final ndefMessage = await ndef.read();
             if (ndefMessage.records.isNotEmpty) {
               final record = ndefMessage.records.first;
-              final payload = String.fromCharCodes(record.payload.skip(3)); // Skip language code
+              final payload = String.fromCharCodes(
+                record.payload.skip(3),
+              ); // Skip language code
 
               tagData = {
                 'payload': payload,

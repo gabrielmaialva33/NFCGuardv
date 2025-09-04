@@ -1,11 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:search_cep/search_cep.dart';
-import '../../domain/entities/user_entity.dart';
-import '../../data/models/user_model.dart';
-import '../../data/datasources/secure_storage_service.dart';
-import '../../core/utils/code_generator.dart';
+
 import '../../core/constants/app_constants.dart';
+import '../../core/utils/code_generator.dart';
+import '../../data/datasources/secure_storage_service.dart';
+import '../../data/models/user_model.dart';
+import '../../domain/entities/user_entity.dart';
 
 part 'auth_provider.g.dart';
 

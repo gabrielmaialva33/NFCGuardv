@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/constants/app_constants.dart';
 import '../../providers/auth_provider.dart';
 import '../home/home_page.dart';
@@ -15,21 +16,21 @@ class RegisterPage extends ConsumerStatefulWidget {
 class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final _pageController = PageController();
-  
+
   // Controllers para dados pessoais
   final _nomeController = TextEditingController();
   final _cpfController = TextEditingController();
   final _emailController = TextEditingController();
   final _telefoneController = TextEditingController();
   final _senhaController = TextEditingController();
-  
+
   // Controllers para endereço
   final _cepController = TextEditingController();
   final _enderecoController = TextEditingController();
   final _bairroController = TextEditingController();
   final _cidadeController = TextEditingController();
   final _ufController = TextEditingController();
-  
+
   DateTime? _dataNascimento;
   String _sexoSelecionado = 'M';
   bool _isPasswordVisible = false;
@@ -56,11 +57,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     final cep = _cepController.text.replaceAll(RegExp(r'[^0-9]'), '');
     if (cep.length == 8) {
       setState(() => _isLoadingCep = true);
-      
+
       try {
         final authNotifier = ref.read(authProvider.notifier);
         final addressInfo = await authNotifier.searchCep(cep);
-        
+
         if (addressInfo != null) {
           _enderecoController.text = addressInfo['endereco'] ?? '';
           _bairroController.text = addressInfo['bairro'] ?? '';
@@ -68,16 +69,16 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           _ufController.text = addressInfo['uf'] ?? '';
         } else {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('CEP não encontrado')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('CEP não encontrado')));
           }
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Erro ao buscar CEP')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Erro ao buscar CEP')));
         }
       } finally {
         if (mounted) {
@@ -117,7 +118,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
     try {
       final authNotifier = ref.read(authProvider.notifier);
-      
+
       await authNotifier.register(
         nomeCompleto: _nomeController.text.trim(),
         cpf: _cpfController.text,
@@ -145,9 +146,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro no cadastro: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erro no cadastro: $e')));
       }
     }
   }
@@ -157,9 +158,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     ref.listen<AsyncValue<dynamic>>(authProvider, (previous, next) {
       next.whenOrNull(
         error: (error, stackTrace) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erro: $error')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Erro: $error')));
         },
       );
     });
@@ -176,10 +177,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         child: PageView(
           controller: _pageController,
           onPageChanged: (page) => setState(() => _currentPage = page),
-          children: [
-            _buildPersonalDataPage(),
-            _buildAddressPage(),
-          ],
+          children: [_buildPersonalDataPage(), _buildAddressPage()],
         ),
       ),
       bottomNavigationBar: Padding(
@@ -232,7 +230,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             ),
             validator: (value) {
               if (value?.isEmpty ?? true) return 'Nome é obrigatório';
-              if (value!.split(' ').length < 2) return 'Digite nome e sobrenome';
+              if (value!.split(' ').length < 2)
+                return 'Digite nome e sobrenome';
               return null;
             },
           ),
@@ -296,8 +295,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               child: Text(
                 _dataNascimento != null
                     ? '${_dataNascimento!.day.toString().padLeft(2, '0')}/'
-                        '${_dataNascimento!.month.toString().padLeft(2, '0')}/'
-                        '${_dataNascimento!.year}'
+                          '${_dataNascimento!.month.toString().padLeft(2, '0')}/'
+                          '${_dataNascimento!.year}'
                     : 'Selecione a data',
                 style: TextStyle(
                   color: _dataNascimento != null
