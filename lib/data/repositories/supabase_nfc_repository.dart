@@ -130,13 +130,13 @@ class SupabaseNfcRepository {
         query = query.eq('operation_type', operationType);
       }
 
-      query = query.order('created_at', ascending: false);
+      var orderedQuery = query.order('created_at', ascending: false);
 
       if (limit != null) {
-        query = query.limit(limit);
+        orderedQuery = orderedQuery.limit(limit);
       }
 
-      final response = await query;
+      final response = await orderedQuery;
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       print('Failed to fetch NFC logs from Supabase: $e');
