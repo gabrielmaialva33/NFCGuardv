@@ -40,7 +40,7 @@ class NfcLoggingService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Error logging NFC operation: $e');
+        debugPrint('Error logging NFC operation: $e');
       }
       // Don't throw error to avoid disrupting the main NFC operation
     }
@@ -72,7 +72,7 @@ class NfcLoggingService {
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       if (kDebugMode) {
-        print('Error getting NFC operation history: $e');
+        debugPrint('Error getting NFC operation history: $e');
       }
       return [];
     }
@@ -115,7 +115,7 @@ class NfcLoggingService {
       return stats;
     } catch (e) {
       if (kDebugMode) {
-        print('Error getting operation statistics: $e');
+        debugPrint('Error getting operation statistics: $e');
       }
       return {};
     }

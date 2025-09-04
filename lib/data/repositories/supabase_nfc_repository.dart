@@ -39,7 +39,7 @@ class SupabaseNfcRepository {
       });
     } catch (e) {
       if (kDebugMode) {
-        print('Failed to log to Supabase: $e');
+        debugPrint('Failed to log to Supabase: $e');
       }
     }
   }
