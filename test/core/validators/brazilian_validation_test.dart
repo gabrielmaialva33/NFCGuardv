@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:all_validations_br/all_validations_br.dart';
+import 'package:all_validations_br/all_validations_br.dart' as validations;
 import 'package:nfc_guard/core/constants/app_constants.dart';
 import '../../helpers/test_helpers.dart';
 
@@ -16,7 +16,7 @@ void main() {
 
         for (final cpf in validTestCpfs) {
           expect(
-            AllValidationsBr.cpf(cpf),
+            validations.cpf(cpf),
             isTrue,
             reason: 'CPF $cpf should be valid according to Brazilian algorithm',
           );
@@ -26,7 +26,7 @@ void main() {
       test('should reject invalid CPF patterns', () {
         for (final invalidCpf in MockDataGenerators.generateInvalidCpfs()) {
           expect(
-            AllValidationsBr.cpf(invalidCpf),
+            validations.cpf(invalidCpf),
             isFalse,
             reason: 'CPF $invalidCpf should be invalid',
           );
@@ -38,8 +38,8 @@ void main() {
         const baseCpf = '11144477735';
         const formattedCpf = '111.444.777-35';
         
-        expect(AllValidationsBr.cpf(baseCpf), isTrue);
-        expect(AllValidationsBr.cpf(formattedCpf), isTrue);
+        expect(validations.cpf(baseCpf), isTrue);
+        expect(validations.cpf(formattedCpf), isTrue);
       });
 
       test('should reject sequential and repeated CPFs', () {
@@ -54,7 +54,7 @@ void main() {
 
         for (final cpf in invalidPatterns) {
           expect(
-            AllValidationsBr.cpf(cpf),
+            validations.cpf(cpf),
             isFalse,
             reason: 'Patterned CPF $cpf should be invalid',
           );
@@ -72,7 +72,7 @@ void main() {
 
         for (final cpf in wrongLengthCpfs) {
           expect(
-            AllValidationsBr.cpf(cpf),
+            validations.cpf(cpf),
             isFalse,
             reason: 'CPF $cpf with wrong length should be invalid',
           );
@@ -518,7 +518,7 @@ void main() {
         
         // Validate 1000 CPFs
         for (int i = 0; i < 1000; i++) {
-          AllValidationsBr.cpf('11144477735');
+          validations.cpf('11144477735');
         }
         
         stopwatch.stop();
@@ -530,7 +530,7 @@ void main() {
         
         // Create 10 concurrent validation requests
         for (int i = 0; i < 10; i++) {
-          futures.add(Future(() => AllValidationsBr.cpf('11144477735')));
+          futures.add(Future(() => validations.cpf('11144477735')));
         }
         
         expect(() => Future.wait(futures), returnsNormally);
