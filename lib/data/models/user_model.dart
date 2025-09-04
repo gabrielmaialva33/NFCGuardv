@@ -4,23 +4,23 @@ import '../../domain/entities/user_entity.dart';
 
 part 'user_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class UserModel extends UserEntity {
   const UserModel({
     required super.id,
-    required super.nomeCompleto,
+    @JsonKey(name: 'nome_completo') required super.fullName,
     required super.cpf,
     required super.email,
-    required super.telefone,
-    required super.dataNascimento,
-    required super.sexo,
-    required super.cep,
-    required super.endereco,
-    required super.bairro,
-    required super.cidade,
-    required super.uf,
-    required super.codigo8Digitos,
-    required super.createdAt,
+    @JsonKey(name: 'telefone') required super.phone,
+    @JsonKey(name: 'data_nascimento') required super.birthDate,
+    @JsonKey(name: 'sexo') required super.gender,
+    @JsonKey(name: 'cep') required super.zipCode,
+    @JsonKey(name: 'endereco') required super.address,
+    @JsonKey(name: 'bairro') required super.neighborhood,
+    @JsonKey(name: 'cidade') required super.city,
+    @JsonKey(name: 'uf') required super.state,
+    @JsonKey(name: 'codigo_8_digitos') required super.eightDigitCode,
+    @JsonKey(name: 'created_at') required super.createdAt,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
@@ -31,18 +31,18 @@ class UserModel extends UserEntity {
   factory UserModel.fromEntity(UserEntity entity) {
     return UserModel(
       id: entity.id,
-      nomeCompleto: entity.nomeCompleto,
+      fullName: entity.fullName,
       cpf: entity.cpf,
       email: entity.email,
-      telefone: entity.telefone,
-      dataNascimento: entity.dataNascimento,
-      sexo: entity.sexo,
-      cep: entity.cep,
-      endereco: entity.endereco,
-      bairro: entity.bairro,
-      cidade: entity.cidade,
-      uf: entity.uf,
-      codigo8Digitos: entity.codigo8Digitos,
+      phone: entity.phone,
+      birthDate: entity.birthDate,
+      gender: entity.gender,
+      zipCode: entity.zipCode,
+      address: entity.address,
+      neighborhood: entity.neighborhood,
+      city: entity.city,
+      state: entity.state,
+      eightDigitCode: entity.eightDigitCode,
       createdAt: entity.createdAt,
     );
   }
