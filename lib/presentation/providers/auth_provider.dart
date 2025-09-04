@@ -48,7 +48,7 @@ class Auth extends _$Auth {
       }
 
       if (!email.contains('@')) {
-        throw Exception('Invalid email');
+        throw Exception('Email inválido');
       }
 
       // Generate unique 8-digit code
@@ -85,18 +85,18 @@ class Auth extends _$Auth {
     required String address,
     required String neighborhood,
     required String city,
-    required String state,
+    required String stateCode,
   }) async {
     try {
       final currentUser = state.value;
-      if (currentUser == null) throw Exception('User not found');
+      if (currentUser == null) throw Exception('Usuário não encontrado');
 
       final updatedUser = currentUser.copyWith(
         zipCode: zipCode,
         address: address,
         neighborhood: neighborhood,
         city: city,
-        state: state,
+        state: stateCode,
       );
 
       await _storageService.saveUser(UserModel.fromEntity(updatedUser));
@@ -118,7 +118,7 @@ class Auth extends _$Auth {
           'address': addressInfo.logradouro ?? '',
           'neighborhood': addressInfo.bairro ?? '',
           'city': addressInfo.localidade ?? '',
-          'state': addressInfo.uf ?? '',
+          'stateCode': addressInfo.uf ?? '',
         },
       );
     } catch (e) {

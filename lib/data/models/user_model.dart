@@ -4,24 +4,80 @@ import '../../domain/entities/user_entity.dart';
 
 part 'user_model.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable()
 class UserModel extends UserEntity {
+  @JsonKey(name: 'nome_completo')
+  @override
+  final String fullName;
+
+  @JsonKey(name: 'telefone')
+  @override
+  final String phone;
+
+  @JsonKey(name: 'data_nascimento')
+  @override
+  final DateTime birthDate;
+
+  @JsonKey(name: 'sexo')
+  @override
+  final String gender;
+
+  @JsonKey(name: 'cep')
+  @override
+  final String zipCode;
+
+  @JsonKey(name: 'endereco')
+  @override
+  final String address;
+
+  @JsonKey(name: 'bairro')
+  @override
+  final String neighborhood;
+
+  @JsonKey(name: 'cidade')
+  @override
+  final String city;
+
+  @JsonKey(name: 'uf')
+  @override
+  final String state;
+
+  @JsonKey(name: 'codigo_8_digitos')
+  @override
+  final String eightDigitCode;
+
+  @JsonKey(name: 'created_at')
+  @override
+  final DateTime createdAt;
+
   const UserModel({
     required super.id,
-    @JsonKey(name: 'nome_completo') required super.fullName,
+    required this.fullName,
     required super.cpf,
     required super.email,
-    @JsonKey(name: 'telefone') required super.phone,
-    @JsonKey(name: 'data_nascimento') required super.birthDate,
-    @JsonKey(name: 'sexo') required super.gender,
-    @JsonKey(name: 'cep') required super.zipCode,
-    @JsonKey(name: 'endereco') required super.address,
-    @JsonKey(name: 'bairro') required super.neighborhood,
-    @JsonKey(name: 'cidade') required super.city,
-    @JsonKey(name: 'uf') required super.state,
-    @JsonKey(name: 'codigo_8_digitos') required super.eightDigitCode,
-    @JsonKey(name: 'created_at') required super.createdAt,
-  });
+    required this.phone,
+    required this.birthDate,
+    required this.gender,
+    required this.zipCode,
+    required this.address,
+    required this.neighborhood,
+    required this.city,
+    required this.state,
+    required this.eightDigitCode,
+    required this.createdAt,
+  }) : super(
+          fullName: fullName,
+          phone: phone,
+          birthDate: birthDate,
+          gender: gender,
+          zipCode: zipCode,
+          address: address,
+          neighborhood: neighborhood,
+          city: city,
+          state: state,
+          eightDigitCode: eightDigitCode,
+          createdAt: createdAt,
+        );
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
