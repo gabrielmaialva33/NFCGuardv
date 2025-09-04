@@ -6,7 +6,7 @@ part of 'nfc_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$nfcHash() => r'91032ea1751f4ac2dc213b9bded8570ba41f727d';
+String _$nfcHash() => r'30a6fb2d0cd87c1978c2b300e5bf554818dfbd6a';
 
 /// See also [Nfc].
 @ProviderFor(Nfc)

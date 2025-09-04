@@ -253,4 +253,54 @@ class Nfc extends _$Nfc {
   void resetStatus() {
     state = const AsyncValue.data(NfcStatus.idle);
   }
+
+  /// Helper method to write NDEF message to tag (handles Android/iOS differences)
+  Future<void> _writeNdefMessage(NfcTag tag, NdefMessage ndefMessage) async {
+    // Try Android first
+    final ndefAndroid = NdefAndroid.from(tag);
+    if (ndefAndroid != null) {
+      if (!ndefAndroid.isWritable) {
+        throw Exception('Tag não é gravável');
+      }
+      
+      final maxSize = await ndefAndroid.getMaxSize();
+      if (maxSize < ndefMessage.byteLength) {
+        throw Exception('Tag não tem espaço suficiente');
+      }
+      
+      await ndefAndroid.write(ndefMessage);
+      return;
+    }
+
+    // Try iOS
+    final ndefIos = NdefIos.from(tag);
+    if (ndefIos != null) {
+      final status = await ndefIos.getStatus();
+      if (status != NdefStatusIos.readWrite) {
+        throw Exception('Tag não é gravável');
+      }
+      
+      await ndefIos.write(ndefMessage);
+      return;
+    }
+
+    throw Exception('Tag não suporta NDEF');
+  }
+
+  /// Helper method to read NDEF message from tag (handles Android/iOS differences)
+  Future<NdefMessage> _readNdefMessage(NfcTag tag) async {
+    // Try Android first
+    final ndefAndroid = NdefAndroid.from(tag);
+    if (ndefAndroid != null) {
+      return await ndefAndroid.read();
+    }
+
+    // Try iOS
+    final ndefIos = NdefIos.from(tag);
+    if (ndefIos != null) {
+      return await ndefIos.read();
+    }
+
+    throw Exception('Tag não contém dados NDEF');
+  }
 }
