@@ -46,3 +46,30 @@ app.*.map.json
 
 /.claude/
 *.salive
+
+# Security and Environment Configuration
+.env
+.env.local
+.env.production
+.env.staging
+*.env
+!.env.example
+
+# API Keys and Secrets
+api_keys.dart
+secrets.dart
+**/secrets/**
+**/credentials/**
+
+# Security certificates and keys
+*.pem
+*.p12
+*.jks
+*.keystore
+android/app/*.jks
+android/app/*.p12
+ios/Runner/*.p12
+ios/Runner/*.pem
+
+# Generated security configs that might contain sensitive data
+android/app/src/main/res/xml/network_security_config_local.xml
