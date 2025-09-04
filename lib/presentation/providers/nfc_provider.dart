@@ -84,7 +84,7 @@ class Nfc extends _$Nfc {
             ]);
             
             final ndefRecord = NdefRecord(
-              typeNameFormat: NdefTypeNameFormat.nfcWellKnown,
+              typeNameFormat: TypeNameFormat.nfcWellKnown,
               type: Uint8List.fromList([84]), // 'T' for text
               identifier: Uint8List(0),
               payload: payload,
@@ -286,7 +286,7 @@ class Nfc extends _$Nfc {
       throw Exception('Tag não tem espaço suficiente');
     }
 
-    await ndef.write(ndefMessage.records);
+    await ndef.write(records: ndefMessage.records);
   }
 
   /// Helper method to read NDEF message from tag (cross-platform)
