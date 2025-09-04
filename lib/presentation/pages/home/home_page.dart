@@ -258,8 +258,8 @@ class _HomePageState extends ConsumerState<HomePage> {
       return;
     }
 
-    // Mostrar dialog de instrução
-    if (mounted) {
+    // Mostrar dialog de instrução usando o contexto atual se ainda montado
+    if (mounted && context.mounted) {
       _showNfcInstructionDialog(context, 'Aproxime o dispositivo da tag NFC');
     }
 
@@ -347,7 +347,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       return;
     }
 
-    if (mounted) {
+    if (mounted && context.mounted) {
       _showNfcInstructionDialog(context, 'Aproxime o dispositivo da tag NFC');
     }
 
