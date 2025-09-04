@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../home/home_page.dart';
+import '../nvidia_nim_demo_page.dart';
 import 'register_page.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -39,6 +40,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (context) => const RegisterPage()));
+  }
+
+  void _navigateToNvidiaDemo() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const NvidiaNimDemoPage()),
+    );
   }
 
   @override
@@ -136,6 +143,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 TextButton(
                   onPressed: _navigateToRegister,
                   child: const Text('Não tem conta? Cadastre-se'),
+                ),
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: _navigateToNvidiaDemo,
+                  icon: const Icon(Icons.smart_toy),
+                  label: const Text('Demo NVIDIA NIM'),
                 ),
               ],
             ),
