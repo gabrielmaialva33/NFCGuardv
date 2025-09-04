@@ -42,6 +42,8 @@
 - **Real-Time Validation** - Instant verification of code validity
 - **Secure Storage** - Encrypted storage for sensitive data using Flutter Secure Storage
 - **Usage Tracking** - Monitor and prevent duplicate code usage
+- **🆕 Enterprise Logging** - Complete NFC operation audit trail
+- **🆕 Cloud Synchronization** - Real-time data backup with Supabase
 
 ### Brazilian Integration 🇧🇷
 
@@ -108,6 +110,13 @@
 - **[Dart](https://dart.dev/)** 3.0+ - Modern programming language
 - **[Material Design 3](https://m3.material.io/)** - Contemporary UI components
 
+### Backend & Database
+
+- **[Supabase](https://supabase.io/)** 2.5.6 - Real-time backend-as-a-service
+- **PostgreSQL** - Robust relational database
+- **Real-time subscriptions** - Live data synchronization
+- **Authentication** - Built-in user management
+
 ### State Management & Architecture
 
 - **[Riverpod](https://riverpod.dev/)** 2.4.9 - Reactive state management
@@ -118,7 +127,8 @@
 
 ### NFC & Hardware
 
-- **[nfc_manager](https://pub.dev/packages/nfc_manager)** 3.5.0 - NFC tag reading and writing
+- **[nfc_manager](https://pub.dev/packages/nfc_manager)** 4.0.2 - NFC tag reading and writing
+- **NFC Operation Logging** - Enterprise-level operation tracking
 - **Native Android/iOS NFC** - Platform-specific NFC implementations
 - **Hardware Security** - Secure element integration where available
 
