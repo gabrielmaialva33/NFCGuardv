@@ -21,7 +21,7 @@ INSERT INTO auth.users (
   '00000000-0000-0000-0000-000000000001',
   'authenticated',
   'authenticated',
-  'gabriel.maia@test.com',
+  'gabrielmaialva33@gmail.com',
   crypt('123456', gen_salt('bf')), -- Password: 123456
   NOW(),
   NOW(),
@@ -54,7 +54,7 @@ INSERT INTO public.users (
   '00000000-0000-0000-0000-000000000001',
   'Gabriel Maia',
   '38738734869',
-  'gabriel.maia@test.com',
+  'gabrielmaialva33@gmail.com',
   '15999123456',
   '1999-02-23',
   'masculino',
