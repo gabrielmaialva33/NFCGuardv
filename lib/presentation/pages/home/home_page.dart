@@ -109,6 +109,18 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
             const SizedBox(height: 24),
             Text(
+              'Ler Cartões/Tags',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 16),
+            _buildNfcButton(
+              context,
+              'Ler cartão de\ncrédito/débito',
+              () => _readNfcCard(context),
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            const SizedBox(height: 24),
+            Text(
               'Gerenciar Tags',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
