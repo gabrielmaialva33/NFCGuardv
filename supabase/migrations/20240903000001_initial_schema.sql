@@ -25,8 +25,8 @@ CREATE TABLE public.users (
   city TEXT,
   state TEXT,
   
-  -- User code
-  user_code TEXT UNIQUE NOT NULL,
+  -- User code (8-digit code)
+  eight_digit_code TEXT UNIQUE NOT NULL,
   
   -- Status
   is_active BOOLEAN DEFAULT true,
@@ -129,7 +129,7 @@ CREATE POLICY "Users can update own trial data" ON public.trial_data
 
 -- Indexes for better performance
 CREATE INDEX idx_users_cpf ON public.users(cpf);
-CREATE INDEX idx_users_user_code ON public.users(user_code);
+CREATE INDEX idx_users_eight_digit_code ON public.users(eight_digit_code);
 CREATE INDEX idx_users_email ON public.users(email);
 
 CREATE INDEX idx_nfc_logs_user_id ON public.nfc_logs(user_id);
@@ -169,7 +169,7 @@ BEGIN
     code := LPAD(FLOOR(RANDOM() * 100000000)::TEXT, 8, '0');
     
     -- Check if code already exists
-    SELECT COUNT(*) INTO exists_check FROM public.users WHERE user_code = code;
+    SELECT COUNT(*) INTO exists_check FROM public.users WHERE eight_digit_code = code;
     
     -- Exit loop if code is unique
     EXIT WHEN exists_check = 0;
