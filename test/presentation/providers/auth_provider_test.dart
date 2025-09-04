@@ -501,7 +501,7 @@ void main() {
         ).thenAnswer((_) async => existingUser);
 
         // Act
-        final authNotifier = container.read(authProvider.notifier);
+        container.read(authProvider.notifier);
         await Future.delayed(Duration.zero); // Allow async loading
 
         // Assert
