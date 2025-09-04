@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/nfc_provider.dart';
+import '../../widgets/trial_counter_widget.dart';
 import '../auth/login_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -23,6 +24,8 @@ class _HomePageState extends ConsumerState<HomePage> {
         title: const Text(AppConstants.appName),
         backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
+          const TrialCounterWidget(),
+          const SizedBox(width: 8),
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'logout') {

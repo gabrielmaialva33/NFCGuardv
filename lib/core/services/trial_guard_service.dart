@@ -115,7 +115,7 @@ class TrialGuardService {
     try {
       if (Platform.isAndroid) {
         final androidInfo = await deviceInfo.androidInfo;
-        fingerprint = '${androidInfo.model}_${androidInfo.androidId}_${androidInfo.serialNumber}';
+        fingerprint = '${androidInfo.model}_${androidInfo.id}_${androidInfo.serialNumber}';
       } else if (Platform.isIOS) {
         final iosInfo = await deviceInfo.iosInfo;
         fingerprint = '${iosInfo.model}_${iosInfo.identifierForVendor}_${iosInfo.systemVersion}';
