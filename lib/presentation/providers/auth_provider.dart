@@ -20,21 +20,33 @@ class Auth extends _$Auth {
 
   @override
   AsyncValue<UserEntity?> build() {
+    if (kDebugMode) {
+      debugPrint('🔄 AuthProvider build() called - initializing auth');
+    }
     _initializeAuth();
     return const AsyncValue.loading();
   }
 
   /// Initialize authentication and check for existing session
   Future<void> _initializeAuth() async {
+    if (kDebugMode) {
+      debugPrint('🔄 _initializeAuth() started');
+    }
     try {
       // Add timeout for network operations
       await Future.any([
         _performAuthInit(),
-        Future.delayed(const Duration(seconds: 10), () => throw Exception('Timeout de conexão')),
+        Future.delayed(const Duration(seconds: 5), () {
+          if (kDebugMode) {
+            debugPrint('⏰ Auth initialization timeout reached');
+          }
+          throw Exception('Timeout de conexão');
+        }),
       ]);
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('Auth initialization error: $e');
+        debugPrint('❌ Auth initialization error: $e');
+        debugPrint('🔄 Setting state to null for offline usage');
       }
       // Set null user state instead of error to allow offline usage
       state = const AsyncValue.data(null);
