@@ -4,8 +4,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/config/supabase_config.dart';
 import 'core/constants/app_constants.dart';
+import 'core/services/trial_guard_service.dart';
 import 'core/theme/app_theme.dart';
 import 'presentation/pages/splash_page.dart';
+import 'presentation/pages/trial_expired_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
