@@ -54,17 +54,44 @@ class Auth extends _$Auth {
   }
 
   Future<void> _performAuthInit() async {
-    // Listen to auth state changes
-    _supabaseClient.auth.onAuthStateChange.listen((data) {
-      _handleAuthStateChange(data);
-    });
+    if (kDebugMode) {
+      debugPrint('🔄 _performAuthInit() started');
+    }
+    
+    try {
+      // Listen to auth state changes
+      if (kDebugMode) {
+        debugPrint('🔄 Setting up auth state listener');
+      }
+      _supabaseClient.auth.onAuthStateChange.listen((data) {
+        if (kDebugMode) {
+          debugPrint('🔄 Auth state changed: ${data.event}');
+        }
+        _handleAuthStateChange(data);
+      });
 
-    // Check if user is already logged in
-    final currentUser = _supabaseClient.auth.currentUser;
-    if (currentUser != null) {
-      await _loadUserProfile(currentUser.id);
-    } else {
-      state = const AsyncValue.data(null);
+      // Check if user is already logged in
+      if (kDebugMode) {
+        debugPrint('🔄 Checking current user');
+      }
+      final currentUser = _supabaseClient.auth.currentUser;
+      
+      if (currentUser != null) {
+        if (kDebugMode) {
+          debugPrint('✅ Current user found: ${currentUser.id}');
+        }
+        await _loadUserProfile(currentUser.id);
+      } else {
+        if (kDebugMode) {
+          debugPrint('❌ No current user found - setting state to null');
+        }
+        state = const AsyncValue.data(null);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ _performAuthInit error: $e');
+      }
+      rethrow;
     }
   }
 
