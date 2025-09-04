@@ -150,14 +150,14 @@ class SupabaseAuth extends _$SupabaseAuth {
       // Generate unique 8-digit code
       String eightDigitCode = CodeGenerator.generateUniqueCode();
 
-      // Sign up with Supabase
+      // Sign up with Supabase using sanitized data
       final authResponse = await SupabaseService.instance.signUp(
-        email: email,
+        email: sanitizedEmail,
         password: password,
         data: {
-          'full_name': fullName,
+          'full_name': sanitizedName,
           'cpf': cpf.replaceAll(RegExp(r'[^0-9]'), ''),
-          'phone': phone,
+          'phone': sanitizedPhone,
           'birth_date': birthDate.toIso8601String(),
           'gender': gender,
           'eight_digit_code': eightDigitCode,

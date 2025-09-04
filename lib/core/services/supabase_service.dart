@@ -1,6 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../config/supabase_config.dart';
+import '../config/environment_config.dart';
 
 class SupabaseService {
   static SupabaseService? _instance;
