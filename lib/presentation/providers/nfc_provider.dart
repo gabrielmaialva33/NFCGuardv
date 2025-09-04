@@ -302,6 +302,6 @@ class Nfc extends _$Nfc {
       throw Exception('Não foi possível ler dados da tag');
     }
     
-    return NdefMessage(records: records);
+    return NdefMessage(records: records as List<NdefRecord>);
   }
 }
