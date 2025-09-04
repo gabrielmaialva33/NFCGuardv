@@ -145,14 +145,29 @@ class TrialGuardService {
   /// Gets current time from network to prevent tampering
   static Future<DateTime> _getCurrentTime() async {
     try {
-      // Try to get network time
-      final networkTime = await NTP.now();
+      // Try to get network time with timeout
+      final networkTime = await NTP.now().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => throw Exception('NTP timeout'),
+      );
       return networkTime;
     } catch (e) {
-      // Fallback to local time if network fails
-      // In production, might want to be more strict here
-      debugPrint('NTP failed, using local time: $e');
-      return DateTime.now();
+      // Enhanced fallback handling
+      final sanitizedError = NetworkSecurity.sanitizeErrorMessage(e.toString());
+      if (kDebugMode) {
+        debugPrint('NTP failed, using local time: $sanitizedError');
+      }
+      
+      // In production, consider being more strict about time validation
+      final localTime = DateTime.now();
+      
+      // Basic sanity check - reject obviously wrong local times
+      final year = localTime.year;
+      if (year < 2024 || year > 2030) {
+        throw Exception('Data do sistema inválida');
+      }
+      
+      return localTime;
     }
   }
 
