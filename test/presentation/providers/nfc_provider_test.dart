@@ -10,19 +10,17 @@ import 'package:nfc_manager/nfc_manager.dart';
 
 import 'nfc_provider_test.mocks.dart';
 
-@GenerateMocks([SecureStorageService, NfcLoggingService, NfcManager, NfcTag])
+@GenerateMocks([SecureStorageService, NfcLoggingService, NfcManager])
 void main() {
   late ProviderContainer container;
   late MockSecureStorageService mockStorageService;
   late MockNfcLoggingService mockLoggingService;
   late MockNfcManager mockNfcManager;
-  late MockNfcTag mockNfcTag;
 
   setUp(() {
     mockStorageService = MockSecureStorageService();
     mockLoggingService = MockNfcLoggingService();
     mockNfcManager = MockNfcManager();
-    mockNfcTag = MockNfcTag();
 
     container = ProviderContainer();
   });
@@ -217,12 +215,7 @@ void main() {
             pollingOptions: anyNamed('pollingOptions'),
             onDiscovered: anyNamed('onDiscovered'),
           ),
-        ).thenAnswer((invocation) async {
-          final onDiscovered =
-              invocation.namedArguments[const Symbol('onDiscovered')]
-                  as Function(NfcTag);
-          await onDiscovered(mockNfcTag);
-        });
+        ).thenAnswer((_) async {});
 
         final nfcNotifier = container.read(nfcProvider.notifier);
 
@@ -240,12 +233,7 @@ void main() {
             pollingOptions: anyNamed('pollingOptions'),
             onDiscovered: anyNamed('onDiscovered'),
           ),
-        ).thenAnswer((invocation) async {
-          final onDiscovered =
-              invocation.namedArguments[const Symbol('onDiscovered')]
-                  as Function(NfcTag);
-          await onDiscovered(mockNfcTag);
-        });
+        ).thenAnswer((_) async {});
 
         final nfcNotifier = container.read(nfcProvider.notifier);
 
