@@ -72,7 +72,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Entre com suas credenciais',
+                  'Enter your credentials',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Theme.of(
@@ -90,12 +90,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'Email é obrigatório';
+                      return 'Email is required';
                     }
                     if (!RegExp(
                       r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                     ).hasMatch(value!)) {
-                      return 'Email inválido';
+                      return 'Invalid email';
                     }
                     return null;
                   },
@@ -105,7 +105,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   controller: _passwordController,
                   obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
-                    labelText: 'Senha',
+                    labelText: 'Password',
                     prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -122,20 +122,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'Senha é obrigatória';
+                      return 'Password is required';
                     }
                     if (value!.length < 6) {
-                      return 'Senha deve ter pelo menos 6 caracteres';
+                      return 'Password must be at least 6 characters';
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 32),
-                ElevatedButton(onPressed: _login, child: const Text('Entrar')),
+                ElevatedButton(onPressed: _login, child: const Text('Login')),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: _navigateToRegister,
-                  child: const Text('Não tem conta? Cadastre-se'),
+                  child: const Text('Don\'t have an account? Sign up'),
                 ),
               ],
             ),
