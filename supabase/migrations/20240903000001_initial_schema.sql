@@ -16,13 +16,11 @@ CREATE TABLE public.users (
   email TEXT NOT NULL,
   phone TEXT,
   birth_date DATE,
-  gender TEXT CHECK (gender IN ('M', 'F', 'Outro')),
+  gender TEXT CHECK (gender IN ('masculino', 'feminino', 'outro')),
   
   -- Address data
-  cep TEXT,
-  street TEXT,
-  number_address TEXT,
-  complement TEXT,
+  zip_code TEXT,
+  address TEXT,
   neighborhood TEXT,
   city TEXT,
   state TEXT,
