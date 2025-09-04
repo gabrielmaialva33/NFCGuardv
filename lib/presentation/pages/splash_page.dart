@@ -21,42 +21,12 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   }
 
   void _navigateAfterDelay() {
-    // Wait for auth provider to load, with timeout
-    Future.delayed(const Duration(seconds: 2), () async {
-      if (!mounted) return;
-
-      // Wait for auth state with timeout
-      final completer = Future.delayed(const Duration(seconds: 3), () {
-        if (mounted) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const LoginPage()),
-          );
-        }
-      });
-
-      final authState = ref.read(authProvider);
-      authState.when(
-        data: (user) {
-          if (mounted) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) =>
-                    user != null ? const HomePage() : const LoginPage(),
-              ),
-            );
-          }
-        },
-        loading: () {
-          // Timeout will handle this case
-        },
-        error: (error, stack) {
-          if (mounted) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-            );
-          }
-        },
-      );
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      }
     });
   }
 
