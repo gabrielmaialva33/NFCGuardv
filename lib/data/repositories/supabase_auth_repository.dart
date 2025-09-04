@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../core/config/supabase_config.dart';
 import '../../core/services/supabase_service.dart';
 import '../models/user_model.dart';
@@ -80,15 +81,18 @@ class SupabaseAuthRepository {
   }
 
   /// Update user profile
-  Future<void> updateUserProfile(String userId, Map<String, dynamic> data) async {
-    await _client
-        .from(SupabaseConfig.usersTable)
-        .update(data)
-        .eq('id', userId);
+  Future<void> updateUserProfile(
+    String userId,
+    Map<String, dynamic> data,
+  ) async {
+    await _client.from(SupabaseConfig.usersTable).update(data).eq('id', userId);
   }
 
   /// Create user profile in database
-  Future<void> _createUserProfile(User user, Map<String, dynamic> userData) async {
+  Future<void> _createUserProfile(
+    User user,
+    Map<String, dynamic> userData,
+  ) async {
     final userProfile = {
       'id': user.id,
       'email': user.email,
@@ -108,9 +112,7 @@ class SupabaseAuthRepository {
       'trial_mode': userData['trial_mode'] ?? false,
     };
 
-    await _client
-        .from(SupabaseConfig.usersTable)
-        .insert(userProfile);
+    await _client.from(SupabaseConfig.usersTable).insert(userProfile);
   }
 
   /// Check if email exists
@@ -162,14 +164,14 @@ class SupabaseAuthRepository {
       // Generate 8-digit code
       final random = DateTime.now().millisecondsSinceEpoch % 100000000;
       code = random.toString().padLeft(8, '0');
-      
+
       // Check if exists
       final response = await _client
           .from(SupabaseConfig.usersTable)
           .select('id')
           .eq('user_code', code)
           .limit(1);
-      
+
       exists = response.isNotEmpty;
     } while (exists);
 

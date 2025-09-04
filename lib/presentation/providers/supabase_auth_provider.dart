@@ -4,12 +4,12 @@ import 'package:search_cep/search_cep.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/constants/app_constants.dart';
-import '../../core/utils/code_generator.dart';
 import '../../core/services/supabase_service.dart';
+import '../../core/utils/code_generator.dart';
 import '../../data/datasources/secure_storage_service.dart';
+import '../../data/models/user_model.dart';
 import '../../data/repositories/supabase_auth_repository.dart';
 import '../../data/repositories/supabase_nfc_repository.dart';
-import '../../data/models/user_model.dart';
 import '../../domain/entities/user_entity.dart';
 
 part 'supabase_auth_provider.g.dart';

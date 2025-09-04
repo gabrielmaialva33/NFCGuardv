@@ -83,7 +83,10 @@ class Nfc extends _$Nfc {
             await _writeSimpleText(tag, textContent);
 
             // Marcar código como usado (Supabase + local)
-            await _supabaseNfcRepository.addUsedCode(userCode, datasetNumber: dataSet);
+            await _supabaseNfcRepository.addUsedCode(
+              userCode,
+              datasetNumber: dataSet,
+            );
 
             // Log successful operation (Supabase + local)
             await _supabaseNfcRepository.logNfcOperation(

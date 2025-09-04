@@ -152,7 +152,7 @@ class SupabaseNfcRepository {
 
       // Get local used codes
       final localCodes = await _storageService.getUsedCodes();
-      
+
       // Check which codes are not in Supabase
       for (final code in localCodes) {
         final existsInSupabase = await _client

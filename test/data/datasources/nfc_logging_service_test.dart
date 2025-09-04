@@ -33,7 +33,7 @@ void main() {
       test('should create multiple instances independently', () {
         final service1 = NfcLoggingService();
         final service2 = NfcLoggingService();
-        
+
         expect(service1, isA<NfcLoggingService>());
         expect(service2, isA<NfcLoggingService>());
         expect(service1, isNot(same(service2)));

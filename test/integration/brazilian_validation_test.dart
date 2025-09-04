@@ -1,4 +1,4 @@
-import 'package:all_validations_br/all_validations_br.dart' as validations;
+import 'package:all_validations_br/all_validations_br.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nfc_guard/core/constants/app_constants.dart';
 import 'package:search_cep/search_cep.dart';
@@ -16,7 +16,7 @@ void main() {
 
         for (final cpf in validCpfs) {
           expect(
-            AllValidationsBr.cpf(cpf),
+            AllValidations.isCpf(cpf),
             isTrue,
             reason: 'CPF $cpf should be valid',
           );
@@ -35,7 +35,7 @@ void main() {
 
         for (final cpf in invalidCpfs) {
           expect(
-            AllValidationsBr.cpf(cpf),
+            AllValidations.isCpf(cpf),
             isFalse,
             reason: 'CPF $cpf should be invalid',
           );
