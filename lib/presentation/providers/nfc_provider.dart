@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
