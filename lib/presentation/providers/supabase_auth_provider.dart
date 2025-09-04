@@ -116,13 +116,35 @@ class SupabaseAuth extends _$SupabaseAuth {
     try {
       state = const AsyncValue.loading();
 
-      // Basic validations
+      // Enhanced input validation and sanitization
+      final nameValidation = InputValidator.validateName(fullName);
+      if (!nameValidation.isValid) {
+        throw Exception(nameValidation.message);
+      }
+      
+      final emailValidation = InputValidator.validateEmail(email);
+      if (!emailValidation.isValid) {
+        throw Exception(emailValidation.message);
+      }
+      
+      final phoneValidation = InputValidator.validatePhone(phone);
+      if (!phoneValidation.isValid) {
+        throw Exception(phoneValidation.message);
+      }
+
+      // Sanitize inputs
+      final sanitizedName = nameValidation.sanitizedValue ?? fullName;
+      final sanitizedEmail = emailValidation.sanitizedValue ?? email.trim().toLowerCase();
+      final sanitizedPhone = phoneValidation.sanitizedValue ?? phone;
+      
+      // CPF validation (keeping existing logic for Brazilian context)
       if (cpf.length < 11) {
         throw Exception(AppConstants.invalidCpfMessage);
       }
-
-      if (!email.contains('@')) {
-        throw Exception('Email inválido');
+      
+      // Rate limiting check for registration attempts
+      if (InputValidator.isRateLimited('registration_$sanitizedEmail')) {
+        throw Exception('Muitas tentativas. Aguarde alguns segundos.');
       }
 
       // Generate unique 8-digit code

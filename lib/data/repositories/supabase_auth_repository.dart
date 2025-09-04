@@ -134,7 +134,7 @@ class SupabaseAuthRepository {
   Future<bool> checkCpfExists(String cpf) async {
     try {
       final response = await _client
-          .from(SupabaseConfig.usersTable)
+          .from('users')
           .select('id')
           .eq('cpf', cpf)
           .limit(1);
@@ -167,7 +167,7 @@ class SupabaseAuthRepository {
 
       // Check if exists
       final response = await _client
-          .from(SupabaseConfig.usersTable)
+          .from('users')
           .select('id')
           .eq('user_code', code)
           .limit(1);
