@@ -31,7 +31,7 @@ class _BrazilianCepFieldState extends ConsumerState<BrazilianCepField>
   late AnimationController _successController;
   late Animation<double> _searchAnimation;
   late Animation<Color?> _borderColorAnimation;
-  
+
   CepSearchState _searchState = CepSearchState.initial;
   String? _errorMessage;
   final Map<String, Map<String, String>> _cache = {};
@@ -48,19 +48,15 @@ class _BrazilianCepFieldState extends ConsumerState<BrazilianCepField>
       duration: AppConstants.animationDuration,
       vsync: this,
     );
-    
+
     _successController = AnimationController(
       duration: AppConstants.fastAnimationDuration,
       vsync: this,
     );
 
-    _searchAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _searchController,
-      curve: Curves.easeInOut,
-    ));
+    _searchAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _searchController, curve: Curves.easeInOut),
+    );
 
     _borderColorAnimation = ColorTween(
       begin: null,
@@ -79,7 +75,7 @@ class _BrazilianCepFieldState extends ConsumerState<BrazilianCepField>
   void _onTextChanged() {
     final text = widget.controller.text;
     final cleanText = text.replaceAll(RegExp(r'[^\d]'), '');
-    
+
     // Auto-format CEP as user types
     if (cleanText.length <= 8) {
       final formatted = _formatCep(cleanText);
@@ -184,7 +180,7 @@ class _BrazilianCepFieldState extends ConsumerState<BrazilianCepField>
       begin: Theme.of(context).colorScheme.outline,
       end: Colors.green,
     ).animate(_successController);
-    
+
     _successController.forward().then((_) {
       Future.delayed(const Duration(milliseconds: 800), () {
         if (mounted) _successController.reverse();
@@ -197,7 +193,7 @@ class _BrazilianCepFieldState extends ConsumerState<BrazilianCepField>
       begin: Theme.of(context).colorScheme.outline,
       end: Theme.of(context).colorScheme.error,
     ).animate(_successController);
-    
+
     _successController.forward().then((_) {
       Future.delayed(const Duration(milliseconds: 1500), () {
         if (mounted) _successController.reverse();
@@ -211,7 +207,7 @@ class _BrazilianCepFieldState extends ConsumerState<BrazilianCepField>
     if (_borderColorAnimation.value != null) {
       return _borderColorAnimation.value!;
     }
-    
+
     switch (_searchState) {
       case CepSearchState.found:
         return Colors.green;
@@ -246,7 +242,11 @@ class _BrazilianCepFieldState extends ConsumerState<BrazilianCepField>
         return const Icon(Icons.check_circle, color: Colors.green, size: 20);
       case CepSearchState.notFound:
       case CepSearchState.error:
-        return Icon(Icons.error, color: Theme.of(context).colorScheme.error, size: 20);
+        return Icon(
+          Icons.error,
+          color: Theme.of(context).colorScheme.error,
+          size: 20,
+        );
       case CepSearchState.initial:
         return const Icon(Icons.location_on_outlined, size: 20);
     }
@@ -289,14 +289,13 @@ class _BrazilianCepFieldState extends ConsumerState<BrazilianCepField>
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.error,
+              ),
             ),
             contentPadding: const EdgeInsets.all(AppConstants.defaultPadding),
             helperText: _getHelperText(),
-            helperStyle: TextStyle(
-              color: _getHelperColor(),
-              fontSize: 12,
-            ),
+            helperStyle: TextStyle(color: _getHelperColor(), fontSize: 12),
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -349,10 +348,4 @@ class _BrazilianCepFieldState extends ConsumerState<BrazilianCepField>
   }
 }
 
-enum CepSearchState {
-  initial,
-  searching,
-  found,
-  notFound,
-  error,
-}
+enum CepSearchState { initial, searching, found, notFound, error }

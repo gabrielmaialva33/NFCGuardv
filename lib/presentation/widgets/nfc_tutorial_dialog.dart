@@ -26,12 +26,12 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
   late AnimationController _tagController;
   late AnimationController _wavesController;
   late AnimationController _pulseController;
-  
+
   late Animation<double> _phoneAnimation;
   late Animation<double> _tagAnimation;
   late Animation<double> _wavesAnimation;
   late Animation<double> _pulseAnimation;
-  
+
   PageController? _pageController;
   int _currentPage = 0;
   final int _totalPages = 3;
@@ -43,7 +43,7 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
     if (widget.isFirstTime) {
       _pageController = PageController();
     }
-    
+
     // Start continuous animations
     _startContinuousAnimations();
   }
@@ -53,53 +53,38 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    
+
     _tagController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    
+
     _wavesController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
-    
+
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
 
-    _phoneAnimation = Tween<double>(
-      begin: 0.0,
-      end: -20.0,
-    ).animate(CurvedAnimation(
-      parent: _phoneController,
-      curve: Curves.easeInOut,
-    ));
+    _phoneAnimation = Tween<double>(begin: 0.0, end: -20.0).animate(
+      CurvedAnimation(parent: _phoneController, curve: Curves.easeInOut),
+    );
 
     _tagAnimation = Tween<double>(
       begin: 0.0,
       end: 10.0,
-    ).animate(CurvedAnimation(
-      parent: _tagController,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: _tagController, curve: Curves.easeInOut));
 
-    _wavesAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _wavesController,
-      curve: Curves.easeInOut,
-    ));
+    _wavesAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _wavesController, curve: Curves.easeInOut),
+    );
 
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.1,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
   }
 
   void _startContinuousAnimations() {
@@ -136,7 +121,9 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
             ),
           ],
         ),
-        child: widget.isFirstTime ? _buildOnboardingContent() : _buildQuickTutorial(),
+        child: widget.isFirstTime
+            ? _buildOnboardingContent()
+            : _buildQuickTutorial(),
       ),
     );
   }
@@ -165,7 +152,7 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
             }),
           ),
         ),
-        
+
         // Page content
         SizedBox(
           height: 400,
@@ -175,14 +162,10 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
               setState(() => _currentPage = page);
               HapticFeedback.selectionClick();
             },
-            children: [
-              _buildPage1(),
-              _buildPage2(),
-              _buildPage3(),
-            ],
+            children: [_buildPage1(), _buildPage2(), _buildPage3()],
           ),
         ),
-        
+
         // Navigation buttons
         Padding(
           padding: const EdgeInsets.all(AppConstants.defaultPadding),
@@ -212,7 +195,9 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
                     widget.onStartNfc();
                   }
                 },
-                child: Text(_currentPage == _totalPages - 1 ? 'Começar' : 'Próximo'),
+                child: Text(
+                  _currentPage == _totalPages - 1 ? 'Começar' : 'Próximo',
+                ),
               ),
             ],
           ),
@@ -229,24 +214,24 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
         children: [
           Text(
             'Aproximar Tag NFC',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: AppConstants.largePadding),
-          
+
           _buildAnimatedNfcDemo(),
-          
+
           const SizedBox(height: AppConstants.largePadding),
-          
+
           Text(
             'Posicione a tag NFC próxima ao topo traseiro do seu dispositivo',
             style: Theme.of(context).textTheme.bodyLarge,
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: AppConstants.largePadding),
-          
+
           Row(
             children: [
               Expanded(
@@ -284,17 +269,17 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
             color: Theme.of(context).colorScheme.primary,
           ),
           const SizedBox(height: AppConstants.largePadding),
-          
+
           Text(
             'Bem-vindo ao NFCGuard!',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: AppConstants.defaultPadding),
-          
+
           Text(
             'Esta app permite gravar dados seguros em tags NFC de forma simples e intuitiva.',
             style: Theme.of(context).textTheme.bodyLarge,
@@ -313,18 +298,18 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
         children: [
           Text(
             'Como funciona',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: AppConstants.largePadding),
-          
+
           _buildAnimatedNfcDemo(),
-          
+
           const SizedBox(height: AppConstants.largePadding),
-          
+
           Text(
             'Aproxime a tag NFC do topo traseiro do seu dispositivo. O sensor NFC ficará ativo quando estiver próximo o suficiente.',
             style: Theme.of(context).textTheme.bodyLarge,
@@ -355,17 +340,17 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(height: AppConstants.defaultPadding),
-                
+
                 Text(
                   'Segurança',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
-                
+
                 const SizedBox(height: AppConstants.smallPadding),
-                
+
                 Text(
                   'Seus códigos são únicos e protegidos. Cada código só pode ser usado uma vez, garantindo máxima segurança.',
                   style: Theme.of(context).textTheme.bodyMedium,
@@ -374,14 +359,14 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
               ],
             ),
           ),
-          
+
           const SizedBox(height: AppConstants.largePadding),
-          
+
           Text(
             'Pronto para começar?',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
         ],
@@ -403,12 +388,14 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
                 size: const Size(200, 200),
                 painter: NfcWavesPainter(
                   progress: _wavesAnimation.value,
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.3),
                 ),
               );
             },
           ),
-          
+
           // Phone animation
           AnimatedBuilder(
             animation: _phoneAnimation,
@@ -432,7 +419,9 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.shadow.withValues(alpha: 0.1),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -450,7 +439,7 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
               );
             },
           ),
-          
+
           // Tag animation
           AnimatedBuilder(
             animation: _tagAnimation,
@@ -465,7 +454,9 @@ class _NfcTutorialDialogState extends State<NfcTutorialDialog>
                     borderRadius: BorderRadius.circular(3),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.2),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.shadow.withValues(alpha: 0.2),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -492,7 +483,7 @@ class NfcWavesPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final maxRadius = size.width / 2;
-    
+
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
@@ -504,7 +495,7 @@ class NfcWavesPainter extends CustomPainter {
       final waveProgress = ((progress + delay) % 1.0);
       final radius = maxRadius * waveProgress;
       final opacity = (1.0 - waveProgress);
-      
+
       paint.color = color.withValues(alpha: color.a * opacity);
       canvas.drawCircle(center, radius, paint);
     }

@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/auth_provider.dart';
-import '../../widgets/brazilian_cpf_field.dart';
 import '../../widgets/brazilian_cep_field.dart';
+import '../../widgets/brazilian_cpf_field.dart';
 import '../home/home_page.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
@@ -209,9 +209,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             },
           ),
           const SizedBox(height: 16),
-          BrazilianCpfField(
-            controller: _cpfController,
-          ),
+          BrazilianCpfField(controller: _cpfController),
           const SizedBox(height: 16),
           TextFormField(
             controller: _emailController,
@@ -243,7 +241,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             validator: (value) {
               if (value?.isEmpty ?? true) return 'Telefone é obrigatório';
               final cleanPhone = value!.replaceAll(RegExp(r'[^0-9]'), '');
-              if (cleanPhone.length < 10) return 'Telefone deve ter pelo menos 10 dígitos';
+              if (cleanPhone.length < 10)
+                return 'Telefone deve ter pelo menos 10 dígitos';
               return null;
             },
           ),
@@ -409,7 +408,8 @@ class _PhoneInputFormatter extends TextInputFormatter {
     } else if (digitsOnly.length <= 7) {
       formatted = '(${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2)}';
     } else {
-      formatted = '(${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2, 7)}-${digitsOnly.substring(7)}';
+      formatted =
+          '(${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2, 7)}-${digitsOnly.substring(7)}';
     }
 
     return TextEditingValue(

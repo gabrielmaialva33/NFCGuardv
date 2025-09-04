@@ -30,7 +30,7 @@ class _BrazilianCpfFieldState extends ConsumerState<BrazilianCpfField>
   late AnimationController _validateController;
   late Animation<double> _pulseAnimation;
   late Animation<Color?> _borderColorAnimation;
-  
+
   CpfValidationState _validationState = CpfValidationState.initial;
   String? _errorMessage;
   bool _isValidating = false;
@@ -47,19 +47,15 @@ class _BrazilianCpfFieldState extends ConsumerState<BrazilianCpfField>
       duration: AppConstants.fastAnimationDuration,
       vsync: this,
     );
-    
+
     _validateController = AnimationController(
       duration: AppConstants.animationDuration,
       vsync: this,
     );
 
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.02,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
 
     _borderColorAnimation = ColorTween(
       begin: null,
@@ -78,7 +74,7 @@ class _BrazilianCpfFieldState extends ConsumerState<BrazilianCpfField>
   void _onTextChanged() {
     final text = widget.controller.text;
     final cleanText = text.replaceAll(RegExp(r'[^\d]'), '');
-    
+
     // Auto-format CPF as user types
     if (cleanText.length <= 11) {
       final formatted = _formatCpf(cleanText);
@@ -137,15 +133,17 @@ class _BrazilianCpfFieldState extends ConsumerState<BrazilianCpfField>
       _isValidating = false;
     });
 
-    widget.onValidationChange?.call(_validationState == CpfValidationState.valid);
+    widget.onValidationChange?.call(
+      _validationState == CpfValidationState.valid,
+    );
   }
 
   bool _isValidCpf(String cpf) {
     if (cpf.length != 11) return false;
-    
+
     // Check for known invalid patterns
     if (RegExp(r'^(\d)\1{10}$').hasMatch(cpf)) return false;
-    
+
     // Calculate check digits
     int sum = 0;
     for (int i = 0; i < 9; i++) {
@@ -153,16 +151,16 @@ class _BrazilianCpfFieldState extends ConsumerState<BrazilianCpfField>
     }
     int digit1 = 11 - (sum % 11);
     if (digit1 >= 10) digit1 = 0;
-    
+
     if (int.parse(cpf[9]) != digit1) return false;
-    
+
     sum = 0;
     for (int i = 0; i < 10; i++) {
       sum += int.parse(cpf[i]) * (11 - i);
     }
     int digit2 = 11 - (sum % 11);
     if (digit2 >= 10) digit2 = 0;
-    
+
     return int.parse(cpf[10]) == digit2;
   }
 
@@ -171,7 +169,7 @@ class _BrazilianCpfFieldState extends ConsumerState<BrazilianCpfField>
       begin: Theme.of(context).colorScheme.outline,
       end: Colors.green,
     ).animate(_validateController);
-    
+
     _validateController.forward().then((_) {
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) _validateController.reverse();
@@ -187,7 +185,7 @@ class _BrazilianCpfFieldState extends ConsumerState<BrazilianCpfField>
       begin: Theme.of(context).colorScheme.outline,
       end: Theme.of(context).colorScheme.error,
     ).animate(_validateController);
-    
+
     _validateController.forward().then((_) {
       Future.delayed(const Duration(milliseconds: 1000), () {
         if (mounted) _validateController.reverse();
@@ -196,7 +194,7 @@ class _BrazilianCpfFieldState extends ConsumerState<BrazilianCpfField>
 
     // Haptic feedback for error
     HapticFeedback.mediumImpact();
-    
+
     // Subtle pulse animation for error
     _pulseController.forward().then((_) => _pulseController.reverse());
   }
@@ -205,7 +203,7 @@ class _BrazilianCpfFieldState extends ConsumerState<BrazilianCpfField>
     if (_borderColorAnimation.value != null) {
       return _borderColorAnimation.value!;
     }
-    
+
     switch (_validationState) {
       case CpfValidationState.valid:
         return Colors.green;
@@ -223,7 +221,11 @@ class _BrazilianCpfFieldState extends ConsumerState<BrazilianCpfField>
       case CpfValidationState.valid:
         return const Icon(Icons.check_circle, color: Colors.green, size: 20);
       case CpfValidationState.invalid:
-        return Icon(Icons.error, color: Theme.of(context).colorScheme.error, size: 20);
+        return Icon(
+          Icons.error,
+          color: Theme.of(context).colorScheme.error,
+          size: 20,
+        );
       case CpfValidationState.typing:
         return SizedBox(
           width: 16,
@@ -265,21 +267,33 @@ class _BrazilianCpfFieldState extends ConsumerState<BrazilianCpfField>
                   suffixIcon: _buildSuffixIcon(),
                   errorText: _errorMessage,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+                    borderRadius: BorderRadius.circular(
+                      AppConstants.borderRadius,
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+                    borderRadius: BorderRadius.circular(
+                      AppConstants.borderRadius,
+                    ),
                     borderSide: BorderSide(color: _getBorderColor()),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+                    borderRadius: BorderRadius.circular(
+                      AppConstants.borderRadius,
+                    ),
                     borderSide: BorderSide(color: _getBorderColor(), width: 2),
                   ),
                   errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-                    borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                    borderRadius: BorderRadius.circular(
+                      AppConstants.borderRadius,
+                    ),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
-                  contentPadding: const EdgeInsets.all(AppConstants.defaultPadding),
+                  contentPadding: const EdgeInsets.all(
+                    AppConstants.defaultPadding,
+                  ),
                   helperText: _getHelperText(),
                   helperStyle: TextStyle(
                     color: _getHelperColor(),
@@ -330,9 +344,4 @@ class _BrazilianCpfFieldState extends ConsumerState<BrazilianCpfField>
   }
 }
 
-enum CpfValidationState {
-  initial,
-  typing,
-  valid,
-  invalid,
-}
+enum CpfValidationState { initial, typing, valid, invalid }
