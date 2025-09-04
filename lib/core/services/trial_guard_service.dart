@@ -31,7 +31,7 @@ class TrialGuardService {
       }
 
       // Get device fingerprint
-      final currentFingerprint = await _getDeviceFingerdebugPrint();
+      final currentFingerprint = await _getDeviceFingerprint();
       final storedFingerprint = await _secureStorage.read(
         key: _deviceFingerprintKey,
       );
@@ -111,7 +111,7 @@ class TrialGuardService {
   }
 
   /// Generates a unique device fingerprint
-  static Future<String> _getDeviceFingerdebugPrint() async {
+  static Future<String> _getDeviceFingerprint() async {
     final deviceInfo = DeviceInfoPlugin();
     String fingerprint = '';
 
