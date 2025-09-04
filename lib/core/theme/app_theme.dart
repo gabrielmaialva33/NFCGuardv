@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 class AppTheme {
   // Paleta de cores harmoniosa para NFCGuard inspirada em tons frios e profissionais
   static const Color _primaryBlue = Color(0xFF3C9EFE); // Azul oceano mais suave
-  static const Color _secondaryTeal = Color(0xFF5DACE8); // Azul-verde harmonioso
-  static const Color _accentTurquoise = Color(0xFF47ACA6); // Turquesa profissional
+  static const Color _secondaryTeal = Color(
+    0xFF5DACE8,
+  ); // Azul-verde harmonioso
+  static const Color _accentTurquoise = Color(
+    0xFF47ACA6,
+  ); // Turquesa profissional
   static const Color _errorRed = Color(0xFFE53935);
-  
+
   static ThemeData get lightTheme {
     const lightColorScheme = ColorScheme(
       brightness: Brightness.light,
@@ -42,7 +46,9 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           elevation: 2,
           shadowColor: Colors.black26,
         ),
@@ -50,7 +56,9 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           side: BorderSide(color: lightColorScheme.outline),
         ),
       ),
@@ -125,7 +133,9 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           elevation: 4,
           shadowColor: Colors.black54,
         ),
@@ -133,7 +143,9 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           side: BorderSide(color: darkColorScheme.outline),
         ),
       ),

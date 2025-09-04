@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 import '../../data/datasources/secure_storage_service.dart';
@@ -8,10 +9,11 @@ import 'supabase_service.dart';
 
 class SyncService {
   static SyncService? _instance;
+
   static SyncService get instance => _instance ??= SyncService._();
-  
+
   SyncService._();
-  
+
   final _storageService = SecureStorageService();
   final _authRepository = SupabaseAuthRepository();
   final _nfcRepository = SupabaseNfcRepository();
@@ -25,10 +27,10 @@ class SyncService {
 
       // 1. Sync local data to Supabase
       await syncLocalToSupabase();
-      
+
       // 2. Sync Supabase data to local
       await syncSupabaseToLocal();
-      
+
       return true;
     } catch (e) {
       if (kDebugMode) debugPrint('Full sync failed: $e');
@@ -62,13 +64,13 @@ class SyncService {
 
       // Get user profile
       final userProfile = await _authRepository.getUserProfile(userId);
-      
+
       // Get all used codes
       final usedCodes = await _nfcRepository.getUserUsedCodes();
-      
+
       // Get NFC logs
       final nfcLogs = await _nfcRepository.getNfcLogs();
-      
+
       // Get trial data if exists
       final trialData = await _getTrialDataForBackup();
 
@@ -81,7 +83,7 @@ class SyncService {
           'used_codes': usedCodes,
           'nfc_logs': nfcLogs,
           'trial_data': trialData,
-        }
+        },
       };
 
       return backup;
@@ -99,16 +101,16 @@ class SyncService {
       }
 
       final data = backup['data'] as Map<String, dynamic>;
-      
+
       // Clear existing local data
       await _storageService.clearStorage();
-      
+
       // Restore used codes to local storage
       final usedCodes = data['used_codes'] as List<dynamic>? ?? [];
       for (final codeData in usedCodes) {
         await _storageService.addUsedCode(codeData['code']);
       }
-      
+
       return true;
     } catch (e) {
       if (kDebugMode) debugPrint('Failed to restore from backup: $e');
@@ -121,7 +123,7 @@ class SyncService {
     try {
       final backup = await createBackup();
       if (backup == null) return null;
-      
+
       return json.encode(backup);
     } catch (e) {
       if (kDebugMode) debugPrint('Failed to export user data: $e');
@@ -151,7 +153,7 @@ class SyncService {
       final isConnected = await checkConnection();
       final isAuthenticated = SupabaseService.instance.isAuthenticated;
       final lastSyncTime = await _getLastSyncTime();
-      
+
       return {
         'is_connected': isConnected,
         'is_authenticated': isAuthenticated,
@@ -173,9 +175,7 @@ class SyncService {
   Future<Map<String, int>> getLocalStats() async {
     try {
       final usedCodes = await _storageService.getUsedCodes();
-      return {
-        'used_codes': usedCodes.length,
-      };
+      return {'used_codes': usedCodes.length};
     } catch (e) {
       return {'used_codes': 0};
     }
@@ -190,10 +190,7 @@ class SyncService {
       final usedCodes = await _nfcRepository.getUserUsedCodes();
       final nfcLogs = await _nfcRepository.getNfcLogs();
 
-      return {
-        'used_codes': usedCodes.length,
-        'nfc_logs': nfcLogs.length,
-      };
+      return {'used_codes': usedCodes.length, 'nfc_logs': nfcLogs.length};
     } catch (e) {
       return {};
     }
@@ -204,7 +201,7 @@ class SyncService {
     try {
       final localStats = await getLocalStats();
       final supabaseStats = await getSupabaseStats();
-      
+
       // If counts don't match, sync is needed
       return localStats['used_codes'] != supabaseStats['used_codes'];
     } catch (e) {
@@ -228,7 +225,7 @@ class SyncService {
   /// Update last sync time
   Future<void> _updateLastSyncTime() async {
     await _storageService.storeValue(
-      'last_sync_time', 
+      'last_sync_time',
       DateTime.now().toIso8601String(),
     );
   }

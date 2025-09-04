@@ -59,9 +59,18 @@ void main() {
 
       test('should return false for codes with invalid check digit', () {
         // Create codes with wrong check digits
-        expect(CodeGenerator.validateCode('12345678'), isFalse); // correct would be 12345674
-        expect(CodeGenerator.validateCode('00000001'), isFalse); // correct would be 00000000
-        expect(CodeGenerator.validateCode('99999999'), isFalse); // correct would be 99999997
+        expect(
+          CodeGenerator.validateCode('12345678'),
+          isFalse,
+        ); // correct would be 12345674
+        expect(
+          CodeGenerator.validateCode('00000001'),
+          isFalse,
+        ); // correct would be 00000000
+        expect(
+          CodeGenerator.validateCode('99999999'),
+          isFalse,
+        ); // correct would be 99999997
       });
 
       test('should return false for non-numeric codes', () {
@@ -88,7 +97,10 @@ void main() {
         // Since _calculateCheckDigit is private, we test through validateCode
 
         // Test known valid codes
-        expect(CodeGenerator.validateCode('00000000'), isTrue); // 0000000 + check digit 0 = valid
+        expect(
+          CodeGenerator.validateCode('00000000'),
+          isTrue,
+        ); // 0000000 + check digit 0 = valid
 
         // Generate valid codes and verify they validate
         final codes = List.generate(

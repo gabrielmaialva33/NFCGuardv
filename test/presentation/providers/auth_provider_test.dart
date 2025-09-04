@@ -12,7 +12,12 @@ import 'package:search_cep/search_cep.dart';
 
 import 'auth_provider_test.mocks.dart';
 
-@GenerateMocks([SecureStorageService, ViaCepSearchCep, CodeGenerator, ViaCepInfo])
+@GenerateMocks([
+  SecureStorageService,
+  ViaCepSearchCep,
+  CodeGenerator,
+  ViaCepInfo,
+])
 void main() {
   late ProviderContainer container;
   late MockSecureStorageService mockStorageService;
@@ -240,7 +245,9 @@ void main() {
 
       test('should handle ZIP code search errors gracefully', () async {
         // Act
-        final result = await container.read(authProvider.notifier).searchZipCode('invalid');
+        final result = await container
+            .read(authProvider.notifier)
+            .searchZipCode('invalid');
 
         // Assert - should not throw and return null for invalid ZIP
         expect(result, isNull);

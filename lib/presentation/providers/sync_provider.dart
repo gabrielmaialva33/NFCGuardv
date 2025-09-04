@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 import '../../core/services/sync_service.dart';
 
 part 'sync_provider.g.dart';
@@ -29,9 +30,9 @@ class SyncNotifier extends _$SyncNotifier {
   Future<void> performFullSync() async {
     try {
       state = const AsyncValue.data(SyncStatus.syncing);
-      
+
       final success = await _syncService.performFullSync();
-      
+
       if (success) {
         state = const AsyncValue.data(SyncStatus.success);
       } else {
@@ -46,7 +47,7 @@ class SyncNotifier extends _$SyncNotifier {
   Future<void> syncToCloud() async {
     try {
       state = const AsyncValue.data(SyncStatus.syncing);
-      
+
       await _syncService.syncLocalToSupabase();
       state = const AsyncValue.data(SyncStatus.success);
     } catch (e) {
@@ -58,7 +59,7 @@ class SyncNotifier extends _$SyncNotifier {
   Future<void> syncFromCloud() async {
     try {
       state = const AsyncValue.data(SyncStatus.syncing);
-      
+
       await _syncService.syncSupabaseToLocal();
       state = const AsyncValue.data(SyncStatus.success);
     } catch (e) {
@@ -80,15 +81,15 @@ class SyncNotifier extends _$SyncNotifier {
   Future<bool> importData(String jsonData) async {
     try {
       state = const AsyncValue.data(SyncStatus.syncing);
-      
+
       final success = await _syncService.importUserData(jsonData);
-      
+
       if (success) {
         state = const AsyncValue.data(SyncStatus.success);
       } else {
         state = const AsyncValue.data(SyncStatus.error);
       }
-      
+
       return success;
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
@@ -106,17 +107,10 @@ class SyncNotifier extends _$SyncNotifier {
     try {
       final localStats = await _syncService.getLocalStats();
       final cloudStats = await _syncService.getSupabaseStats();
-      
-      return {
-        'local': localStats,
-        'cloud': cloudStats,
-      };
+
+      return {'local': localStats, 'cloud': cloudStats};
     } catch (e) {
-      return {
-        'local': {},
-        'cloud': {},
-        'error': e.toString(),
-      };
+      return {'local': {}, 'cloud': {}, 'error': e.toString()};
     }
   }
 

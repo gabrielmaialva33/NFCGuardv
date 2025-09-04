@@ -63,78 +63,78 @@ class _HomePageState extends ConsumerState<HomePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Bem-vindo, ${user.fullName}',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Código único: ${user.eightDigitCode}',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
+          children: [
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Bem-vindo, ${user.fullName}',
+                      style: Theme.of(context).textTheme.headlineSmall,
                     ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Código único: ${user.eightDigitCode}',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Gravar Tags NFC',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 16),
+            GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              children: List.generate(
+                AppConstants.maxTagDataSets,
+                (index) => _buildNfcButton(
+                  context,
+                  'Gravar tag com\ndados ${index + 1}',
+                  () => _writeNfcTag(context, index + 1),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Gerenciar Tags',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildNfcButton(
+                    context,
+                    'Proteger tag\ncom senha',
+                    () => _protectNfcTag(context),
+                    color: Theme.of(context).colorScheme.tertiary,
                   ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Gravar Tags NFC',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 16),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            children: List.generate(
-              AppConstants.maxTagDataSets,
-              (index) => _buildNfcButton(
-                context,
-                'Gravar tag com\ndados ${index + 1}',
-                () => _writeNfcTag(context, index + 1),
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Gerenciar Tags',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildNfcButton(
-                  context,
-                  'Proteger tag\ncom senha',
-                  () => _protectNfcTag(context),
-                  color: Theme.of(context).colorScheme.tertiary,
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildNfcButton(
-                  context,
-                  'Remover senha\nda tag',
-                  () => _removeNfcPassword(context),
-                  color: Theme.of(context).colorScheme.error,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildNfcButton(
+                    context,
+                    'Remover senha\nda tag',
+                    () => _removeNfcPassword(context),
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
         ),
       ),
     );

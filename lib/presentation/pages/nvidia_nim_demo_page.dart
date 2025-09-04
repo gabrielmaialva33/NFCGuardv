@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/nvidia_nim_provider.dart';
+
 import '../../core/constants/app_constants.dart';
+import '../providers/nvidia_nim_provider.dart';
 
 class NvidiaNimDemoPage extends ConsumerStatefulWidget {
   const NvidiaNimDemoPage({super.key});
@@ -150,30 +151,43 @@ class _NvidiaNimDemoPageState extends ConsumerState<NvidiaNimDemoPage> {
                       nimState.when(
                         data: (response) => Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                          padding: const EdgeInsets.all(
+                            AppConstants.defaultPadding,
+                          ),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(
+                              AppConstants.borderRadius,
+                            ),
                           ),
                           child: SelectableText(
-                            response.isEmpty ? 'Nenhuma resposta ainda...' : response,
+                            response.isEmpty
+                                ? 'Nenhuma resposta ainda...'
+                                : response,
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
-                        loading: () => const Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
                         error: (error, stack) => Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                          padding: const EdgeInsets.all(
+                            AppConstants.defaultPadding,
+                          ),
                           decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.errorContainer,
-                            borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+                            borderRadius: BorderRadius.circular(
+                              AppConstants.borderRadius,
+                            ),
                           ),
                           child: Text(
                             'Erro: $error',
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.onErrorContainer,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onErrorContainer,
                             ),
                           ),
                         ),

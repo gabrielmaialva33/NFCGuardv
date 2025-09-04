@@ -13,7 +13,7 @@ import 'secure_storage_service_test.mocks.dart';
 @GenerateMocks([FlutterSecureStorage])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  
+
   late SecureStorageService service;
   late MockFlutterSecureStorage mockStorage;
 

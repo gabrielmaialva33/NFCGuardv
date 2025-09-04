@@ -83,13 +83,10 @@ class Auth extends _$Auth {
   }
 
   /// Sign in with email and password
-  Future<void> signIn({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> signIn({required String email, required String password}) async {
     try {
       state = const AsyncValue.loading();
-      
+
       final response = await _authRepository.signIn(
         email: email,
         password: password,
@@ -249,7 +246,7 @@ class Auth extends _$Auth {
 
   /// Get current user session
   User? get currentUser => _supabaseClient.auth.currentUser;
-  
+
   /// Check if user is authenticated
   bool get isAuthenticated => _supabaseClient.auth.currentUser != null;
 }

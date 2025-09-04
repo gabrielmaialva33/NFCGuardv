@@ -1,5 +1,7 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+
 import '../constants/app_constants.dart';
 
 class NvidiaNimService {
@@ -24,10 +26,7 @@ class NvidiaNimService {
         body: json.encode({
           'model': _model,
           'messages': [
-            {
-              'role': 'user',
-              'content': prompt,
-            }
+            {'role': 'user', 'content': prompt},
           ],
           'temperature': temperature,
           'top_p': topP,
@@ -57,7 +56,7 @@ Analise este código de segurança NFC e forneça insights sobre:
 3. Recomendações para uso
 
 Código: ''';
-    
+
     return await generateResponse(prompt: '$prompt$code');
   }
 
@@ -67,7 +66,8 @@ Código: ''';
     bool includeLetters = true,
     bool includeSymbols = false,
   }) async {
-    final prompt = '''
+    final prompt =
+        '''
 Gere um código seguro de $length caracteres para uso em tags NFC com as seguintes características:
 - Incluir números: $includeNumbers
 - Incluir letras: $includeLetters  
@@ -75,12 +75,13 @@ Gere um código seguro de $length caracteres para uso em tags NFC com as seguint
 
 Retorne apenas o código gerado, sem explicações adicionais.
 ''';
-    
+
     return await generateResponse(prompt: prompt);
   }
 
   Future<Map<String, dynamic>> validateCpfWithFraudDetection(String cpf) async {
-    final prompt = '''
+    final prompt =
+        '''
 Analise este CPF brasileiro para validação e detecção de fraude:
 
 CPF: $cpf
@@ -111,10 +112,10 @@ Responda APENAS em formato JSON válido:
   "analise_detalhada": "texto explicativo"
 }
 ''';
-    
+
     try {
       final response = await generateResponse(prompt: prompt, temperature: 0.1);
-      
+
       // Tentar parsear como JSON
       try {
         final jsonResponse = json.decode(response.trim());
@@ -124,9 +125,14 @@ Responda APENAS em formato JSON válido:
         return {
           'valido': _isValidCpf(cpf),
           'fraudulento': _hasCommonFraudPatterns(cpf),
-          'score_confiabilidade': _isValidCpf(cpf) && !_hasCommonFraudPatterns(cpf) ? 85 : 20,
-          'recomendacao': _isValidCpf(cpf) && !_hasCommonFraudPatterns(cpf) ? 'ACEITAR' : 'REJEITAR',
-          'motivos': ['Análise básica aplicada devido a erro na resposta da AI'],
+          'score_confiabilidade':
+              _isValidCpf(cpf) && !_hasCommonFraudPatterns(cpf) ? 85 : 20,
+          'recomendacao': _isValidCpf(cpf) && !_hasCommonFraudPatterns(cpf)
+              ? 'ACEITAR'
+              : 'REJEITAR',
+          'motivos': [
+            'Análise básica aplicada devido a erro na resposta da AI',
+          ],
           'analise_detalhada': response,
         };
       }
@@ -135,8 +141,11 @@ Responda APENAS em formato JSON válido:
       return {
         'valido': _isValidCpf(cpf),
         'fraudulento': _hasCommonFraudPatterns(cpf),
-        'score_confiabilidade': _isValidCpf(cpf) && !_hasCommonFraudPatterns(cpf) ? 70 : 10,
-        'recomendacao': _isValidCpf(cpf) && !_hasCommonFraudPatterns(cpf) ? 'REVISAR' : 'REJEITAR',
+        'score_confiabilidade':
+            _isValidCpf(cpf) && !_hasCommonFraudPatterns(cpf) ? 70 : 10,
+        'recomendacao': _isValidCpf(cpf) && !_hasCommonFraudPatterns(cpf)
+            ? 'REVISAR'
+            : 'REJEITAR',
         'motivos': ['Análise offline devido a erro na conexão com AI'],
         'analise_detalhada': 'Erro na conexão: $e',
       };
@@ -147,12 +156,12 @@ Responda APENAS em formato JSON válido:
   bool _isValidCpf(String cpf) {
     // Remove formatação
     cpf = cpf.replaceAll(RegExp(r'[^0-9]'), '');
-    
+
     if (cpf.length != 11) return false;
-    
+
     // Verifica se todos os dígitos são iguais
     if (RegExp(r'^(\d)\1{10}$').hasMatch(cpf)) return false;
-    
+
     // Calcula primeiro dígito verificador
     int sum = 0;
     for (int i = 0; i < 9; i++) {
@@ -160,7 +169,7 @@ Responda APENAS em formato JSON válido:
     }
     int digit1 = 11 - (sum % 11);
     if (digit1 > 9) digit1 = 0;
-    
+
     // Calcula segundo dígito verificador
     sum = 0;
     for (int i = 0; i < 10; i++) {
@@ -168,41 +177,49 @@ Responda APENAS em formato JSON válido:
     }
     int digit2 = 11 - (sum % 11);
     if (digit2 > 9) digit2 = 0;
-    
+
     return cpf[9] == digit1.toString() && cpf[10] == digit2.toString();
   }
 
   // Detecção de padrões fraudulentos comuns
   bool _hasCommonFraudPatterns(String cpf) {
     cpf = cpf.replaceAll(RegExp(r'[^0-9]'), '');
-    
+
     // Lista de CPFs inválidos conhecidos (todos os dígitos iguais)
     final invalidCpfs = [
-      '00000000000', '11111111111', '22222222222', '33333333333',
-      '44444444444', '55555555555', '66666666666', '77777777777',
-      '88888888888', '99999999999'
+      '00000000000',
+      '11111111111',
+      '22222222222',
+      '33333333333',
+      '44444444444',
+      '55555555555',
+      '66666666666',
+      '77777777777',
+      '88888888888',
+      '99999999999',
     ];
-    
+
     if (invalidCpfs.contains(cpf)) return true;
-    
+
     // Verifica apenas sequências óbvias nos primeiros 9 dígitos
     bool isObviousSequential = true;
-    for (int i = 1; i < 9; i++) { // Apenas os primeiros 9 dígitos
-      if (int.parse(cpf[i]) != int.parse(cpf[i-1]) + 1) {
+    for (int i = 1; i < 9; i++) {
+      // Apenas os primeiros 9 dígitos
+      if (int.parse(cpf[i]) != int.parse(cpf[i - 1]) + 1) {
         isObviousSequential = false;
         break;
       }
     }
-    
+
     // Verifica sequências decrescentes
     bool isDescendingSequential = true;
     for (int i = 1; i < 9; i++) {
-      if (int.parse(cpf[i]) != int.parse(cpf[i-1]) - 1) {
+      if (int.parse(cpf[i]) != int.parse(cpf[i - 1]) - 1) {
         isDescendingSequential = false;
         break;
       }
     }
-    
+
     return isObviousSequential || isDescendingSequential;
   }
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/sync_provider.dart';
+
 import '../providers/supabase_auth_provider.dart';
+import '../providers/sync_provider.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
@@ -24,12 +25,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   Future<void> _loadStatus() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final syncNotifier = ref.read(syncNotifierProvider.notifier);
       final syncStatus = await syncNotifier.getSyncStatus();
       final stats = await syncNotifier.getStats();
-      
+
       if (mounted) {
         setState(() {
           _syncStatus = syncStatus;
@@ -59,7 +60,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       final data = await ref.read(syncNotifierProvider.notifier).exportData();
       if (data != null) {
         await Clipboard.setData(ClipboardData(text: data));
-        _showSnackBar('Dados exportados para área de transferência!', Colors.green);
+        _showSnackBar(
+          'Dados exportados para área de transferência!',
+          Colors.green,
+        );
       } else {
         _showSnackBar('Falha ao exportar dados', Colors.red);
       }
@@ -82,9 +86,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     if (confirm == true) {
       try {
-        final success = await ref.read(syncNotifierProvider.notifier)
+        final success = await ref
+            .read(syncNotifierProvider.notifier)
             .importData(clipboardData!.text!);
-        
+
         if (success) {
           _showSnackBar('Dados importados com sucesso!', Colors.green);
           await _loadStatus();
@@ -243,10 +248,16 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             ),
             const SizedBox(height: 8),
             if (_syncStatus != null) ...[
-              Text('Conectado: ${_syncStatus!['is_connected'] ? 'Sim' : 'Não'}'),
-              Text('Autenticado: ${_syncStatus!['is_authenticated'] ? 'Sim' : 'Não'}'),
+              Text(
+                'Conectado: ${_syncStatus!['is_connected'] ? 'Sim' : 'Não'}',
+              ),
+              Text(
+                'Autenticado: ${_syncStatus!['is_authenticated'] ? 'Sim' : 'Não'}',
+              ),
               if (_syncStatus!['last_sync'] != null)
-                Text('Última sincronização: ${_formatDate(_syncStatus!['last_sync'])}'),
+                Text(
+                  'Última sincronização: ${_formatDate(_syncStatus!['last_sync'])}',
+                ),
             ],
           ],
         ),
@@ -275,7 +286,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   children: [
                     Text(
                       '${_stats!['local']['used_codes'] ?? 0}',
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const Text('Códigos Locais'),
                   ],
@@ -284,7 +298,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   children: [
                     Text(
                       '${_stats!['cloud']['used_codes'] ?? 0}',
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const Text('Códigos na Nuvem'),
                   ],

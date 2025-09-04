@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../providers/auth_provider.dart';
-import '../home/home_page.dart';
 import '../cpf_fraud_analysis_page.dart';
+import '../home/home_page.dart';
 import 'register_page.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -30,11 +30,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   void _login() async {
     if (_formKey.currentState?.validate() ?? false) {
       try {
-        await ref.read(authProvider.notifier).signIn(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-        );
-        
+        await ref
+            .read(authProvider.notifier)
+            .signIn(
+              email: _emailController.text.trim(),
+              password: _passwordController.text,
+            );
+
         if (mounted) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => const HomePage()),
@@ -58,7 +60,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       context,
     ).push(MaterialPageRoute(builder: (context) => const RegisterPage()));
   }
-
 
   void _navigateToCpfFraudAnalysis() {
     Navigator.of(context).push(
@@ -84,7 +85,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     width: 72,
                     height: 72,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Icon(
@@ -109,7 +112,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   'Entre com suas credenciais',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
                     letterSpacing: 0.25,
                   ),
                 ),
@@ -121,15 +126,22 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     labelText: 'Email',
                     prefixIcon: Icon(
                       Icons.email_outlined,
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
                     ),
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
-                    contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                    fillColor: Theme.of(
+                      context,
+                    ).colorScheme.surface.withValues(alpha: 0.8),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 20,
+                      horizontal: 16,
+                    ),
                   ),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
@@ -151,14 +163,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     labelText: 'Senha',
                     prefixIcon: Icon(
                       Icons.lock_outlined,
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _isPasswordVisible
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                       onPressed: () {
                         setState(() {
@@ -171,8 +187,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       borderSide: BorderSide.none,
                     ),
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
-                    contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                    fillColor: Theme.of(
+                      context,
+                    ).colorScheme.surface.withValues(alpha: 0.8),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 20,
+                      horizontal: 16,
+                    ),
                   ),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
@@ -192,7 +213,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     gradient: LinearGradient(
                       colors: [
                         Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+                        Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.8),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -200,7 +223,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -230,7 +255,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 TextButton(
                   onPressed: _navigateToRegister,
                   style: TextButton.styleFrom(
-                    foregroundColor: const Color(0xFF67B7BE), // Tom turquesa suave da paleta
+                    foregroundColor: const Color(0xFF67B7BE),
+                    // Tom turquesa suave da paleta
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   child: const Text('Não tem conta? Cadastre-se'),
@@ -242,7 +268,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   margin: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.3),
                       width: 1.5,
                     ),
                     borderRadius: BorderRadius.circular(16),

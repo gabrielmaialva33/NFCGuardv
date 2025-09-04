@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 import '../../core/services/nvidia_nim_service.dart';
 
 part 'nvidia_nim_provider.g.dart';
@@ -18,7 +19,7 @@ class NvidiaNimState extends _$NvidiaNimState {
 
   Future<void> generateResponse(String prompt) async {
     state = const AsyncValue.loading();
-    
+
     try {
       final service = ref.read(nvidiaNimServiceProvider);
       final response = await service.generateResponse(prompt: prompt);
@@ -30,7 +31,7 @@ class NvidiaNimState extends _$NvidiaNimState {
 
   Future<void> analyzeSecurityCode(String code) async {
     state = const AsyncValue.loading();
-    
+
     try {
       final service = ref.read(nvidiaNimServiceProvider);
       final analysis = await service.analyzeSecurityCode(code);
@@ -47,7 +48,7 @@ class NvidiaNimState extends _$NvidiaNimState {
     bool includeSymbols = false,
   }) async {
     state = const AsyncValue.loading();
-    
+
     try {
       final service = ref.read(nvidiaNimServiceProvider);
       final code = await service.generateSecureCode(
@@ -76,7 +77,7 @@ class CpfValidationState extends _$CpfValidationState {
 
   Future<void> validateCpfWithFraud(String cpf) async {
     state = const AsyncValue.loading();
-    
+
     try {
       final service = ref.read(nvidiaNimServiceProvider);
       final result = await service.validateCpfWithFraudDetection(cpf);

@@ -51,17 +51,15 @@ class _SplashPageState extends ConsumerState<SplashPage> {
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
                 ],
               ),
-              child: Icon(
-                Icons.nfc_outlined,
-                size: 56,
-                color: Colors.white,
-              ),
+              child: Icon(Icons.nfc_outlined, size: 56, color: Colors.white),
             ),
             const SizedBox(height: 40),
             Text(
@@ -76,7 +74,9 @@ class _SplashPageState extends ConsumerState<SplashPage> {
             Text(
               'Segurança inteligente para NFC',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.7),
                 letterSpacing: 0.5,
                 fontWeight: FontWeight.w400,
               ),

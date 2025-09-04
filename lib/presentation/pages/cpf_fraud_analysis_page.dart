@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/nvidia_nim_provider.dart';
+
 import '../../core/constants/app_constants.dart';
+import '../providers/nvidia_nim_provider.dart';
 
 class CpfFraudAnalysisPage extends ConsumerStatefulWidget {
   const CpfFraudAnalysisPage({super.key});
 
   @override
-  ConsumerState<CpfFraudAnalysisPage> createState() => _CpfFraudAnalysisPageState();
+  ConsumerState<CpfFraudAnalysisPage> createState() =>
+      _CpfFraudAnalysisPageState();
 }
 
 class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
@@ -83,7 +85,9 @@ class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
                       Text(
                         'Utilize AI avançada para detectar fraudes e validar CPFs com alta precisão',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                       const SizedBox(height: AppConstants.defaultPadding),
@@ -101,7 +105,9 @@ class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
                           if (formatted != value) {
                             _cpfController.value = TextEditingValue(
                               text: formatted,
-                              selection: TextSelection.collapsed(offset: formatted.length),
+                              selection: TextSelection.collapsed(
+                                offset: formatted.length,
+                              ),
                             );
                           }
                         },
@@ -111,28 +117,43 @@ class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
                         children: [
                           Expanded(
                             child: ElevatedButton.icon(
-                              onPressed: cpfState.isLoading ? null : () {
-                                if (_cpfController.text.isNotEmpty) {
-                                  ref
-                                      .read(cpfValidationStateProvider.notifier)
-                                      .validateCpfWithFraud(_cpfController.text);
-                                }
-                              },
-                              icon: cpfState.isLoading 
+                              onPressed: cpfState.isLoading
+                                  ? null
+                                  : () {
+                                      if (_cpfController.text.isNotEmpty) {
+                                        ref
+                                            .read(
+                                              cpfValidationStateProvider
+                                                  .notifier,
+                                            )
+                                            .validateCpfWithFraud(
+                                              _cpfController.text,
+                                            );
+                                      }
+                                    },
+                              icon: cpfState.isLoading
                                   ? const SizedBox(
                                       width: 16,
                                       height: 16,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
                                     )
                                   : const Icon(Icons.security),
-                              label: Text(cpfState.isLoading ? 'Analisando...' : 'Analisar CPF'),
+                              label: Text(
+                                cpfState.isLoading
+                                    ? 'Analisando...'
+                                    : 'Analisar CPF',
+                              ),
                             ),
                           ),
                           const SizedBox(width: 8),
                           IconButton(
                             onPressed: () {
                               _cpfController.clear();
-                              ref.read(cpfValidationStateProvider.notifier).reset();
+                              ref
+                                  .read(cpfValidationStateProvider.notifier)
+                                  .reset();
                             },
                             icon: const Icon(Icons.clear),
                             tooltip: 'Limpar',
@@ -149,7 +170,9 @@ class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
                   if (result == null) {
                     return Card(
                       child: Padding(
-                        padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                        padding: const EdgeInsets.all(
+                          AppConstants.defaultPadding,
+                        ),
                         child: Column(
                           children: [
                             Icon(
@@ -172,17 +195,24 @@ class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
                   final isValid = result['valido'] as bool? ?? false;
                   final isFraud = result['fraudulento'] as bool? ?? true;
                   final score = result['score_confiabilidade'] as int? ?? 0;
-                  final recommendation = result['recomendacao'] as String? ?? 'REJEITAR';
-                  final reasons = (result['motivos'] as List<dynamic>?)?.cast<String>() ?? [];
+                  final recommendation =
+                      result['recomendacao'] as String? ?? 'REJEITAR';
+                  final reasons =
+                      (result['motivos'] as List<dynamic>?)?.cast<String>() ??
+                      [];
                   final analysis = result['analise_detalhada'] as String? ?? '';
 
                   return Column(
                     children: [
                       // Status geral
                       Card(
-                        color: _getRecommendationColor(recommendation).withValues(alpha: 0.1),
+                        color: _getRecommendationColor(
+                          recommendation,
+                        ).withValues(alpha: 0.1),
                         child: Padding(
-                          padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                          padding: const EdgeInsets.all(
+                            AppConstants.defaultPadding,
+                          ),
                           child: Row(
                             children: [
                               Icon(
@@ -197,14 +227,21 @@ class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
                                   children: [
                                     Text(
                                       recommendation.toUpperCase(),
-                                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                        color: _getRecommendationColor(recommendation),
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium
+                                          ?.copyWith(
+                                            color: _getRecommendationColor(
+                                              recommendation,
+                                            ),
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
                                     Text(
                                       'Score de Confiabilidade: $score/100',
-                                      style: Theme.of(context).textTheme.bodyLarge,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyLarge,
                                     ),
                                   ],
                                 ),
@@ -214,17 +251,21 @@ class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Detalhes da validação
                       Card(
                         child: Padding(
-                          padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                          padding: const EdgeInsets.all(
+                            AppConstants.defaultPadding,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Detalhes da Análise',
-                                style: Theme.of(context).textTheme.headlineSmall,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineSmall,
                               ),
                               const SizedBox(height: 16),
                               Row(
@@ -237,7 +278,9 @@ class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
                                   Text(
                                     isValid ? 'CPF Válido' : 'CPF Inválido',
                                     style: TextStyle(
-                                      color: isValid ? Colors.green : Colors.red,
+                                      color: isValid
+                                          ? Colors.green
+                                          : Colors.red,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -247,14 +290,20 @@ class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
                               Row(
                                 children: [
                                   Icon(
-                                    isFraud ? Icons.warning : Icons.verified_user,
+                                    isFraud
+                                        ? Icons.warning
+                                        : Icons.verified_user,
                                     color: isFraud ? Colors.red : Colors.green,
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    isFraud ? 'Padrão Fraudulento Detectado' : 'Sem Indícios de Fraude',
+                                    isFraud
+                                        ? 'Padrão Fraudulento Detectado'
+                                        : 'Sem Indícios de Fraude',
                                     style: TextStyle(
-                                      color: isFraud ? Colors.red : Colors.green,
+                                      color: isFraud
+                                          ? Colors.red
+                                          : Colors.green,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -264,71 +313,92 @@ class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
                           ),
                         ),
                       ),
-                      
+
                       // Motivos
                       if (reasons.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         Card(
                           child: Padding(
-                            padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                            padding: const EdgeInsets.all(
+                              AppConstants.defaultPadding,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'Motivos da Análise',
-                                  style: Theme.of(context).textTheme.headlineSmall,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.headlineSmall,
                                 ),
                                 const SizedBox(height: 12),
-                                ...reasons.map((reason) => Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 4),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Icon(
-                                        Icons.arrow_right,
-                                        size: 20,
-                                        color: Theme.of(context).colorScheme.primary,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          reason,
-                                          style: Theme.of(context).textTheme.bodyMedium,
+                                ...reasons.map(
+                                  (reason) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 4,
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Icon(
+                                          Icons.arrow_right,
+                                          size: 20,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            reason,
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.bodyMedium,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                )),
+                                ),
                               ],
                             ),
                           ),
                         ),
                       ],
-                      
+
                       // Análise detalhada
                       if (analysis.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         Card(
                           child: Padding(
-                            padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                            padding: const EdgeInsets.all(
+                              AppConstants.defaultPadding,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'Análise Detalhada da AI',
-                                  style: Theme.of(context).textTheme.headlineSmall,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.headlineSmall,
                                 ),
                                 const SizedBox(height: 12),
                                 Container(
                                   width: double.infinity,
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainerHighest,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: SelectableText(
                                     analysis,
-                                    style: Theme.of(context).textTheme.bodyMedium,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium,
                                   ),
                                 ),
                               ],
@@ -341,7 +411,9 @@ class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
                 },
                 loading: () => Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(AppConstants.defaultPadding * 2),
+                    padding: const EdgeInsets.all(
+                      AppConstants.defaultPadding * 2,
+                    ),
                     child: Column(
                       children: [
                         const CircularProgressIndicator(),
@@ -368,9 +440,12 @@ class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
                         const SizedBox(height: 16),
                         Text(
                           'Erro na análise: $error',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.onErrorContainer,
-                          ),
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onErrorContainer,
+                              ),
                           textAlign: TextAlign.center,
                         ),
                       ],
