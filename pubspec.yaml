@@ -41,6 +41,7 @@ dependencies:
 
   # NFC
   nfc_manager: ^4.0.2
+  nfc_manager_ndef: ^1.0.1
 
   # Brazilian Validations
   all_validations_br: ^3.0.0
@@ -78,6 +79,29 @@ dev_dependencies:
   build_runner: ^2.4.7
   riverpod_generator: ^2.3.9
   json_serializable: ^6.7.1
+
+  # Testing frameworks
+  test: ^1.24.0
+  mockito: ^5.4.0
+  mocktail: ^1.0.0
+  integration_test:
+    sdk: flutter
+  patrol: ^3.0.0
+  
+  # Code coverage
+  coverage: ^1.6.0
+  
+  # Golden testing
+  golden_toolkit: ^0.15.0
+  
+  # Fake data generation
+  faker: ^2.1.0
+  
+  # Network mocking
+  http_mock_adapter: ^0.6.0
+  
+  # Build verification
+  build_verify: ^3.1.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -1,7 +1,5 @@
 import 'package:nfc_manager/nfc_manager.dart';
-import 'package:nfc_manager/nfc_manager_android.dart';
-import 'package:nfc_manager/nfc_manager_ios.dart';
-import 'package:nfc_manager/ndef_record.dart';
+import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../core/utils/code_generator.dart';
@@ -77,7 +75,7 @@ class Nfc extends _$Nfc {
               'NFCGuard Data Set $dataSet - Code: $userCode',
             );
 
-            final ndefMessage = NdefMessage([ndefRecord]);
+            final ndefMessage = NdefMessage(records: [ndefRecord]);
 
             // Tentar escrever na tag (Android/iOS specific)
             await _writeNdefMessage(tag, ndefMessage);
