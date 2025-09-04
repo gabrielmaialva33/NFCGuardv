@@ -67,12 +67,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Bem-vindo, ${user.nomeCompleto}',
+                    'Bem-vindo, ${user.fullName}',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Código único: ${user.codigo8Digitos}',
+                    'Código único: ${user.eightDigitCode}',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.primary,
