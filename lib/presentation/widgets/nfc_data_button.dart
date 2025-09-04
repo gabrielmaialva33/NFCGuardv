@@ -24,9 +24,11 @@ class NfcDataButton extends ConsumerWidget {
 
     return Card(
       elevation: 2,
-      margin: EdgeInsets.all(ResponsiveHelper.isMobile(context) 
-          ? AppConstants.smallPadding 
-          : AppConstants.defaultPadding),
+      margin: EdgeInsets.all(
+        ResponsiveHelper.isMobile(context)
+            ? AppConstants.smallPadding
+            : AppConstants.defaultPadding,
+      ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppConstants.borderRadius),
       ),
@@ -44,7 +46,7 @@ class NfcDataButton extends ConsumerWidget {
               Icon(
                 Icons.nfc,
                 size: ResponsiveHelper.isMobile(context) ? 24 : 32,
-                color: isLoading 
+                color: isLoading
                     ? theme.colorScheme.onSurface.withValues(alpha: 0.5)
                     : theme.colorScheme.primary,
               ),
@@ -53,7 +55,7 @@ class NfcDataButton extends ConsumerWidget {
                 'Data Set $dataSet',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontSize: ResponsiveHelper.getResponsiveFontSize(context, 16),
-                  color: isLoading 
+                  color: isLoading
                       ? theme.colorScheme.onSurface.withValues(alpha: 0.5)
                       : null,
                 ),

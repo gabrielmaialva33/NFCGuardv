@@ -248,7 +248,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     final isAvailable = await nfcNotifier.isNfcAvailable();
     if (!isAvailable) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        final messenger = ScaffoldMessenger.of(context);
+        messenger.showSnackBar(
           const SnackBar(
             content: Text('NFC não está disponível neste dispositivo'),
           ),
@@ -336,7 +337,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     final isAvailable = await nfcNotifier.isNfcAvailable();
     if (!isAvailable) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        final messenger = ScaffoldMessenger.of(context);
+        messenger.showSnackBar(
           const SnackBar(
             content: Text('NFC não está disponível neste dispositivo'),
           ),

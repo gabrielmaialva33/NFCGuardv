@@ -36,13 +36,14 @@ class ResponsiveHelper {
   }
 
   /// Get responsive width based on screen size
-  static double getResponsiveWidth(BuildContext context, {
+  static double getResponsiveWidth(
+    BuildContext context, {
     double mobile = 1.0,
     double tablet = 0.8,
     double desktop = 0.6,
   }) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     if (isMobile(context)) {
       return screenWidth * mobile;
     } else if (isTablet(context)) {
@@ -64,9 +65,12 @@ class ResponsiveHelper {
   }
 
   /// Get responsive font size
-  static double getResponsiveFontSize(BuildContext context, double baseFontSize) {
+  static double getResponsiveFontSize(
+    BuildContext context,
+    double baseFontSize,
+  ) {
     final width = MediaQuery.of(context).size.width;
-    
+
     if (width < AppConstants.mobileBreakpoint) {
       return baseFontSize * 0.9;
     } else if (width < AppConstants.desktopBreakpoint) {
@@ -115,7 +119,7 @@ class ResponsiveHelper {
   /// Responsive card width for forms
   static double getCardWidth(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     if (screenWidth < AppConstants.mobileBreakpoint) {
       return screenWidth - (AppConstants.defaultPadding * 2);
     } else if (screenWidth < AppConstants.desktopBreakpoint) {

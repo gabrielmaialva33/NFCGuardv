@@ -15,12 +15,12 @@ class AppConstants {
   static const Duration animationDuration = Duration(milliseconds: 250);
   static const Duration fastAnimationDuration = Duration(milliseconds: 150);
   static const Duration debounceDelay = Duration(milliseconds: 300);
-  
+
   // Breakpoints for responsive design
   static const double mobileBreakpoint = 480.0;
   static const double tabletBreakpoint = 768.0;
   static const double desktopBreakpoint = 1024.0;
-  
+
   // UI Constants
   static const double defaultPadding = 16.0;
   static const double smallPadding = 8.0;

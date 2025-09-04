@@ -79,8 +79,4 @@ class OptimizedButton extends StatelessWidget {
   }
 }
 
-enum ButtonVariant {
-  primary,
-  secondary,
-  text,
-}
+enum ButtonVariant { primary, secondary, text }

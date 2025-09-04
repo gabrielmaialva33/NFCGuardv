@@ -66,7 +66,11 @@ class OptimizedHomePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildMainContent(BuildContext context, WidgetRef ref, UserEntity user) {
+  Widget _buildMainContent(
+    BuildContext context,
+    WidgetRef ref,
+    UserEntity user,
+  ) {
     return ResponsiveHelper.responsiveLayout(
       context: context,
       mobile: _buildMobileLayout(context, ref, user),
@@ -75,7 +79,11 @@ class OptimizedHomePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildMobileLayout(BuildContext context, WidgetRef ref, UserEntity user) {
+  Widget _buildMobileLayout(
+    BuildContext context,
+    WidgetRef ref,
+    UserEntity user,
+  ) {
     return SingleChildScrollView(
       padding: ResponsiveHelper.getResponsivePadding(context),
       child: Column(
@@ -91,7 +99,11 @@ class OptimizedHomePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildTabletLayout(BuildContext context, WidgetRef ref, UserEntity user) {
+  Widget _buildTabletLayout(
+    BuildContext context,
+    WidgetRef ref,
+    UserEntity user,
+  ) {
     return Center(
       child: SizedBox(
         width: ResponsiveHelper.getResponsiveWidth(context, tablet: 0.8),
@@ -111,7 +123,11 @@ class OptimizedHomePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildDesktopLayout(BuildContext context, WidgetRef ref, UserEntity user) {
+  Widget _buildDesktopLayout(
+    BuildContext context,
+    WidgetRef ref,
+    UserEntity user,
+  ) {
     return Center(
       child: SizedBox(
         width: ResponsiveHelper.getResponsiveWidth(context, desktop: 0.7),
@@ -122,10 +138,7 @@ class OptimizedHomePage extends ConsumerWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    flex: 1,
-                    child: _buildWelcomeCard(context, user),
-                  ),
+                  Expanded(flex: 1, child: _buildWelcomeCard(context, user)),
                   const SizedBox(width: AppConstants.largePadding),
                   Expanded(
                     flex: 2,
@@ -189,7 +202,7 @@ class OptimizedHomePage extends ConsumerWidget {
 
   Widget _buildNfcButtonsGrid(BuildContext context, WidgetRef ref) {
     final columns = ResponsiveHelper.getGridColumns(context);
-    
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -265,9 +278,7 @@ class _LoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
+    return const Center(child: CircularProgressIndicator());
   }
 }
 
