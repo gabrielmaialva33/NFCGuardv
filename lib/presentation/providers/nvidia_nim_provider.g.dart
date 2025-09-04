@@ -39,5 +39,26 @@ final nvidiaNimStateProvider =
     );
 
 typedef _$NvidiaNimState = AutoDisposeNotifier<AsyncValue<String>>;
+String _$cpfValidationStateHash() =>
+    r'3792b21bf21a5ae2799446b133c88a3b608a9fd7';
+
+/// See also [CpfValidationState].
+@ProviderFor(CpfValidationState)
+final cpfValidationStateProvider =
+    AutoDisposeNotifierProvider<
+      CpfValidationState,
+      AsyncValue<Map<String, dynamic>?>
+    >.internal(
+      CpfValidationState.new,
+      name: r'cpfValidationStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$cpfValidationStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+typedef _$CpfValidationState =
+    AutoDisposeNotifier<AsyncValue<Map<String, dynamic>?>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

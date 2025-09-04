@@ -66,3 +66,27 @@ class NvidiaNimState extends _$NvidiaNimState {
     state = const AsyncValue.data('');
   }
 }
+
+@riverpod
+class CpfValidationState extends _$CpfValidationState {
+  @override
+  AsyncValue<Map<String, dynamic>?> build() {
+    return const AsyncValue.data(null);
+  }
+
+  Future<void> validateCpfWithFraud(String cpf) async {
+    state = const AsyncValue.loading();
+    
+    try {
+      final service = ref.read(nvidiaNimServiceProvider);
+      final result = await service.validateCpfWithFraudDetection(cpf);
+      state = AsyncValue.data(result);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  void reset() {
+    state = const AsyncValue.data(null);
+  }
+}

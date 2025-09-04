@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_constants.dart';
 import '../home/home_page.dart';
 import '../nvidia_nim_demo_page.dart';
+import '../cpf_fraud_analysis_page.dart';
 import 'register_page.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -45,6 +46,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   void _navigateToNvidiaDemo() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const NvidiaNimDemoPage()),
+    );
+  }
+
+  void _navigateToCpfFraudAnalysis() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const CpfFraudAnalysisPage()),
     );
   }
 
@@ -149,6 +156,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   onPressed: _navigateToNvidiaDemo,
                   icon: const Icon(Icons.smart_toy),
                   label: const Text('Demo NVIDIA NIM'),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton.icon(
+                  onPressed: _navigateToCpfFraudAnalysis,
+                  icon: const Icon(Icons.security),
+                  label: const Text('Análise Anti-Fraude CPF'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                  ),
                 ),
               ],
             ),

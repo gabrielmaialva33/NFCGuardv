@@ -78,4 +78,116 @@ Retorne apenas o código gerado, sem explicações adicionais.
     
     return await generateResponse(prompt: prompt);
   }
+
+  Future<Map<String, dynamic>> validateCpfWithFraudDetection(String cpf) async {
+    final prompt = '''
+Analise este CPF brasileiro para validação e detecção de fraude:
+
+CPF: $cpf
+
+Forneça uma análise completa incluindo:
+1. Validação matemática do CPF (dígitos verificadores)
+2. Detecção de padrões fraudulentos comuns:
+   - CPFs sequenciais (111.111.111-11, 123.456.789-01, etc.)
+   - CPFs com padrões repetitivos
+   - CPFs em listas de fraudes conhecidas
+   - Anomalias estatísticas nos dígitos
+3. Score de confiabilidade (0-100)
+4. Recomendação de ação (ACEITAR, REVISAR, REJEITAR)
+
+Responda APENAS em formato JSON válido:
+{
+  "valido": true/false,
+  "fraudulento": true/false,
+  "score_confiabilidade": número_0_a_100,
+  "recomendacao": "ACEITAR/REVISAR/REJEITAR",
+  "motivos": ["lista", "de", "motivos"],
+  "analise_detalhada": "texto explicativo"
+}
+''';
+    
+    try {
+      final response = await generateResponse(prompt: prompt, temperature: 0.1);
+      
+      // Tentar parsear como JSON
+      try {
+        final jsonResponse = json.decode(response.trim());
+        return jsonResponse as Map<String, dynamic>;
+      } catch (e) {
+        // Se falhar o parse, extrair informações básicas
+        return {
+          'valido': _isValidCpf(cpf),
+          'fraudulento': _hasCommonFraudPatterns(cpf),
+          'score_confiabilidade': _isValidCpf(cpf) && !_hasCommonFraudPatterns(cpf) ? 85 : 20,
+          'recomendacao': _isValidCpf(cpf) && !_hasCommonFraudPatterns(cpf) ? 'ACEITAR' : 'REJEITAR',
+          'motivos': ['Análise básica aplicada devido a erro na resposta da AI'],
+          'analise_detalhada': response,
+        };
+      }
+    } catch (e) {
+      // Fallback para validação básica em caso de erro da API
+      return {
+        'valido': _isValidCpf(cpf),
+        'fraudulento': _hasCommonFraudPatterns(cpf),
+        'score_confiabilidade': _isValidCpf(cpf) && !_hasCommonFraudPatterns(cpf) ? 70 : 10,
+        'recomendacao': _isValidCpf(cpf) && !_hasCommonFraudPatterns(cpf) ? 'REVISAR' : 'REJEITAR',
+        'motivos': ['Análise offline devido a erro na conexão com AI'],
+        'analise_detalhada': 'Erro na conexão: $e',
+      };
+    }
+  }
+
+  // Validação básica de CPF (fallback)
+  bool _isValidCpf(String cpf) {
+    // Remove formatação
+    cpf = cpf.replaceAll(RegExp(r'[^0-9]'), '');
+    
+    if (cpf.length != 11) return false;
+    
+    // Verifica se todos os dígitos são iguais
+    if (RegExp(r'^(\d)\1{10}$').hasMatch(cpf)) return false;
+    
+    // Calcula primeiro dígito verificador
+    int sum = 0;
+    for (int i = 0; i < 9; i++) {
+      sum += int.parse(cpf[i]) * (10 - i);
+    }
+    int digit1 = 11 - (sum % 11);
+    if (digit1 > 9) digit1 = 0;
+    
+    // Calcula segundo dígito verificador
+    sum = 0;
+    for (int i = 0; i < 10; i++) {
+      sum += int.parse(cpf[i]) * (11 - i);
+    }
+    int digit2 = 11 - (sum % 11);
+    if (digit2 > 9) digit2 = 0;
+    
+    return cpf[9] == digit1.toString() && cpf[10] == digit2.toString();
+  }
+
+  // Detecção de padrões fraudulentos comuns
+  bool _hasCommonFraudPatterns(String cpf) {
+    cpf = cpf.replaceAll(RegExp(r'[^0-9]'), '');
+    
+    // Lista de CPFs inválidos conhecidos
+    final invalidCpfs = [
+      '00000000000', '11111111111', '22222222222', '33333333333',
+      '44444444444', '55555555555', '66666666666', '77777777777',
+      '88888888888', '99999999999', '12345678901', '01234567890'
+    ];
+    
+    if (invalidCpfs.contains(cpf)) return true;
+    
+    // Verifica sequências
+    bool isSequential = true;
+    for (int i = 1; i < cpf.length; i++) {
+      if (int.parse(cpf[i]) != int.parse(cpf[i-1]) + 1) {
+        isSequential = false;
+        break;
+      }
+    }
+    
+    return isSequential;
+  }
 }
