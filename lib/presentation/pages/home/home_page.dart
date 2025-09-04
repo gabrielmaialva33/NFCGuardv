@@ -488,6 +488,185 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
+  void _readNfcCard(BuildContext context) async {
+    final nfcNotifier = ref.read(nfcProvider.notifier);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    // Verificar se NFC está disponível
+    final isAvailable = await nfcNotifier.isNfcAvailable();
+    if (!isAvailable) {
+      if (mounted) {
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(
+            content: Text('NFC não está disponível neste dispositivo'),
+          ),
+        );
+      }
+      return;
+    }
+
+    // Mostrar dialog de instrução
+    if (mounted && context.mounted) {
+      _showNfcReadDialog(context, 'Aproxime o cartão do dispositivo');
+    }
+
+    // Executar leitura
+    final cardData = await nfcNotifier.readTag();
+    
+    if (cardData != null && mounted && context.mounted) {
+      _showCardDataDialog(context, cardData);
+    }
+  }
+
+  void _showNfcReadDialog(BuildContext context, String instruction) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Consumer(
+        builder: (context, ref, child) {
+          final nfcState = ref.watch(nfcProvider);
+
+          return AlertDialog(
+            title: Text(instruction),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.credit_card,
+                  size: 64,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(height: 16),
+                nfcState.when(
+                  data: (status) {
+                    switch (status) {
+                      case NfcStatus.scanning:
+                        return const Text('Procurando cartão NFC...');
+                      case NfcStatus.success:
+                        return const Text('Cartão lido com sucesso!');
+                      case NfcStatus.error:
+                        return const Text('Erro na leitura do cartão');
+                      case NfcStatus.unavailable:
+                        return const Text('NFC não disponível');
+                      default:
+                        return const Text('Preparando leitura...');
+                    }
+                  },
+                  loading: () => const Text('Preparando...'),
+                  error: (error, _) => Text('Erro: $error'),
+                ),
+                const SizedBox(height: 16),
+                nfcState.when(
+                  data: (status) {
+                    if (status == NfcStatus.success) {
+                      return const Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                        size: 48,
+                      );
+                    } else if (status == NfcStatus.error) {
+                      return const Icon(
+                        Icons.error,
+                        color: Colors.red,
+                        size: 48,
+                      );
+                    }
+                    return const CircularProgressIndicator();
+                  },
+                  loading: () => const CircularProgressIndicator(),
+                  error: (_, __) =>
+                      const Icon(Icons.error, color: Colors.red, size: 48),
+                ),
+              ],
+            ),
+            actions: nfcState.when(
+              data: (status) {
+                if (status == NfcStatus.success ||
+                    status == NfcStatus.error ||
+                    status == NfcStatus.unavailable) {
+                  return [
+                    ElevatedButton(
+                      onPressed: () {
+                        ref.read(nfcProvider.notifier).resetStatus();
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ];
+                }
+                return [
+                  TextButton(
+                    onPressed: () {
+                      ref.read(nfcProvider.notifier).stopSession();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancelar'),
+                  ),
+                ];
+              },
+              loading: () => [
+                TextButton(
+                  onPressed: () {
+                    ref.read(nfcProvider.notifier).stopSession();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancelar'),
+                ),
+              ],
+              error: (_, __) => [
+                ElevatedButton(
+                  onPressed: () {
+                    ref.read(nfcProvider.notifier).resetStatus();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showCardDataDialog(BuildContext context, Map<String, dynamic> cardData) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Dados do Cartão'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Informações lidas do chip:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              Text('Tipo: ${cardData['type'] ?? 'Desconhecido'}'),
+              const SizedBox(height: 8),
+              Text('Conteúdo: ${cardData['payload'] ?? 'Sem dados'}'),
+              const SizedBox(height: 8),
+              Text('Lido em: ${DateTime.fromMillisecondsSinceEpoch(cardData['readAt'] ?? 0)}'),
+              const SizedBox(height: 16),
+              const Text(
+                '⚠️ Atenção: Este app lê apenas dados básicos de identificação. Dados financeiros sensíveis são protegidos pelo chip.',
+                style: TextStyle(fontSize: 12, color: Colors.orange),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _logout(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
