@@ -55,8 +55,8 @@ class Nfc extends _$Nfc {
         throw Exception('Código inválido');
       }
 
-      // Verificar se o código já foi usado
-      final isUsed = await _storageService.isCodeUsed(userCode);
+      // Verificar se o código já foi usado (Supabase + local)
+      final isUsed = await _supabaseNfcRepository.isCodeUsed(userCode);
       if (isUsed) {
         throw Exception('CÓDIGO JÁ UTILIZADO');
       }
@@ -82,11 +82,11 @@ class Nfc extends _$Nfc {
             // Por enquanto, usar implementação direta da tag sem NDEF abstração
             await _writeSimpleText(tag, textContent);
 
-            // Marcar código como usado
-            await _storageService.addUsedCode(userCode);
+            // Marcar código como usado (Supabase + local)
+            await _supabaseNfcRepository.addUsedCode(userCode, datasetNumber: dataSet);
 
-            // Log successful operation
-            await _loggingService.logNfcOperation(
+            // Log successful operation (Supabase + local)
+            await _supabaseNfcRepository.logNfcOperation(
               operationType: NfcOperationType.write,
               codeUsed: userCode,
               datasetNumber: dataSet,
