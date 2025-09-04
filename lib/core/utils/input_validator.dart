@@ -4,7 +4,7 @@ import 'dart:io';
 class InputValidator {
   // Email validation regex - RFC 5322 compliant but practical
   static final RegExp _emailRegex = RegExp(
-    r'^[a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$',
+    r'^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$',
   );
 
   // Brazilian domains for additional validation
@@ -124,7 +124,7 @@ class InputValidator {
     }
 
     // Only allow letters, spaces, hyphens, and Brazilian diacritics
-    final nameRegex = RegExp(r'^[a-zA-ZÀ-ÿ\s\-\'\.]+$');
+    final nameRegex = RegExp(r'^[a-zA-ZÀ-ÿ\s\-\.]+$');
     if (!nameRegex.hasMatch(sanitized)) {
       return ValidationResult(
         isValid: false,

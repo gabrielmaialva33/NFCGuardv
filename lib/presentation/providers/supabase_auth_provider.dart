@@ -203,7 +203,9 @@ class SupabaseAuth extends _$SupabaseAuth {
         throw Exception('Falha ao criar conta');
       }
     } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
+      // Sanitize error message before exposing to user
+      final sanitizedError = NetworkSecurity.sanitizeErrorMessage(e.toString());
+      state = AsyncValue.error(Exception(sanitizedError), StackTrace.current);
     }
   }
 
@@ -212,18 +214,40 @@ class SupabaseAuth extends _$SupabaseAuth {
     try {
       state = const AsyncValue.loading();
 
+      // Enhanced input validation
+      final emailValidation = InputValidator.validateEmail(email);
+      if (!emailValidation.isValid) {
+        throw Exception(emailValidation.message);
+      }
+      
+      final sanitizedEmail = emailValidation.sanitizedValue ?? email.trim().toLowerCase();
+      
+      // Brute force protection
+      if (InputValidator.isBruteForceAttempt('login_$sanitizedEmail')) {
+        throw Exception('Muitas tentativas de login. Aguarde 15 minutos.');
+      }
+      
+      // Rate limiting
+      if (InputValidator.isRateLimited('login_$sanitizedEmail')) {
+        throw Exception('Muitas tentativas. Aguarde alguns segundos.');
+      }
+
       final authResponse = await SupabaseService.instance.signIn(
-        email: email,
+        email: sanitizedEmail,
         password: password,
       );
 
       if (authResponse.user != null) {
+        // Clear failed attempts on successful login
+        InputValidator.clearFailedAttempts('login_$sanitizedEmail');
         await _syncUserFromSupabase(authResponse.user!);
       } else {
-        throw Exception('Falha no login');
+        throw Exception('Credenciais inválidas');
       }
     } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
+      // Sanitize error message before exposing to user
+      final sanitizedError = NetworkSecurity.sanitizeErrorMessage(e.toString());
+      state = AsyncValue.error(Exception(sanitizedError), StackTrace.current);
     }
   }
 
