@@ -190,7 +190,7 @@ class Nfc extends _$Nfc {
             buffer.writeln('=== DADOS DO CARTÃO NFC ===');
             
             // Try to get NFC-A information
-            final nfcA = NfcA.from(tag);
+            final nfcA = NfcAAndroid.from(tag);
             if (nfcA != null) {
               buffer.writeln('ID da Tag: ${_formatBytes(nfcA.identifier)}');
               buffer.writeln('ATQA: ${_formatBytes(nfcA.atqa)}');
@@ -199,14 +199,14 @@ class Nfc extends _$Nfc {
             }
             
             // Try to get ISO-DEP information (common in credit cards)
-            final isoDep = IsoDep.from(tag);
+            final isoDep = IsoDepAndroid.from(tag);
             if (isoDep != null) {
               buffer.writeln('ISO-DEP suportado: Sim');
               buffer.writeln('Histórico: ${_formatBytes(isoDep.historicalBytes)}');
             }
             
             // Try to get MiFare Classic information  
-            final mifareClassic = MifareClassic.from(tag);
+            final mifareClassic = MifareClassicAndroid.from(tag);
             if (mifareClassic != null) {
               buffer.writeln('Tipo: MiFare Classic');
               buffer.writeln('Tamanho: ${mifareClassic.size} bytes');
