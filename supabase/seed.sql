@@ -1,69 +1,21 @@
 -- Seed data for NFCGuard application
+-- This file provides initial test data for development
 
--- Insert some sample data for development (optional)
--- This file can be used to populate the database with initial test data
+-- Insert reserved codes that should never be used
+INSERT INTO public.used_codes (user_id, code, used_at) VALUES 
+-- System reserved codes (using Gabriel's ID as placeholder)
+('00000000-0000-0000-0000-000000000001', '00000000', NOW()),
+('00000000-0000-0000-0000-000000000001', '11111111', NOW()),
+('00000000-0000-0000-0000-000000000001', '22222222', NOW()),
+('00000000-0000-0000-0000-000000000001', '33333333', NOW()),
+('00000000-0000-0000-0000-000000000001', '44444444', NOW()),
+('00000000-0000-0000-0000-000000000001', '55555555', NOW()),
+('00000000-0000-0000-0000-000000000001', '66666666', NOW()),
+('00000000-0000-0000-0000-000000000001', '77777777', NOW()),
+('00000000-0000-0000-0000-000000000001', '88888888', NOW()),
+('00000000-0000-0000-0000-000000000001', '99999999', NOW()),
+('00000000-0000-0000-0000-000000000001', '12345678', NOW()),
+('00000000-0000-0000-0000-000000000001', '87654321', NOW())
+ON CONFLICT (user_id, code) DO NOTHING;
 
--- Example: Insert some reserved codes that should not be used
-INSERT INTO used_codes (code, used_at) VALUES 
-('00000000', NOW()),
-('11111111', NOW()),
-('22222222', NOW()),
-('33333333', NOW()),
-('44444444', NOW()),
-('55555555', NOW()),
-('66666666', NOW()),
-('77777777', NOW()),
-('88888888', NOW()),
-('99999999', NOW()),
-('12345678', NOW()),
-('87654321', NOW())
-ON CONFLICT (code) DO NOTHING;
-
--- Add some Brazilian states for reference (optional)
--- You can extend this with a states table if needed for validation
-
--- Insert Gabriel Maia test user
--- Note: This user will need to be created in Supabase Auth separately
--- The user_id here should match the Auth user ID after creation
-INSERT INTO users (
-  id,
-  email,
-  full_name,
-  cpf,
-  phone,
-  birth_date,
-  gender,
-  cep,
-  street,
-  number_address,
-  complement,
-  neighborhood,
-  city,
-  state,
-  user_code,
-  trial_mode,
-  created_at,
-  updated_at
-) VALUES (
-  '00000000-0000-0000-0000-000000000001', -- Placeholder ID - replace with actual Auth user ID
-  'gabriel.maia@test.com',
-  'Gabriel Maia',
-  '38738734869',
-  '15999123456',
-  '1999-02-23',
-  'masculino',
-  '18300270',
-  'R. Bernardino de Campos',
-  '809',
-  '',
-  'Centro',
-  'Capão Bonito',
-  'SP',
-  '69550617',
-  true,
-  NOW(),
-  NOW()
-) ON CONFLICT (email) DO NOTHING;
-
--- Add Gabriel's user code to used codes to prevent duplication
-INSERT INTO used_codes (code, used_at) VALUES ('69550617', NOW()) ON CONFLICT (code) DO NOTHING;
+-- Note: Gabriel Maia user creation is handled by migration 20250904000010_add_gabriel_maia_user.sql
