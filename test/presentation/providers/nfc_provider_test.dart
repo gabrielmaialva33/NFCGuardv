@@ -20,6 +20,7 @@ void main() {
   setUp(() {
     mockStorageService = MockSecureStorageService();
     mockLoggingService = MockNfcLoggingService();
+    mockNfcManager = MockNfcManager();
 
     container = ProviderContainer();
   });
