@@ -16,11 +16,11 @@ import 'auth_provider_test.mocks.dart';
 void main() {
   late ProviderContainer container;
   late MockSecureStorageService mockStorageService;
-  late MockViaCepSearchCep mockViaCepService;
+  // late MockViaCepSearchCep mockViaCepService;
 
   setUp(() {
     mockStorageService = MockSecureStorageService();
-    mockViaCepService = MockViaCepSearchCep();
+    // mockViaCepService = MockViaCepSearchCep();
 
     container = ProviderContainer(
       overrides: [
