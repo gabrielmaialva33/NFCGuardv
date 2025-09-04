@@ -34,7 +34,7 @@ void main() {
     mockLoggingService = MockNfcLoggingService();
     mockNfcTag = MockNfcTag();
     mockNdef = MockNdef();
-    
+
     container = ProviderContainer();
   });
 
@@ -99,35 +99,49 @@ void main() {
         // Act & Assert - invalid code should fail
         expect(
           () => nfcNotifier.writeTagWithCode('invalid', 1),
-          throwsA(predicate((e) => 
-            e is Exception && e.toString().contains('Código inválido'))),
+          throwsA(
+            predicate(
+              (e) => e is Exception && e.toString().contains('Código inválido'),
+            ),
+          ),
         );
       });
 
       test('should check if code is already used', () async {
         // Arrange
         final validCode = CodeGenerator.generateUniqueCode();
-        when(mockStorageService.isCodeUsed(validCode)).thenAnswer((_) async => true);
-        
+        when(
+          mockStorageService.isCodeUsed(validCode),
+        ).thenAnswer((_) async => true);
+
         final nfcNotifier = container.read(nfcProvider.notifier);
 
         // Act & Assert
         expect(
           () => nfcNotifier.writeTagWithCode(validCode, 1),
-          throwsA(predicate((e) => 
-            e is Exception && e.toString().contains('CÓDIGO JÁ UTILIZADO'))),
+          throwsA(
+            predicate(
+              (e) =>
+                  e is Exception &&
+                  e.toString().contains('CÓDIGO JÁ UTILIZADO'),
+            ),
+          ),
         );
       });
 
       test('should start NFC session for valid code', () async {
         // Arrange
         final validCode = CodeGenerator.generateUniqueCode();
-        when(mockStorageService.isCodeUsed(validCode)).thenAnswer((_) async => false);
-        when(mockNfcManager.startSession(
-          pollingOptions: anyNamed('pollingOptions'),
-          onDiscovered: anyNamed('onDiscovered'),
-        )).thenAnswer((_) async {});
-        
+        when(
+          mockStorageService.isCodeUsed(validCode),
+        ).thenAnswer((_) async => false);
+        when(
+          mockNfcManager.startSession(
+            pollingOptions: anyNamed('pollingOptions'),
+            onDiscovered: anyNamed('onDiscovered'),
+          ),
+        ).thenAnswer((_) async {});
+
         final nfcNotifier = container.read(nfcProvider.notifier);
 
         // Act
@@ -144,10 +158,15 @@ void main() {
 
         // Test valid dataset ranges
         for (int i = 1; i <= 8; i++) {
-          when(mockStorageService.isCodeUsed(validCode)).thenAnswer((_) async => false);
-          
+          when(
+            mockStorageService.isCodeUsed(validCode),
+          ).thenAnswer((_) async => false);
+
           // Should not throw for valid dataset numbers
-          expect(() => nfcNotifier.writeTagWithCode(validCode, i), returnsNormally);
+          expect(
+            () => nfcNotifier.writeTagWithCode(validCode, i),
+            returnsNormally,
+          );
         }
       });
     });
@@ -159,24 +178,31 @@ void main() {
         // Act & Assert
         expect(
           () => nfcNotifier.protectTagWithPassword('invalid', 'password123'),
-          throwsA(predicate((e) => 
-            e is Exception && e.toString().contains('Código inválido'))),
+          throwsA(
+            predicate(
+              (e) => e is Exception && e.toString().contains('Código inválido'),
+            ),
+          ),
         );
       });
 
       test('should start protection session for valid code', () async {
         // Arrange
         final validCode = CodeGenerator.generateUniqueCode();
-        when(mockNfcManager.startSession(
-          pollingOptions: anyNamed('pollingOptions'),
-          onDiscovered: anyNamed('onDiscovered'),
-        )).thenAnswer((_) async {});
-        
+        when(
+          mockNfcManager.startSession(
+            pollingOptions: anyNamed('pollingOptions'),
+            onDiscovered: anyNamed('onDiscovered'),
+          ),
+        ).thenAnswer((_) async {});
+
         final nfcNotifier = container.read(nfcProvider.notifier);
 
         // Act & Assert
-        expect(() => nfcNotifier.protectTagWithPassword(validCode, 'password123'), 
-               returnsNormally);
+        expect(
+          () => nfcNotifier.protectTagWithPassword(validCode, 'password123'),
+          returnsNormally,
+        );
       });
 
       test('should validate code before removing protection', () async {
@@ -185,8 +211,11 @@ void main() {
         // Act & Assert
         expect(
           () => nfcNotifier.removeTagPassword('invalid', 'password123'),
-          throwsA(predicate((e) => 
-            e is Exception && e.toString().contains('Código inválido'))),
+          throwsA(
+            predicate(
+              (e) => e is Exception && e.toString().contains('Código inválido'),
+            ),
+          ),
         );
       });
     });
@@ -196,17 +225,22 @@ void main() {
         // Arrange
         final mockNdefMessage = MockNdefMessage();
         final mockNdefRecord = MockNdefRecord();
-        
-        when(mockNdefRecord.payload).thenReturn([65, 66, 67, 68, 69]); // "ABCDE"
+
+        when(
+          mockNdefRecord.payload,
+        ).thenReturn([65, 66, 67, 68, 69]); // "ABCDE"
         when(mockNdefRecord.type).thenReturn([84]); // 'T' for text
         when(mockNdefMessage.records).thenReturn([mockNdefRecord]);
-        
-        when(mockNfcManager.startSession(
-          pollingOptions: anyNamed('pollingOptions'),
-          onDiscovered: anyNamed('onDiscovered'),
-        )).thenAnswer((invocation) async {
-          final onDiscovered = invocation.namedArguments[const Symbol('onDiscovered')] 
-              as Function(NfcTag);
+
+        when(
+          mockNfcManager.startSession(
+            pollingOptions: anyNamed('pollingOptions'),
+            onDiscovered: anyNamed('onDiscovered'),
+          ),
+        ).thenAnswer((invocation) async {
+          final onDiscovered =
+              invocation.namedArguments[const Symbol('onDiscovered')]
+                  as Function(NfcTag);
           await onDiscovered(mockNfcTag);
         });
 
@@ -223,12 +257,15 @@ void main() {
 
       test('should handle tags without NDEF data', () async {
         // Arrange
-        when(mockNfcManager.startSession(
-          pollingOptions: anyNamed('pollingOptions'),
-          onDiscovered: anyNamed('onDiscovered'),
-        )).thenAnswer((invocation) async {
-          final onDiscovered = invocation.namedArguments[const Symbol('onDiscovered')] 
-              as Function(NfcTag);
+        when(
+          mockNfcManager.startSession(
+            pollingOptions: anyNamed('pollingOptions'),
+            onDiscovered: anyNamed('onDiscovered'),
+          ),
+        ).thenAnswer((invocation) async {
+          final onDiscovered =
+              invocation.namedArguments[const Symbol('onDiscovered')]
+                  as Function(NfcTag);
           await onDiscovered(mockNfcTag);
         });
 
@@ -246,7 +283,7 @@ void main() {
       test('should stop NFC session', () {
         // Arrange
         when(mockNfcManager.stopSession()).thenAnswer((_) async {});
-        
+
         final nfcNotifier = container.read(nfcProvider.notifier);
 
         // Act
@@ -273,12 +310,16 @@ void main() {
       test('should handle NFC session start errors', () async {
         // Arrange
         final validCode = CodeGenerator.generateUniqueCode();
-        when(mockStorageService.isCodeUsed(validCode)).thenAnswer((_) async => false);
-        when(mockNfcManager.startSession(
-          pollingOptions: anyNamed('pollingOptions'),
-          onDiscovered: anyNamed('onDiscovered'),
-        )).thenThrow(Exception('NFC session failed'));
-        
+        when(
+          mockStorageService.isCodeUsed(validCode),
+        ).thenAnswer((_) async => false);
+        when(
+          mockNfcManager.startSession(
+            pollingOptions: anyNamed('pollingOptions'),
+            onDiscovered: anyNamed('onDiscovered'),
+          ),
+        ).thenThrow(Exception('NFC session failed'));
+
         final nfcNotifier = container.read(nfcProvider.notifier);
 
         // Act
@@ -298,14 +339,18 @@ void main() {
       test('should log failed operations', () async {
         // Arrange
         final validCode = CodeGenerator.generateUniqueCode();
-        when(mockStorageService.isCodeUsed(validCode)).thenAnswer((_) async => false);
-        when(mockLoggingService.logNfcOperation(
-          operationType: anyNamed('operationType'),
-          codeUsed: anyNamed('codeUsed'),
-          datasetNumber: anyNamed('datasetNumber'),
-          success: anyNamed('success'),
-          errorMessage: anyNamed('errorMessage'),
-        )).thenAnswer((_) async {});
+        when(
+          mockStorageService.isCodeUsed(validCode),
+        ).thenAnswer((_) async => false);
+        when(
+          mockLoggingService.logNfcOperation(
+            operationType: anyNamed('operationType'),
+            codeUsed: anyNamed('codeUsed'),
+            datasetNumber: anyNamed('datasetNumber'),
+            success: anyNamed('success'),
+            errorMessage: anyNamed('errorMessage'),
+          ),
+        ).thenAnswer((_) async {});
 
         // Act & Assert - verify error logging is called
         // This would require more complex setup to properly test
@@ -316,7 +361,7 @@ void main() {
       test('should transition through correct states during write operation', () {
         // Expected state transitions:
         // idle -> loading -> scanning -> writing -> success/error
-        
+
         final nfcNotifier = container.read(nfcProvider.notifier);
         expect(container.read(nfcProvider).value, equals(NfcStatus.idle));
 
@@ -339,7 +384,7 @@ void main() {
         const userCode = '12345678';
         const dataSet = 1;
         final expectedText = 'NFCGuard Data Set $dataSet - Code: $userCode';
-        
+
         expect(expectedText, contains('NFCGuard'));
         expect(expectedText, contains(userCode));
         expect(expectedText, contains(dataSet.toString()));
@@ -349,7 +394,7 @@ void main() {
         for (int dataSet = 1; dataSet <= 8; dataSet++) {
           const userCode = '12345678';
           final ndefText = 'NFCGuard Data Set $dataSet - Code: $userCode';
-          
+
           expect(ndefText, contains('Data Set $dataSet'));
           expect(ndefText.length, greaterThan(20));
         }
@@ -360,9 +405,13 @@ void main() {
       test('should mark code as used after successful write', () async {
         // Arrange
         final validCode = CodeGenerator.generateUniqueCode();
-        when(mockStorageService.isCodeUsed(validCode)).thenAnswer((_) async => false);
-        when(mockStorageService.addUsedCode(validCode)).thenAnswer((_) async {});
-        
+        when(
+          mockStorageService.isCodeUsed(validCode),
+        ).thenAnswer((_) async => false);
+        when(
+          mockStorageService.addUsedCode(validCode),
+        ).thenAnswer((_) async {});
+
         // Note: This would require complex async callback mocking for full test
         expect(true, isTrue); // Placeholder
       });
@@ -377,14 +426,14 @@ void main() {
     group('Integration with Services', () {
       test('should integrate with storage service correctly', () {
         final nfcNotifier = container.read(nfcProvider.notifier);
-        
+
         // Verify that the provider is constructed with proper dependencies
         expect(nfcNotifier, isA<Nfc>());
       });
 
       test('should integrate with logging service correctly', () {
         final nfcNotifier = container.read(nfcProvider.notifier);
-        
+
         // Verify logging service integration
         expect(nfcNotifier, isA<Nfc>());
       });
@@ -393,22 +442,22 @@ void main() {
     group('Performance Considerations', () {
       test('should handle rapid successive operations', () {
         final nfcNotifier = container.read(nfcProvider.notifier);
-        
+
         // Test that rapid calls don't cause race conditions
         nfcNotifier.resetStatus();
         nfcNotifier.resetStatus();
         nfcNotifier.stopSession();
-        
+
         final state = container.read(nfcProvider);
         expect(state.value, equals(NfcStatus.idle));
       });
 
       test('should properly clean up resources', () {
         final nfcNotifier = container.read(nfcProvider.notifier);
-        
+
         // Act
         nfcNotifier.stopSession();
-        
+
         // Assert
         final state = container.read(nfcProvider);
         expect(state.value, equals(NfcStatus.idle));
@@ -456,18 +505,27 @@ void main() {
         final nfcNotifier = container.read(nfcProvider.notifier);
 
         // Dataset numbers should be 1-8 according to app constants
-        expect(() => nfcNotifier.writeTagWithCode(validCode, 0), returnsNormally);
-        expect(() => nfcNotifier.writeTagWithCode(validCode, 9), returnsNormally);
-        expect(() => nfcNotifier.writeTagWithCode(validCode, -1), returnsNormally);
+        expect(
+          () => nfcNotifier.writeTagWithCode(validCode, 0),
+          returnsNormally,
+        );
+        expect(
+          () => nfcNotifier.writeTagWithCode(validCode, 9),
+          returnsNormally,
+        );
+        expect(
+          () => nfcNotifier.writeTagWithCode(validCode, -1),
+          returnsNormally,
+        );
       });
 
       test('should handle concurrent operations gracefully', () {
         final nfcNotifier = container.read(nfcProvider.notifier);
-        
+
         // Simulate concurrent calls
         nfcNotifier.resetStatus();
         nfcNotifier.stopSession();
-        
+
         final state = container.read(nfcProvider);
         expect(state.value, equals(NfcStatus.idle));
       });
@@ -498,12 +556,12 @@ void main() {
           () => nfcNotifier.writeTagWithCode('invalid', 1),
           throwsA(isA<Exception>()),
         );
-        
+
         expect(
           () => nfcNotifier.protectTagWithPassword('invalid', 'pass'),
           throwsA(isA<Exception>()),
         );
-        
+
         expect(
           () => nfcNotifier.removeTagPassword('invalid', 'pass'),
           throwsA(isA<Exception>()),

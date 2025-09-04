@@ -7,7 +7,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'nfc_logging_service_test.mocks.dart';
 
-@GenerateMocks([SupabaseService, User, SupabaseQueryBuilder, SupabaseFilterBuilder])
+@GenerateMocks([
+  SupabaseService,
+  User,
+  SupabaseQueryBuilder,
+  SupabaseFilterBuilder,
+])
 void main() {
   late NfcLoggingService service;
   late MockSupabaseService mockSupabaseService;
@@ -20,7 +25,7 @@ void main() {
     mockUser = MockUser();
     mockQueryBuilder = MockSupabaseQueryBuilder();
     mockFilterBuilder = MockSupabaseFilterBuilder();
-    
+
     // Initialize service with mocked dependencies
     service = NfcLoggingService();
   });
@@ -31,8 +36,9 @@ void main() {
         // Arrange
         when(mockSupabaseService.currentUser).thenReturn(mockUser);
         when(mockUser.id).thenReturn('user-123');
-        when(mockSupabaseService.from('nfc_operations'))
-            .thenReturn(mockQueryBuilder);
+        when(
+          mockSupabaseService.from('nfc_operations'),
+        ).thenReturn(mockQueryBuilder);
         when(mockQueryBuilder.insert(any)).thenAnswer((_) async => {});
 
         // Act
@@ -45,22 +51,25 @@ void main() {
 
         // Assert
         verify(mockSupabaseService.from('nfc_operations')).called(1);
-        verify(mockQueryBuilder.insert({
-          'user_id': 'user-123',
-          'operation_type': 'write',
-          'code_used': '12345678',
-          'dataset_number': 1,
-          'success': true,
-          'error_message': null,
-        })).called(1);
+        verify(
+          mockQueryBuilder.insert({
+            'user_id': 'user-123',
+            'operation_type': 'write',
+            'code_used': '12345678',
+            'dataset_number': 1,
+            'success': true,
+            'error_message': null,
+          }),
+        ).called(1);
       });
 
       test('should log failed NFC operation with error message', () async {
         // Arrange
         when(mockSupabaseService.currentUser).thenReturn(mockUser);
         when(mockUser.id).thenReturn('user-123');
-        when(mockSupabaseService.from('nfc_operations'))
-            .thenReturn(mockQueryBuilder);
+        when(
+          mockSupabaseService.from('nfc_operations'),
+        ).thenReturn(mockQueryBuilder);
         when(mockQueryBuilder.insert(any)).thenAnswer((_) async => {});
 
         // Act
@@ -72,14 +81,16 @@ void main() {
         );
 
         // Assert
-        verify(mockQueryBuilder.insert({
-          'user_id': 'user-123',
-          'operation_type': 'protect',
-          'code_used': '87654321',
-          'dataset_number': null,
-          'success': false,
-          'error_message': 'Tag not writable',
-        })).called(1);
+        verify(
+          mockQueryBuilder.insert({
+            'user_id': 'user-123',
+            'operation_type': 'protect',
+            'code_used': '87654321',
+            'dataset_number': null,
+            'success': false,
+            'error_message': 'Tag not writable',
+          }),
+        ).called(1);
       });
 
       test('should not log when user is not authenticated', () async {
@@ -101,10 +112,12 @@ void main() {
         // Arrange
         when(mockSupabaseService.currentUser).thenReturn(mockUser);
         when(mockUser.id).thenReturn('user-123');
-        when(mockSupabaseService.from('nfc_operations'))
-            .thenReturn(mockQueryBuilder);
-        when(mockQueryBuilder.insert(any))
-            .thenThrow(Exception('Network error'));
+        when(
+          mockSupabaseService.from('nfc_operations'),
+        ).thenReturn(mockQueryBuilder);
+        when(
+          mockQueryBuilder.insert(any),
+        ).thenThrow(Exception('Network error'));
 
         // Act & Assert - should not throw
         await service.logNfcOperation(
@@ -118,8 +131,9 @@ void main() {
         // Arrange
         when(mockSupabaseService.currentUser).thenReturn(mockUser);
         when(mockUser.id).thenReturn('user-123');
-        when(mockSupabaseService.from('nfc_operations'))
-            .thenReturn(mockQueryBuilder);
+        when(
+          mockSupabaseService.from('nfc_operations'),
+        ).thenReturn(mockQueryBuilder);
         when(mockQueryBuilder.insert(any)).thenAnswer((_) async => {});
 
         // Act & Assert
@@ -129,15 +143,17 @@ void main() {
             codeUsed: '12345678',
             success: true,
           );
-          
-          verify(mockQueryBuilder.insert({
-            'user_id': 'user-123',
-            'operation_type': opType.name,
-            'code_used': '12345678',
-            'dataset_number': null,
-            'success': true,
-            'error_message': null,
-          })).called(1);
+
+          verify(
+            mockQueryBuilder.insert({
+              'user_id': 'user-123',
+              'operation_type': opType.name,
+              'code_used': '12345678',
+              'dataset_number': null,
+              'success': true,
+              'error_message': null,
+            }),
+          ).called(1);
         }
       });
     });
@@ -166,13 +182,16 @@ void main() {
 
         when(mockSupabaseService.currentUser).thenReturn(mockUser);
         when(mockUser.id).thenReturn('user-123');
-        when(mockSupabaseService.from('nfc_operations'))
-            .thenReturn(mockQueryBuilder);
+        when(
+          mockSupabaseService.from('nfc_operations'),
+        ).thenReturn(mockQueryBuilder);
         when(mockQueryBuilder.select('*')).thenReturn(mockFilterBuilder);
-        when(mockFilterBuilder.eq('user_id', 'user-123'))
-            .thenReturn(mockFilterBuilder);
-        when(mockFilterBuilder.order('created_at', ascending: false))
-            .thenReturn(mockFilterBuilder);
+        when(
+          mockFilterBuilder.eq('user_id', 'user-123'),
+        ).thenReturn(mockFilterBuilder);
+        when(
+          mockFilterBuilder.order('created_at', ascending: false),
+        ).thenReturn(mockFilterBuilder);
         when(mockFilterBuilder.limit(50)).thenReturn(mockFilterBuilder);
         when(mockFilterBuilder).thenAnswer((_) async => expectedData);
 
@@ -189,27 +208,37 @@ void main() {
         final since = DateTime(2023, 12, 1);
         when(mockSupabaseService.currentUser).thenReturn(mockUser);
         when(mockUser.id).thenReturn('user-123');
-        when(mockSupabaseService.from('nfc_operations'))
-            .thenReturn(mockQueryBuilder);
+        when(
+          mockSupabaseService.from('nfc_operations'),
+        ).thenReturn(mockQueryBuilder);
         when(mockQueryBuilder.select('*')).thenReturn(mockFilterBuilder);
-        when(mockFilterBuilder.eq('user_id', 'user-123'))
-            .thenReturn(mockFilterBuilder);
-        when(mockFilterBuilder.order('created_at', ascending: false))
-            .thenReturn(mockFilterBuilder);
+        when(
+          mockFilterBuilder.eq('user_id', 'user-123'),
+        ).thenReturn(mockFilterBuilder);
+        when(
+          mockFilterBuilder.order('created_at', ascending: false),
+        ).thenReturn(mockFilterBuilder);
         when(mockFilterBuilder.limit(25)).thenReturn(mockFilterBuilder);
-        when(mockFilterBuilder.filter('created_at', 'gte', since.toIso8601String()))
-            .thenReturn(mockFilterBuilder);
+        when(
+          mockFilterBuilder.filter(
+            'created_at',
+            'gte',
+            since.toIso8601String(),
+          ),
+        ).thenReturn(mockFilterBuilder);
         when(mockFilterBuilder).thenAnswer((_) async => []);
 
         // Act
         await service.getNfcOperationHistory(limit: 25, since: since);
 
         // Assert
-        verify(mockFilterBuilder.filter(
-          'created_at', 
-          'gte', 
-          since.toIso8601String()
-        )).called(1);
+        verify(
+          mockFilterBuilder.filter(
+            'created_at',
+            'gte',
+            since.toIso8601String(),
+          ),
+        ).called(1);
       });
 
       test('should return empty list when user not authenticated', () async {
@@ -228,8 +257,9 @@ void main() {
         // Arrange
         when(mockSupabaseService.currentUser).thenReturn(mockUser);
         when(mockUser.id).thenReturn('user-123');
-        when(mockSupabaseService.from('nfc_operations'))
-            .thenThrow(Exception('Database error'));
+        when(
+          mockSupabaseService.from('nfc_operations'),
+        ).thenThrow(Exception('Database error'));
 
         // Act
         final result = await service.getNfcOperationHistory();
@@ -253,12 +283,15 @@ void main() {
 
         when(mockSupabaseService.currentUser).thenReturn(mockUser);
         when(mockUser.id).thenReturn('user-123');
-        when(mockSupabaseService.from('nfc_operations'))
-            .thenReturn(mockQueryBuilder);
-        when(mockQueryBuilder.select('operation_type, success'))
-            .thenReturn(mockFilterBuilder);
-        when(mockFilterBuilder.eq('user_id', 'user-123'))
-            .thenReturn(mockFilterBuilder);
+        when(
+          mockSupabaseService.from('nfc_operations'),
+        ).thenReturn(mockQueryBuilder);
+        when(
+          mockQueryBuilder.select('operation_type, success'),
+        ).thenReturn(mockFilterBuilder);
+        when(
+          mockFilterBuilder.eq('user_id', 'user-123'),
+        ).thenReturn(mockFilterBuilder);
         when(mockFilterBuilder).thenAnswer((_) async => operationsData);
 
         // Act
@@ -290,12 +323,15 @@ void main() {
         // Arrange
         when(mockSupabaseService.currentUser).thenReturn(mockUser);
         when(mockUser.id).thenReturn('user-123');
-        when(mockSupabaseService.from('nfc_operations'))
-            .thenReturn(mockQueryBuilder);
-        when(mockQueryBuilder.select('operation_type, success'))
-            .thenReturn(mockFilterBuilder);
-        when(mockFilterBuilder.eq('user_id', 'user-123'))
-            .thenReturn(mockFilterBuilder);
+        when(
+          mockSupabaseService.from('nfc_operations'),
+        ).thenReturn(mockQueryBuilder);
+        when(
+          mockQueryBuilder.select('operation_type, success'),
+        ).thenReturn(mockFilterBuilder);
+        when(
+          mockFilterBuilder.eq('user_id', 'user-123'),
+        ).thenReturn(mockFilterBuilder);
         when(mockFilterBuilder).thenAnswer((_) async => []);
 
         // Act
@@ -310,8 +346,9 @@ void main() {
         // Arrange
         when(mockSupabaseService.currentUser).thenReturn(mockUser);
         when(mockUser.id).thenReturn('user-123');
-        when(mockSupabaseService.from('nfc_operations'))
-            .thenThrow(Exception('Database connection failed'));
+        when(
+          mockSupabaseService.from('nfc_operations'),
+        ).thenThrow(Exception('Database connection failed'));
 
         // Act
         final result = await service.getOperationStatistics();

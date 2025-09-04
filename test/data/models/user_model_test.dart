@@ -87,10 +87,16 @@ void main() {
         expect(deserializedUser.gender, equals(originalUser.gender));
         expect(deserializedUser.zipCode, equals(originalUser.zipCode));
         expect(deserializedUser.address, equals(originalUser.address));
-        expect(deserializedUser.neighborhood, equals(originalUser.neighborhood));
+        expect(
+          deserializedUser.neighborhood,
+          equals(originalUser.neighborhood),
+        );
         expect(deserializedUser.city, equals(originalUser.city));
         expect(deserializedUser.state, equals(originalUser.state));
-        expect(deserializedUser.eightDigitCode, equals(originalUser.eightDigitCode));
+        expect(
+          deserializedUser.eightDigitCode,
+          equals(originalUser.eightDigitCode),
+        );
         expect(deserializedUser.createdAt, equals(originalUser.createdAt));
       });
     });
@@ -228,15 +234,18 @@ void main() {
 
       test('should handle maximum length data', () {
         final maxUser = UserModel(
-          id: '123456789012345678901234567890', // Very long ID
-          fullName: 'A' * 100, // Long name
+          id: '123456789012345678901234567890',
+          // Very long ID
+          fullName: 'A' * 100,
+          // Long name
           cpf: '99999999999',
           email: 'very.long.email.address.test@example-domain.com',
           phone: '11999887766',
           birthDate: DateTime(2000, 12, 31),
           gender: 'Prefiro não informar',
           zipCode: '99999999',
-          address: 'Rua com nome muito longo para testar limites de caracteres, 9999',
+          address:
+              'Rua com nome muito longo para testar limites de caracteres, 9999',
           neighborhood: 'Bairro com nome extenso para validação',
           city: 'Cidade com Nome Muito Extenso Para Teste',
           state: 'RJ',

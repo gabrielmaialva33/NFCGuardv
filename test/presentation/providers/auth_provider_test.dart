@@ -21,7 +21,7 @@ void main() {
   setUp(() {
     mockStorageService = MockSecureStorageService();
     mockViaCepService = MockViaCepSearchCep();
-    
+
     container = ProviderContainer(
       overrides: [
         // Would need dependency injection to properly override
@@ -63,7 +63,7 @@ void main() {
         // Assert
         final state = container.read(authProvider);
         expect(state, isA<AsyncData>());
-        
+
         final user = state.value;
         expect(user?.fullName, equals('João da Silva'));
         expect(user?.cpf, equals('12345678901'));
@@ -78,15 +78,21 @@ void main() {
         expect(
           () => authNotifier.register(
             fullName: 'João da Silva',
-            cpf: '123', // Invalid CPF length
+            cpf: '123',
+            // Invalid CPF length
             email: 'joao@example.com',
             phone: '11987654321',
             birthDate: DateTime(1990, 5, 15),
             gender: 'Masculino',
             password: 'password123',
           ),
-          throwsA(predicate((e) => 
-            e is Exception && e.toString().contains(AppConstants.invalidCpfMessage))),
+          throwsA(
+            predicate(
+              (e) =>
+                  e is Exception &&
+                  e.toString().contains(AppConstants.invalidCpfMessage),
+            ),
+          ),
         );
       });
 
@@ -98,27 +104,32 @@ void main() {
           () => authNotifier.register(
             fullName: 'João da Silva',
             cpf: '12345678901',
-            email: 'invalid-email', // Invalid email
+            email: 'invalid-email',
+            // Invalid email
             phone: '11987654321',
             birthDate: DateTime(1990, 5, 15),
             gender: 'Masculino',
             password: 'password123',
           ),
-          throwsA(predicate((e) => 
-            e is Exception && e.toString().contains('Email inválido'))),
+          throwsA(
+            predicate(
+              (e) => e is Exception && e.toString().contains('Email inválido'),
+            ),
+          ),
         );
       });
 
       test('should clean CPF format during registration', () async {
         // Arrange
         when(mockStorageService.saveUser(any)).thenAnswer((_) async {});
-        
+
         final authNotifier = container.read(authProvider.notifier);
 
         // Act
         await authNotifier.register(
           fullName: 'João da Silva',
-          cpf: '123.456.789-01', // Formatted CPF
+          cpf: '123.456.789-01',
+          // Formatted CPF
           email: 'joao@example.com',
           phone: '11987654321',
           birthDate: DateTime(1990, 5, 15),
@@ -135,7 +146,7 @@ void main() {
       test('should generate valid 8-digit code during registration', () async {
         // Arrange
         when(mockStorageService.saveUser(any)).thenAnswer((_) async {});
-        
+
         final authNotifier = container.read(authProvider.notifier);
 
         // Act
@@ -162,9 +173,11 @@ void main() {
         // Arrange
         final existingUser = _createTestUserEntity();
         when(mockStorageService.saveUser(any)).thenAnswer((_) async {});
-        
+
         final authNotifier = container.read(authProvider.notifier);
-        container.read(authProvider.notifier).state = AsyncValue.data(existingUser);
+        container.read(authProvider.notifier).state = AsyncValue.data(
+          existingUser,
+        );
 
         // Act
         await authNotifier.updateAddress(
@@ -188,7 +201,9 @@ void main() {
       test('should throw error when updating address without user', () async {
         // Arrange
         final authNotifier = container.read(authProvider.notifier);
-        container.read(authProvider.notifier).state = const AsyncValue.data(null);
+        container.read(authProvider.notifier).state = const AsyncValue.data(
+          null,
+        );
 
         // Act & Assert
         expect(
@@ -199,8 +214,13 @@ void main() {
             city: 'Rio de Janeiro',
             stateCode: 'RJ',
           ),
-          throwsA(predicate((e) => 
-            e is Exception && e.toString().contains('Usuário não encontrado'))),
+          throwsA(
+            predicate(
+              (e) =>
+                  e is Exception &&
+                  e.toString().contains('Usuário não encontrado'),
+            ),
+          ),
         );
       });
     });
@@ -213,7 +233,7 @@ void main() {
         when(mockAddressInfo.bairro).thenReturn('Centro');
         when(mockAddressInfo.localidade).thenReturn('São Paulo');
         when(mockAddressInfo.uf).thenReturn('SP');
-        
+
         final authNotifier = container.read(authProvider.notifier);
 
         // Note: This test would need proper mocking setup for ViaCepSearchCep
@@ -244,8 +264,10 @@ void main() {
     group('Code Validation', () {
       test('should validate code format and uniqueness', () async {
         // Arrange
-        when(mockStorageService.isCodeUsed('12345678')).thenAnswer((_) async => false);
-        
+        when(
+          mockStorageService.isCodeUsed('12345678'),
+        ).thenAnswer((_) async => false);
+
         final authNotifier = container.read(authProvider.notifier);
 
         // Act
@@ -258,23 +280,32 @@ void main() {
       test('should reject already used codes', () async {
         // Arrange
         final validCode = CodeGenerator.generateUniqueCode();
-        when(mockStorageService.isCodeUsed(validCode)).thenAnswer((_) async => true);
-        
+        when(
+          mockStorageService.isCodeUsed(validCode),
+        ).thenAnswer((_) async => true);
+
         final authNotifier = container.read(authProvider.notifier);
 
         // Act & Assert
         expect(
           () => authNotifier.validateCodeForUse(validCode),
-          throwsA(predicate((e) => 
-            e is Exception && e.toString().contains(AppConstants.codeAlreadyUsedMessage))),
+          throwsA(
+            predicate(
+              (e) =>
+                  e is Exception &&
+                  e.toString().contains(AppConstants.codeAlreadyUsedMessage),
+            ),
+          ),
         );
       });
 
       test('should accept valid unused codes', () async {
         // Arrange
         final validCode = CodeGenerator.generateUniqueCode();
-        when(mockStorageService.isCodeUsed(validCode)).thenAnswer((_) async => false);
-        
+        when(
+          mockStorageService.isCodeUsed(validCode),
+        ).thenAnswer((_) async => false);
+
         final authNotifier = container.read(authProvider.notifier);
 
         // Act
@@ -290,8 +321,13 @@ void main() {
         // Act & Assert
         expect(
           () => authNotifier.validateCodeForUse('invalid'),
-          throwsA(predicate((e) => 
-            e is Exception && e.toString().contains(AppConstants.invalidCodeMessage))),
+          throwsA(
+            predicate(
+              (e) =>
+                  e is Exception &&
+                  e.toString().contains(AppConstants.invalidCodeMessage),
+            ),
+          ),
         );
       });
     });
@@ -299,8 +335,10 @@ void main() {
     group('Code Usage Tracking', () {
       test('should mark code as used successfully', () async {
         // Arrange
-        when(mockStorageService.addUsedCode('12345678')).thenAnswer((_) async {});
-        
+        when(
+          mockStorageService.addUsedCode('12345678'),
+        ).thenAnswer((_) async {});
+
         final authNotifier = container.read(authProvider.notifier);
 
         // Act & Assert
@@ -309,9 +347,10 @@ void main() {
 
       test('should handle mark code errors gracefully', () async {
         // Arrange
-        when(mockStorageService.addUsedCode(any))
-            .thenThrow(Exception('Storage error'));
-        
+        when(
+          mockStorageService.addUsedCode(any),
+        ).thenThrow(Exception('Storage error'));
+
         final authNotifier = container.read(authProvider.notifier);
 
         // Act & Assert - should not throw
@@ -323,7 +362,7 @@ void main() {
       test('should logout successfully and clear data', () async {
         // Arrange
         when(mockStorageService.clearStorage()).thenAnswer((_) async {});
-        
+
         final authNotifier = container.read(authProvider.notifier);
 
         // Act
@@ -336,9 +375,10 @@ void main() {
 
       test('should handle logout errors', () async {
         // Arrange
-        when(mockStorageService.clearStorage())
-            .thenThrow(Exception('Clear storage failed'));
-        
+        when(
+          mockStorageService.clearStorage(),
+        ).thenThrow(Exception('Clear storage failed'));
+
         final authNotifier = container.read(authProvider.notifier);
 
         // Act
@@ -353,8 +393,9 @@ void main() {
     group('Error States', () {
       test('should handle storage service errors during load', () async {
         // Arrange
-        when(mockStorageService.getUser())
-            .thenThrow(Exception('Storage read failed'));
+        when(
+          mockStorageService.getUser(),
+        ).thenThrow(Exception('Storage read failed'));
 
         // Act
         final provider = container.read(authProvider);
@@ -365,9 +406,10 @@ void main() {
 
       test('should handle registration errors', () async {
         // Arrange
-        when(mockStorageService.saveUser(any))
-            .thenThrow(Exception('Save failed'));
-        
+        when(
+          mockStorageService.saveUser(any),
+        ).thenThrow(Exception('Save failed'));
+
         final authNotifier = container.read(authProvider.notifier);
 
         // Act
@@ -389,14 +431,23 @@ void main() {
 
     group('Brazilian Validation Integration', () {
       test('should handle different CPF formats', () {
-        expect('123.456.789-01'.replaceAll(RegExp(r'[^0-9]'), ''), equals('12345678901'));
-        expect('123 456 789 01'.replaceAll(RegExp(r'[^0-9]'), ''), equals('12345678901'));
-        expect('12345678901'.replaceAll(RegExp(r'[^0-9]'), ''), equals('12345678901'));
+        expect(
+          '123.456.789-01'.replaceAll(RegExp(r'[^0-9]'), ''),
+          equals('12345678901'),
+        );
+        expect(
+          '123 456 789 01'.replaceAll(RegExp(r'[^0-9]'), ''),
+          equals('12345678901'),
+        );
+        expect(
+          '12345678901'.replaceAll(RegExp(r'[^0-9]'), ''),
+          equals('12345678901'),
+        );
       });
 
       test('should validate Brazilian state codes', () {
         const validStates = ['SP', 'RJ', 'MG', 'RS', 'PR', 'SC', 'BA', 'GO'];
-        
+
         for (final state in validStates) {
           expect(state.length, equals(2));
           expect(state, matches(RegExp(r'^[A-Z]{2}$')));
@@ -406,11 +457,11 @@ void main() {
       test('should validate Brazilian ZIP code format', () {
         const validZipCodes = ['01234567', '12345678', '99999999'];
         const invalidZipCodes = ['1234567', '123456789', 'abcdefgh', ''];
-        
+
         for (final zipCode in validZipCodes) {
           expect(zipCode, matches(RegExp(r'^\d{8}$')));
         }
-        
+
         for (final zipCode in invalidZipCodes) {
           expect(zipCode, isNot(matches(RegExp(r'^\d{8}$'))));
         }
@@ -418,7 +469,7 @@ void main() {
 
       test('should validate Brazilian phone number formats', () {
         const validPhones = ['11987654321', '1134567890', '85999887766'];
-        
+
         for (final phone in validPhones) {
           expect(phone.length, inInclusiveRange(10, 11));
           expect(phone, matches(RegExp(r'^\d{10,11}$')));
@@ -430,7 +481,7 @@ void main() {
       test('should persist user data after successful registration', () async {
         // Arrange
         when(mockStorageService.saveUser(any)).thenAnswer((_) async {});
-        
+
         final authNotifier = container.read(authProvider.notifier);
 
         // Act
@@ -451,7 +502,9 @@ void main() {
       test('should load existing user on provider initialization', () async {
         // Arrange
         final existingUser = _createTestUserModel();
-        when(mockStorageService.getUser()).thenAnswer((_) async => existingUser);
+        when(
+          mockStorageService.getUser(),
+        ).thenAnswer((_) async => existingUser);
 
         // Act
         final authNotifier = container.read(authProvider.notifier);

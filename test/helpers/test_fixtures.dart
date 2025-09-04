@@ -3,7 +3,6 @@ import 'package:nfc_guard/domain/entities/user_entity.dart';
 
 /// Test fixtures for consistent test data across the application
 class TestFixtures {
-  
   /// Creates a valid test user entity
   static UserEntity createUserEntity({
     String? id,
@@ -34,7 +33,8 @@ class TestFixtures {
       neighborhood: neighborhood ?? 'Centro',
       city: city ?? 'São Paulo',
       state: state ?? 'SP',
-      eightDigitCode: eightDigitCode ?? '12345674', // Valid check digit
+      eightDigitCode: eightDigitCode ?? '12345674',
+      // Valid check digit
       createdAt: createdAt ?? DateTime(2023, 12, 1),
     );
   }
@@ -69,7 +69,8 @@ class TestFixtures {
       neighborhood: neighborhood ?? 'Centro',
       city: city ?? 'São Paulo',
       state: state ?? 'SP',
-      eightDigitCode: eightDigitCode ?? '12345674', // Valid check digit
+      eightDigitCode: eightDigitCode ?? '12345674',
+      // Valid check digit
       createdAt: createdAt ?? DateTime(2023, 12, 1),
     );
   }
@@ -149,75 +150,78 @@ class TestFixtures {
 
     // Add write operations
     for (int i = 0; i < writeSuccessful; i++) {
-      logs.add(createNfcOperationLog(
-        operationType: 'write',
-        success: true,
-        codeUsed: 'code$i',
-      ));
+      logs.add(
+        createNfcOperationLog(
+          operationType: 'write',
+          success: true,
+          codeUsed: 'code$i',
+        ),
+      );
     }
     for (int i = 0; i < writeFailed; i++) {
-      logs.add(createNfcOperationLog(
-        operationType: 'write',
-        success: false,
-        errorMessage: 'Write failed',
-        codeUsed: 'fail$i',
-      ));
+      logs.add(
+        createNfcOperationLog(
+          operationType: 'write',
+          success: false,
+          errorMessage: 'Write failed',
+          codeUsed: 'fail$i',
+        ),
+      );
     }
 
     // Add protect operations
     for (int i = 0; i < protectSuccessful; i++) {
-      logs.add(createNfcOperationLog(
-        operationType: 'protect',
-        success: true,
-        codeUsed: 'protect$i',
-      ));
+      logs.add(
+        createNfcOperationLog(
+          operationType: 'protect',
+          success: true,
+          codeUsed: 'protect$i',
+        ),
+      );
     }
     for (int i = 0; i < protectFailed; i++) {
-      logs.add(createNfcOperationLog(
-        operationType: 'protect',
-        success: false,
-        errorMessage: 'Protect failed',
-        codeUsed: 'protectfail$i',
-      ));
+      logs.add(
+        createNfcOperationLog(
+          operationType: 'protect',
+          success: false,
+          errorMessage: 'Protect failed',
+          codeUsed: 'protectfail$i',
+        ),
+      );
     }
 
     // Add unprotect operations
     for (int i = 0; i < unprotectSuccessful; i++) {
-      logs.add(createNfcOperationLog(
-        operationType: 'unprotect',
-        success: true,
-        codeUsed: 'unprotect$i',
-      ));
+      logs.add(
+        createNfcOperationLog(
+          operationType: 'unprotect',
+          success: true,
+          codeUsed: 'unprotect$i',
+        ),
+      );
     }
     for (int i = 0; i < unprotectFailed; i++) {
-      logs.add(createNfcOperationLog(
-        operationType: 'unprotect',
-        success: false,
-        errorMessage: 'Unprotect failed',
-        codeUsed: 'unprotectfail$i',
-      ));
+      logs.add(
+        createNfcOperationLog(
+          operationType: 'unprotect',
+          success: false,
+          errorMessage: 'Unprotect failed',
+          codeUsed: 'unprotectfail$i',
+        ),
+      );
     }
 
     return logs;
   }
 
   /// Valid Brazilian test data
-  static const validCpfs = [
-    '11122233344',
-    '12345678901',
-    '98765432100',
-  ];
+  static const validCpfs = ['11122233344', '12345678901', '98765432100'];
 
-  static const validZipCodes = [
-    '01234567',
-    '12345678',
-    '87654321',
-    '99999999',
-  ];
+  static const validZipCodes = ['01234567', '12345678', '87654321', '99999999'];
 
   static const validPhones = [
     '11987654321', // Mobile with 11 digits
-    '1134567890',  // Landline with 10 digits
+    '1134567890', // Landline with 10 digits
     '85999887766', // Mobile from northeast
     '47988776655', // Mobile from south
   ];
@@ -230,10 +234,33 @@ class TestFixtures {
   ];
 
   static const validStates = [
-    'SP', 'RJ', 'MG', 'RS', 'PR', 'SC', 'BA', 'GO',
-    'PE', 'CE', 'PA', 'MA', 'PB', 'ES', 'MT', 'MS',
-    'DF', 'AL', 'SE', 'RN', 'RO', 'AC', 'AM', 'AP',
-    'RR', 'TO', 'PI',
+    'SP',
+    'RJ',
+    'MG',
+    'RS',
+    'PR',
+    'SC',
+    'BA',
+    'GO',
+    'PE',
+    'CE',
+    'PA',
+    'MA',
+    'PB',
+    'ES',
+    'MT',
+    'MS',
+    'DF',
+    'AL',
+    'SE',
+    'RN',
+    'RO',
+    'AC',
+    'AM',
+    'AP',
+    'RR',
+    'TO',
+    'PI',
   ];
 
   static const brazilianCities = [
@@ -251,18 +278,18 @@ class TestFixtures {
 
   /// Invalid test data for negative testing
   static const invalidCpfs = [
-    '123',           // Too short
-    '123456789012',  // Too long
-    'abcdefghijk',   // Non-numeric
-    '',              // Empty
+    '123', // Too short
+    '123456789012', // Too long
+    'abcdefghijk', // Non-numeric
+    '', // Empty
     '000.000.000-00', // Formatted but invalid
   ];
 
   static const invalidZipCodes = [
-    '1234567',   // Too short
+    '1234567', // Too short
     '123456789', // Too long
-    'abcdefgh',  // Non-numeric
-    '',          // Empty
+    'abcdefgh', // Non-numeric
+    '', // Empty
     '12345-678', // Formatted
   ];
 
@@ -275,10 +302,10 @@ class TestFixtures {
   ];
 
   static const invalidPhones = [
-    '123',         // Too short
+    '123', // Too short
     '123456789012', // Too long
-    'abcdefghij',   // Non-numeric
-    '',             // Empty
+    'abcdefghij', // Non-numeric
+    '', // Empty
   ];
 
   /// Creates address data for CEP testing

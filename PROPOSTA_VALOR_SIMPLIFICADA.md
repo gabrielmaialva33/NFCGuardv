@@ -11,23 +11,27 @@
 ## 🎯 **FUNCIONALIDADES CONFORME ESCOPO**
 
 ### **1. ✅ Sistema de Login/Cadastro**
+
 - **Dados completos** - Nome, CPF, email, telefone, data nascimento, sexo
 - **Endereço automático** - Digite CEP, preenche endereço completo
 - **Validação CPF real** - Com cálculo de dígito verificador
 - **Código único 8 dígitos** - Gerado automaticamente (não mostrado na primeira vez)
 
 ### **2. ✅ Tela de Gravação (10 Botões Total)**
+
 - **8 botões "Gravar tag com dados 1-8"** - Exatamente como solicitado
 - **1 botão "Proteger tag com senha"** - Segurança adicional
 - **1 botão "Remover senha da tag"** - Desbloqueio de tags
 
 ### **3. ✅ Validações Obrigatórias**
+
 - **Solicita código 8 dígitos** - Ao clicar em qualquer botão
 - **Cálculo dígito verificador** - Igual CPF, valida matematicamente
 - **Anti-reutilização** - Verifica se código já foi usado
 - **Mensagens específicas** - "CÓDIGO INVÁLIDO" e "CÓDIGO JÁ UTILIZADO"
 
 ### **4. ✅ Bonus Técnico (Sem Custo Extra)**
+
 - **App nativo** - Android + iOS com Flutter
 - **Armazenamento seguro** - Dados protegidos
 - **Interface moderna** - Material Design 3
@@ -42,7 +46,7 @@
 ```yaml
 📱 Framework: Flutter 3.9+ (Google - Nativo Android/iOS)
 🎯 Gerenciamento: Riverpod (Estado reativo)
-📡 Backend: Supabase FREE (Backup automático)  
+📡 Backend: Supabase FREE (Backup automático)
 🔧 NFC: nfc_manager 4.0.2 + ndef (Melhor library)
 🔐 Segurança: Flutter Secure Storage (Dados seguros)
 🇧🇷 Validações: CPF + CEP automático brasileiro
@@ -65,6 +69,7 @@
 ```
 
 ### **🚀 Funciona Imediatamente:**
+
 - **Instalar e usar** - Zero configuração
 - **Testado em dispositivos reais** - Android e iOS
 - **Todas as validações** - Conforme especificado no PDF
@@ -78,17 +83,17 @@
 
 **Por que este preço é justo:**
 
-| Item | Valor de Mercado | Incluído |
-|------|-----------------|----------|
-| **App Flutter básico** | R$ 1.500 - R$ 3.000 | ✅ |
-| **Validações brasileiras** | R$ 500 - R$ 800 | ✅ |
-| **NFC implementation** | R$ 800 - R$ 1.200 | ✅ |
-| **Backend Supabase** | R$ 600 - R$ 1.000 | ✅ |
-| **Build Android + iOS** | R$ 300 - R$ 500 | ✅ |
-| **Suporte 30 dias** | R$ 200 - R$ 400 | ✅ |
-| **TOTAL MERCADO** | **R$ 3.900 - R$ 6.900** | - |
-| **PREÇO NFCGuard** | **R$ 2.500** | **✅** |
-| **SUA ECONOMIA** | **R$ 1.400 - R$ 4.400** | **56% OFF** |
+| Item                       | Valor de Mercado        | Incluído    |
+|----------------------------|-------------------------|-------------|
+| **App Flutter básico**     | R$ 1.500 - R$ 3.000     | ✅           |
+| **Validações brasileiras** | R$ 500 - R$ 800         | ✅           |
+| **NFC implementation**     | R$ 800 - R$ 1.200       | ✅           |
+| **Backend Supabase**       | R$ 600 - R$ 1.000       | ✅           |
+| **Build Android + iOS**    | R$ 300 - R$ 500         | ✅           |
+| **Suporte 30 dias**        | R$ 200 - R$ 400         | ✅           |
+| **TOTAL MERCADO**          | **R$ 3.900 - R$ 6.900** | -           |
+| **PREÇO NFCGuard**         | **R$ 2.500**            | **✅**       |
+| **SUA ECONOMIA**           | **R$ 1.400 - R$ 4.400** | **56% OFF** |
 
 ---
 
@@ -111,9 +116,10 @@ VS Apps Caros (R$ 4.000+):
 ```
 
 ### **🎁 Incluso Sem Custo Extra:**
+
 - ✅ **Temas automáticos** - Dark/Light mode
 - ✅ **Responsividade** - Funciona em qualquer tela
-- ✅ **Código limpo** - Fácil manutenção futura  
+- ✅ **Código limpo** - Fácil manutenção futura
 - ✅ **Tratamento de erros** - App nunca trava
 - ✅ **Configuração completa** - Pronto para stores
 
@@ -131,6 +137,7 @@ VS Apps Caros (R$ 4.000+):
 - ✅ **Zero bugs críticos** - App estável e confiável
 
 ### **⏰ Cronograma:**
+
 ```bash
 ✅ App já está pronto (100% concluído)
 ✅ Supabase configurado e testado
@@ -147,6 +154,7 @@ VS Apps Caros (R$ 4.000+):
 ### **🤝 Aceita a Proposta de R$ 2.500?**
 
 **Inclui:**
+
 - ✅ App completo conforme PDF
 - ✅ Código fonte Flutter
 - ✅ Supabase configurado (FREE)
@@ -155,6 +163,7 @@ VS Apps Caros (R$ 4.000+):
 - ✅ Documentação básica
 
 **Forma de pagamento:**
+
 - 💰 50% no início (R$ 1.250)
 - 💰 50% na entrega (R$ 1.250)
 - 🔒 Ou 100% à vista com 5% desconto (R$ 2.375)
@@ -163,7 +172,8 @@ VS Apps Caros (R$ 4.000+):
 
 ### **💬 Mensagem Final:**
 
-> *"Este preço reflete exatamente o escopo solicitado, sem extras desnecessários. Você recebe um app profissional, funcional e moderno pelo preço de uma solução básica."*
+> *"Este preço reflete exatamente o escopo solicitado, sem extras desnecessários. Você recebe um app
+profissional, funcional e moderno pelo preço de uma solução básica."*
 
 **Vamos fechar negócio?** 🤝
 

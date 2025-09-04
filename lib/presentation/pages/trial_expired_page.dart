@@ -30,9 +30,9 @@ class TrialExpiredPage extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Title
               Text(
                 'Trial de 3 dias concluído!',
@@ -42,25 +42,27 @@ class TrialExpiredPage extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Subtitle
               Text(
                 'Esperamos que tenha gostado do NFCGuard!\nVamos finalizar sua compra?',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.7),
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 48),
-              
+
               // Features recap
               _buildFeatureList(context),
-              
+
               const SizedBox(height: 48),
-              
+
               // Action buttons
               Column(
                 children: [
@@ -79,9 +81,9 @@ class TrialExpiredPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Secondary CTA
                   SizedBox(
                     width: double.infinity,
@@ -99,14 +101,16 @@ class TrialExpiredPage extends StatelessWidget {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Footer
               Text(
                 'Obrigado por testar o NFCGuard!',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.5),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -145,32 +149,34 @@ class TrialExpiredPage extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 'O que você testou:',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          ...features.map((feature) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.check_circle,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 16,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    feature,
-                    style: Theme.of(context).textTheme.bodyMedium,
+          ...features.map(
+            (feature) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 16,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      feature,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -190,12 +196,12 @@ class TrialExpiredPage extends StatelessWidget {
           children: [
             Text(
               'Entre em contato',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
-            
+
             // WhatsApp
             ListTile(
               leading: const Icon(Icons.chat, color: Colors.green),
@@ -206,7 +212,7 @@ class TrialExpiredPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            
+
             // Email
             ListTile(
               leading: const Icon(Icons.email, color: Colors.blue),
@@ -217,7 +223,7 @@ class TrialExpiredPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            
+
             const SizedBox(height: 16),
           ],
         ),
@@ -226,17 +232,20 @@ class TrialExpiredPage extends StatelessWidget {
   }
 
   Future<void> _openWhatsApp() async {
-    const message = 'Olá! Testei o NFCGuard por 3 dias e gostaria de finalizar a compra. Podemos conversar sobre os preços?';
+    const message =
+        'Olá! Testei o NFCGuard por 3 dias e gostaria de finalizar a compra. Podemos conversar sobre os preços?';
     const phone = '5511999999999'; // Replace with actual number
     final url = 'https://wa.me/$phone?text=${Uri.encodeComponent(message)}';
-    
+
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     }
   }
 
   Future<void> _copyEmail(BuildContext context) async {
-    await Clipboard.setData(const ClipboardData(text: 'gabrielmaialva33@gmail.com'));
+    await Clipboard.setData(
+      const ClipboardData(text: 'gabrielmaialva33@gmail.com'),
+    );
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

@@ -42,6 +42,7 @@ dependencies:
   # NFC
   nfc_manager: ^4.0.2
   nfc_manager_ndef: ^1.0.1
+  ndef_record: ^1.2.1
 
   # Brazilian Validations
   all_validations_br: ^3.0.0

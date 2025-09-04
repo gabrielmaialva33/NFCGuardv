@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:ndef_record/ndef_record.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
-import 'package:ndef_record/ndef_record.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../core/utils/code_generator.dart';
@@ -76,7 +76,7 @@ class Nfc extends _$Nfc {
 
             // Criar registro NDEF simples
             final textContent = 'NFCGuard Data Set $dataSet - Code: $userCode';
-            
+
             // Por enquanto, usar implementação direta da tag sem NDEF abstração
             await _writeSimpleText(tag, textContent);
 
@@ -102,7 +102,7 @@ class Nfc extends _$Nfc {
               success: false,
               errorMessage: e.toString(),
             );
-            
+
             await NfcManager.instance.stopSession(
               errorMessageIos: e.toString(),
             );
@@ -250,7 +250,7 @@ class Nfc extends _$Nfc {
   /// Helper method to write simple text to tag (cross-platform)
   Future<void> _writeSimpleText(NfcTag tag, String text) async {
     final ndef = Ndef.from(tag);
-    
+
     if (ndef == null) {
       throw Exception('Tag não suporta NDEF');
     }
@@ -267,7 +267,7 @@ class Nfc extends _$Nfc {
       ...languageBytes,
       ...textBytes,
     ]);
-    
+
     final textRecord = NdefRecord(
       typeNameFormat: TypeNameFormat.wellKnown,
       type: utf8.encode('T'),
@@ -283,7 +283,7 @@ class Nfc extends _$Nfc {
   /// Helper method to read NDEF message from tag (cross-platform)
   Future<String?> _readSimpleText(NfcTag tag) async {
     final ndef = Ndef.from(tag);
-    
+
     if (ndef == null) {
       throw Exception('Tag não contém dados NDEF');
     }
@@ -292,17 +292,17 @@ class Nfc extends _$Nfc {
     if (message == null || message.records.isEmpty) {
       throw Exception('Não foi possível ler dados da tag');
     }
-    
+
     final record = message.records.first;
     if (record.payload.length < 4) {
       throw Exception('Formato de dados inválido');
     }
-    
+
     // Skip language code prefix and decode text
     final languageCodeLength = record.payload[0];
     final textStart = 1 + languageCodeLength;
     final textBytes = record.payload.skip(textStart).toList();
-    
+
     return utf8.decode(textBytes);
   }
 }

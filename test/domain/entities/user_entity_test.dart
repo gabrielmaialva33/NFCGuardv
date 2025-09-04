@@ -42,7 +42,7 @@ void main() {
 
       test('should be immutable', () {
         final user = _createTestUser();
-        
+
         // Verify all fields are final (compile-time check)
         expect(user.id, isA<String>());
         expect(user.fullName, isA<String>());
@@ -103,7 +103,7 @@ void main() {
         expect(updatedUser.email, equals('maria@example.com'));
         expect(updatedUser.city, equals('Rio de Janeiro'));
         expect(updatedUser.state, equals('RJ'));
-        
+
         // Unchanged fields
         expect(updatedUser.id, equals(originalUser.id));
         expect(updatedUser.cpf, equals(originalUser.cpf));
@@ -189,9 +189,33 @@ void main() {
 
       test('should handle valid Brazilian state codes', () {
         final brazilianStates = [
-          'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
-          'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
-          'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+          'AC',
+          'AL',
+          'AP',
+          'AM',
+          'BA',
+          'CE',
+          'DF',
+          'ES',
+          'GO',
+          'MA',
+          'MT',
+          'MS',
+          'MG',
+          'PA',
+          'PB',
+          'PR',
+          'PE',
+          'PI',
+          'RJ',
+          'RN',
+          'RS',
+          'RO',
+          'RR',
+          'SC',
+          'SP',
+          'SE',
+          'TO',
         ];
 
         for (final state in brazilianStates) {
@@ -205,7 +229,7 @@ void main() {
       test('should handle valid phone number formats', () {
         final phoneFormats = [
           '11987654321', // Mobile (11 digits)
-          '1134567890',  // Landline (10 digits)
+          '1134567890', // Landline (10 digits)
           '85999887766', // Mobile from another state
         ];
 
@@ -250,7 +274,7 @@ void main() {
       test('should handle birth date correctly', () {
         final birthDate = DateTime(1990, 12, 25);
         final user = _createTestUser().copyWith(birthDate: birthDate);
-        
+
         expect(user.birthDate, equals(birthDate));
         expect(user.birthDate.year, equals(1990));
         expect(user.birthDate.month, equals(12));
@@ -260,7 +284,7 @@ void main() {
       test('should handle created at timestamp', () {
         final createdAt = DateTime(2023, 6, 15, 14, 30, 0);
         final user = _createTestUser().copyWith(createdAt: createdAt);
-        
+
         expect(user.createdAt, equals(createdAt));
         expect(user.createdAt.isBefore(DateTime.now()), isTrue);
       });
@@ -303,7 +327,7 @@ void main() {
 
       test('should maintain code uniqueness property', () {
         final codes = ['12345674', '87654321', '11111111', '99999999'];
-        
+
         for (final code in codes) {
           final user = _createTestUser().copyWith(eightDigitCode: code);
           expect(user.eightDigitCode, equals(code));
@@ -316,7 +340,7 @@ void main() {
       test('should consider entities with same data equal', () {
         final user1 = _createTestUser();
         final user2 = _createTestUser();
-        
+
         // Since there's no explicit equality implementation,
         // we test field-by-field equality
         expect(user1.id, equals(user2.id));
@@ -329,7 +353,7 @@ void main() {
       test('should consider entities with different IDs as different', () {
         final user1 = _createTestUser();
         final user2 = user1.copyWith(id: 'different-id');
-        
+
         expect(user1.id, isNot(equals(user2.id)));
         expect(user1.fullName, equals(user2.fullName)); // Other fields same
       });
@@ -345,11 +369,16 @@ void main() {
           phone: '11987654321',
           birthDate: DateTime(1990, 1, 1),
           gender: 'Masculino',
-          zipCode: '',  // Empty ZIP code
-          address: '',  // Empty address
-          neighborhood: '', // Empty neighborhood
-          city: '',     // Empty city
-          state: '',    // Empty state
+          zipCode: '',
+          // Empty ZIP code
+          address: '',
+          // Empty address
+          neighborhood: '',
+          // Empty neighborhood
+          city: '',
+          // Empty city
+          state: '',
+          // Empty state
           eightDigitCode: '12345678',
           createdAt: DateTime.now(),
         );
@@ -364,7 +393,7 @@ void main() {
       test('should handle very long string fields', () {
         const longName = 'A' * 100;
         const longAddress = 'Rua com nome muito longo ' * 10;
-        
+
         final user = _createTestUser().copyWith(
           fullName: longName,
           address: longAddress,
@@ -410,11 +439,11 @@ void main() {
       test('should maintain referential integrity', () {
         final user = _createTestUser();
         final copiedUser = user.copyWith(email: 'new@email.com');
-        
+
         // Original user should be unchanged
         expect(user.email, equals('joao@example.com'));
         expect(copiedUser.email, equals('new@email.com'));
-        
+
         // Other fields should reference same values
         expect(user.id, equals(copiedUser.id));
         expect(user.cpf, equals(copiedUser.cpf));
@@ -423,7 +452,7 @@ void main() {
       test('should handle DateTime precision correctly', () {
         final birthDate = DateTime(1990, 5, 15, 10, 30, 45, 123);
         final createdAt = DateTime(2023, 12, 1, 9, 15, 30, 456);
-        
+
         final user = _createTestUser().copyWith(
           birthDate: birthDate,
           createdAt: createdAt,
@@ -439,20 +468,21 @@ void main() {
     group('Brazilian Business Rules', () {
       test('should support Brazilian address components', () {
         final user = _createTestUser();
-        
+
         // All Brazilian address components should be present
-        expect(user.zipCode, isNotEmpty);    // CEP
-        expect(user.address, isNotEmpty);    // Logradouro
+        expect(user.zipCode, isNotEmpty); // CEP
+        expect(user.address, isNotEmpty); // Logradouro
         expect(user.neighborhood, isNotEmpty); // Bairro
-        expect(user.city, isNotEmpty);       // Cidade
-        expect(user.state, isNotEmpty);      // Estado
+        expect(user.city, isNotEmpty); // Cidade
+        expect(user.state, isNotEmpty); // Estado
       });
 
       test('should handle incomplete address data', () {
         final incompleteUser = _createTestUser().copyWith(
           zipCode: '12345678',
           address: 'Rua das Flores, 123',
-          neighborhood: '', // Missing neighborhood
+          neighborhood: '',
+          // Missing neighborhood
           city: 'São Paulo',
           state: 'SP',
         );
@@ -466,7 +496,7 @@ void main() {
 
       test('should validate Brazilian state codes', () {
         const validStates = ['SP', 'RJ', 'MG', 'RS', 'BA'];
-        
+
         for (final state in validStates) {
           final user = _createTestUser().copyWith(state: state);
           expect(user.state, hasLength(2));
@@ -476,7 +506,7 @@ void main() {
 
       test('should handle 8-digit security code format', () {
         final codes = ['12345674', '87654321', '00000000', '99999999'];
-        
+
         for (final code in codes) {
           final user = _createTestUser().copyWith(eightDigitCode: code);
           expect(user.eightDigitCode, hasLength(8));
@@ -488,11 +518,11 @@ void main() {
     group('Performance', () {
       test('should create instances quickly', () {
         final stopwatch = Stopwatch()..start();
-        
+
         for (int i = 0; i < 1000; i++) {
           _createTestUser();
         }
-        
+
         stopwatch.stop();
         expect(stopwatch.elapsedMilliseconds, lessThan(100));
       });
@@ -500,11 +530,11 @@ void main() {
       test('should copy instances quickly', () {
         final user = _createTestUser();
         final stopwatch = Stopwatch()..start();
-        
+
         for (int i = 0; i < 1000; i++) {
           user.copyWith(fullName: 'Test $i');
         }
-        
+
         stopwatch.stop();
         expect(stopwatch.elapsedMilliseconds, lessThan(100));
       });

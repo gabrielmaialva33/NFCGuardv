@@ -63,16 +63,12 @@ class _TrialCounterWidgetState extends State<TrialCounterWidget> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.schedule,
-            size: 16,
-            color: _getTextColor(context),
-          ),
+          Icon(Icons.schedule, size: 16, color: _getTextColor(context)),
           const SizedBox(width: 4),
           Text(
-            _remainingDays > 0 
-              ? '$_remainingDays ${_remainingDays == 1 ? "dia" : "dias"}'
-              : 'Expirado',
+            _remainingDays > 0
+                ? '$_remainingDays ${_remainingDays == 1 ? "dia" : "dias"}'
+                : 'Expirado',
             style: TextStyle(
               color: _getTextColor(context),
               fontSize: 12,

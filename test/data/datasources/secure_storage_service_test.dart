@@ -27,11 +27,10 @@ void main() {
         // Arrange
         final user = _createTestUser();
         final expectedJson = json.encode(user.toJson());
-        
-        when(mockStorage.write(
-          key: AppConstants.userDataKey,
-          value: expectedJson,
-        )).thenAnswer((_) async {});
+
+        when(
+          mockStorage.write(key: AppConstants.userDataKey, value: expectedJson),
+        ).thenAnswer((_) async {});
 
         // Act & Assert
         expect(() => service.saveUser(user), returnsNormally);
@@ -41,9 +40,10 @@ void main() {
         // Arrange
         final user = _createTestUser();
         final userJson = json.encode(user.toJson());
-        
-        when(mockStorage.read(key: AppConstants.userDataKey))
-            .thenAnswer((_) async => userJson);
+
+        when(
+          mockStorage.read(key: AppConstants.userDataKey),
+        ).thenAnswer((_) async => userJson);
 
         // Act
         final result = await service.getUser();
@@ -58,8 +58,9 @@ void main() {
 
       test('should return null when user data does not exist', () async {
         // Arrange
-        when(mockStorage.read(key: AppConstants.userDataKey))
-            .thenAnswer((_) async => null);
+        when(
+          mockStorage.read(key: AppConstants.userDataKey),
+        ).thenAnswer((_) async => null);
 
         // Act
         final result = await service.getUser();
@@ -70,8 +71,9 @@ void main() {
 
       test('should delete user successfully', () async {
         // Arrange
-        when(mockStorage.delete(key: AppConstants.userDataKey))
-            .thenAnswer((_) async {});
+        when(
+          mockStorage.delete(key: AppConstants.userDataKey),
+        ).thenAnswer((_) async {});
 
         // Act & Assert
         expect(() => service.deleteUser(), returnsNormally);
@@ -84,11 +86,13 @@ void main() {
         // Arrange
         final codes = ['12345678', '87654321', '11111111'];
         final expectedJson = json.encode(codes);
-        
-        when(mockStorage.write(
-          key: AppConstants.usedCodesKey,
-          value: expectedJson,
-        )).thenAnswer((_) async {});
+
+        when(
+          mockStorage.write(
+            key: AppConstants.usedCodesKey,
+            value: expectedJson,
+          ),
+        ).thenAnswer((_) async {});
 
         // Act & Assert
         expect(() => service.saveUsedCodes(codes), returnsNormally);
@@ -98,9 +102,10 @@ void main() {
         // Arrange
         final expectedCodes = ['12345678', '87654321', '11111111'];
         final codesJson = json.encode(expectedCodes);
-        
-        when(mockStorage.read(key: AppConstants.usedCodesKey))
-            .thenAnswer((_) async => codesJson);
+
+        when(
+          mockStorage.read(key: AppConstants.usedCodesKey),
+        ).thenAnswer((_) async => codesJson);
 
         // Act
         final result = await service.getUsedCodes();
@@ -112,8 +117,9 @@ void main() {
 
       test('should return empty list when used codes do not exist', () async {
         // Arrange
-        when(mockStorage.read(key: AppConstants.usedCodesKey))
-            .thenAnswer((_) async => null);
+        when(
+          mockStorage.read(key: AppConstants.usedCodesKey),
+        ).thenAnswer((_) async => null);
 
         // Act
         final result = await service.getUsedCodes();
@@ -127,54 +133,65 @@ void main() {
         final existingCodes = ['12345678', '87654321'];
         final newCode = '11111111';
         final expectedCodes = ['12345678', '87654321', '11111111'];
-        
-        when(mockStorage.read(key: AppConstants.usedCodesKey))
-            .thenAnswer((_) async => json.encode(existingCodes));
-        
-        when(mockStorage.write(
-          key: AppConstants.usedCodesKey,
-          value: json.encode(expectedCodes),
-        )).thenAnswer((_) async {});
+
+        when(
+          mockStorage.read(key: AppConstants.usedCodesKey),
+        ).thenAnswer((_) async => json.encode(existingCodes));
+
+        when(
+          mockStorage.write(
+            key: AppConstants.usedCodesKey,
+            value: json.encode(expectedCodes),
+          ),
+        ).thenAnswer((_) async {});
 
         // Act
         await service.addUsedCode(newCode);
 
         // Assert
-        verify(mockStorage.write(
-          key: AppConstants.usedCodesKey,
-          value: json.encode(expectedCodes),
-        )).called(1);
+        verify(
+          mockStorage.write(
+            key: AppConstants.usedCodesKey,
+            value: json.encode(expectedCodes),
+          ),
+        ).called(1);
       });
 
       test('should add code to empty list', () async {
         // Arrange
         final newCode = '12345678';
         final expectedCodes = ['12345678'];
-        
-        when(mockStorage.read(key: AppConstants.usedCodesKey))
-            .thenAnswer((_) async => null);
-        
-        when(mockStorage.write(
-          key: AppConstants.usedCodesKey,
-          value: json.encode(expectedCodes),
-        )).thenAnswer((_) async {});
+
+        when(
+          mockStorage.read(key: AppConstants.usedCodesKey),
+        ).thenAnswer((_) async => null);
+
+        when(
+          mockStorage.write(
+            key: AppConstants.usedCodesKey,
+            value: json.encode(expectedCodes),
+          ),
+        ).thenAnswer((_) async {});
 
         // Act
         await service.addUsedCode(newCode);
 
         // Assert
-        verify(mockStorage.write(
-          key: AppConstants.usedCodesKey,
-          value: json.encode(expectedCodes),
-        )).called(1);
+        verify(
+          mockStorage.write(
+            key: AppConstants.usedCodesKey,
+            value: json.encode(expectedCodes),
+          ),
+        ).called(1);
       });
 
       test('should correctly identify used codes', () async {
         // Arrange
         final usedCodes = ['12345678', '87654321', '11111111'];
-        
-        when(mockStorage.read(key: AppConstants.usedCodesKey))
-            .thenAnswer((_) async => json.encode(usedCodes));
+
+        when(
+          mockStorage.read(key: AppConstants.usedCodesKey),
+        ).thenAnswer((_) async => json.encode(usedCodes));
 
         // Act & Assert
         expect(await service.isCodeUsed('12345678'), isTrue);
@@ -186,8 +203,9 @@ void main() {
 
       test('should return false for unused codes when list is empty', () async {
         // Arrange
-        when(mockStorage.read(key: AppConstants.usedCodesKey))
-            .thenAnswer((_) async => null);
+        when(
+          mockStorage.read(key: AppConstants.usedCodesKey),
+        ).thenAnswer((_) async => null);
 
         // Act & Assert
         expect(await service.isCodeUsed('12345678'), isFalse);
@@ -207,32 +225,42 @@ void main() {
     });
 
     group('Error Handling', () {
-      test('should handle JSON decode errors gracefully for user data', () async {
-        // Arrange
-        when(mockStorage.read(key: AppConstants.userDataKey))
-            .thenAnswer((_) async => 'invalid_json');
+      test(
+        'should handle JSON decode errors gracefully for user data',
+        () async {
+          // Arrange
+          when(
+            mockStorage.read(key: AppConstants.userDataKey),
+          ).thenAnswer((_) async => 'invalid_json');
 
-        // Act & Assert
-        expect(() => service.getUser(), throwsA(isA<FormatException>()));
-      });
+          // Act & Assert
+          expect(() => service.getUser(), throwsA(isA<FormatException>()));
+        },
+      );
 
-      test('should handle JSON decode errors gracefully for used codes', () async {
-        // Arrange
-        when(mockStorage.read(key: AppConstants.usedCodesKey))
-            .thenAnswer((_) async => 'invalid_json');
+      test(
+        'should handle JSON decode errors gracefully for used codes',
+        () async {
+          // Arrange
+          when(
+            mockStorage.read(key: AppConstants.usedCodesKey),
+          ).thenAnswer((_) async => 'invalid_json');
 
-        // Act & Assert
-        expect(() => service.getUsedCodes(), throwsA(isA<FormatException>()));
-      });
+          // Act & Assert
+          expect(() => service.getUsedCodes(), throwsA(isA<FormatException>()));
+        },
+      );
 
       test('should handle storage write failures', () async {
         // Arrange
         final user = _createTestUser();
-        
-        when(mockStorage.write(
-          key: AppConstants.userDataKey,
-          value: any(named: 'value'),
-        )).thenThrow(Exception('Storage write failed'));
+
+        when(
+          mockStorage.write(
+            key: AppConstants.userDataKey,
+            value: any(named: 'value'),
+          ),
+        ).thenThrow(Exception('Storage write failed'));
 
         // Act & Assert
         expect(() => service.saveUser(user), throwsException);
@@ -240,8 +268,9 @@ void main() {
 
       test('should handle storage read failures', () async {
         // Arrange
-        when(mockStorage.read(key: AppConstants.userDataKey))
-            .thenThrow(Exception('Storage read failed'));
+        when(
+          mockStorage.read(key: AppConstants.userDataKey),
+        ).thenThrow(Exception('Storage read failed'));
 
         // Act & Assert
         expect(() => service.getUser(), throwsException);
@@ -252,7 +281,7 @@ void main() {
       test('should return same instance', () {
         final instance1 = SecureStorageService();
         final instance2 = SecureStorageService();
-        
+
         expect(identical(instance1, instance2), isTrue);
       });
     });

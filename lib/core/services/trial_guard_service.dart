@@ -16,9 +16,7 @@ class TrialGuardService {
   static const String _trialVersionKey = 'nfc_guard_trial_version';
 
   static const _secureStorage = FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
     iOptions: IOSOptions(
       accessibility: KeychainAccessibility.first_unlock_this_device,
     ),
@@ -34,7 +32,9 @@ class TrialGuardService {
 
       // Get device fingerprint
       final currentFingerprint = await _getDeviceFingerprint();
-      final storedFingerprint = await _secureStorage.read(key: _deviceFingerprintKey);
+      final storedFingerprint = await _secureStorage.read(
+        key: _deviceFingerprintKey,
+      );
 
       // First installation
       if (storedFingerprint == null) {
@@ -103,7 +103,10 @@ class TrialGuardService {
     final trialStartMs = currentTime.millisecondsSinceEpoch.toString();
 
     await _secureStorage.write(key: _trialStartKey, value: trialStartMs);
-    await _secureStorage.write(key: _deviceFingerprintKey, value: deviceFingerprint);
+    await _secureStorage.write(
+      key: _deviceFingerprintKey,
+      value: deviceFingerprint,
+    );
     await _secureStorage.write(key: _trialVersionKey, value: '1.0.0-trial');
   }
 
@@ -115,10 +118,12 @@ class TrialGuardService {
     try {
       if (Platform.isAndroid) {
         final androidInfo = await deviceInfo.androidInfo;
-        fingerprint = '${androidInfo.model}_${androidInfo.id}_${androidInfo.serialNumber}';
+        fingerprint =
+            '${androidInfo.model}_${androidInfo.id}_${androidInfo.serialNumber}';
       } else if (Platform.isIOS) {
         final iosInfo = await deviceInfo.iosInfo;
-        fingerprint = '${iosInfo.model}_${iosInfo.identifierForVendor}_${iosInfo.systemVersion}';
+        fingerprint =
+            '${iosInfo.model}_${iosInfo.identifierForVendor}_${iosInfo.systemVersion}';
       }
 
       // Create a hash of the fingerprint for security
@@ -169,7 +174,9 @@ class TrialGuardService {
       'isTrialBuild': _isTrialBuild(),
       'trialDays': _trialDays,
       'trialStart': await _secureStorage.read(key: _trialStartKey),
-      'deviceFingerprint': await _secureStorage.read(key: _deviceFingerprintKey),
+      'deviceFingerprint': await _secureStorage.read(
+        key: _deviceFingerprintKey,
+      ),
       'currentTime': (await _getCurrentTime()).toIso8601String(),
       'remainingDays': await getRemainingDays(),
     };
