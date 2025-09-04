@@ -211,19 +211,11 @@ class Nfc extends _$Nfc {
         onDiscovered: (NfcTag tag) async {
           try {
             // Tentar ler da tag (Android/iOS specific)
-            final ndefMessage = await _readNdefMessage(tag);
-            if (ndefMessage == null) {
-              throw Exception('Tag não contém dados NDEF');
-            }
-            if (ndefMessage.records.isNotEmpty) {
-              final record = ndefMessage.records.first;
-              final payload = String.fromCharCodes(
-                record.payload.skip(3),
-              ); // Skip language code
-
+            final textContent = await _readSimpleText(tag);
+            if (textContent != null) {
               tagData = {
-                'payload': payload,
-                'type': record.type,
+                'payload': textContent,
+                'type': 'text',
                 'readAt': DateTime.now().millisecondsSinceEpoch,
               };
             }
@@ -283,7 +275,7 @@ class Nfc extends _$Nfc {
       payload: payload,
     );
 
-    await ndef.write([textRecord]);
+    await ndef.write(textRecord);
   }
 
   /// Helper method to read NDEF message from tag (cross-platform)
