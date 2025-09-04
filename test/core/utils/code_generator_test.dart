@@ -87,8 +87,8 @@ void main() {
       test('should calculate correct check digit for known cases', () {
         // Since _calculateCheckDigit is private, we test through validateCode
 
-        // Test edge cases
-        expect(CodeGenerator.validateCode('00000000'), isFalse);
+        // Test known valid codes
+        expect(CodeGenerator.validateCode('00000000'), isTrue); // 0000000 + check digit 0 = valid
 
         // Generate valid codes and verify they validate
         final codes = List.generate(
