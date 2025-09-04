@@ -60,6 +60,8 @@
 - **Clean Architecture** - Organized code structure with separation of concerns
 - **Type Safety** - Full Dart null safety implementation
 - **Code Generation** - Automated provider and JSON serialization generation
+- **🆕 Supabase Integration** - Real-time backend with PostgreSQL database
+- **🆕 Cloud Authentication** - Secure user management and session handling
 
 <br>
 
@@ -87,6 +89,8 @@
 - Encrypted user data storage
 - Secure token management
 - Protected against replay attacks
+- 🆕 Cloud data encryption with Supabase
+- 🆕 Operation logging and audit trails
 ```
 
 ### NFC Security
