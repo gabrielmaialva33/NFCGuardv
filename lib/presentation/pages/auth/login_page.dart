@@ -163,8 +163,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   icon: const Icon(Icons.security),
                   label: const Text('Análise Anti-Fraude CPF'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                    foregroundColor: Theme.of(context).colorScheme.onError,
                   ),
                 ),
               ],
