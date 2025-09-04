@@ -1,4 +1,4 @@
-import 'package:all_validations_br/all_validations_br.dart' as validations;
+import 'package:all_validations_br/all_validations_br.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nfc_guard/core/constants/app_constants.dart';
 
@@ -17,7 +17,7 @@ void main() {
 
         for (final cpf in validTestCpfs) {
           expect(
-            validations.cpf(cpf),
+            AllValidations.isCpf(cpf),
             isTrue,
             reason: 'CPF $cpf should be valid according to Brazilian algorithm',
           );
@@ -27,7 +27,7 @@ void main() {
       test('should reject invalid CPF patterns', () {
         for (final invalidCpf in MockDataGenerators.generateInvalidCpfs()) {
           expect(
-            validations.cpf(invalidCpf),
+            AllValidations.isCpf(invalidCpf),
             isFalse,
             reason: 'CPF $invalidCpf should be invalid',
           );
@@ -39,8 +39,8 @@ void main() {
         const baseCpf = '11144477735';
         const formattedCpf = '111.444.777-35';
 
-        expect(validations.cpf(baseCpf), isTrue);
-        expect(validations.cpf(formattedCpf), isTrue);
+        expect(AllValidations.isCpf(baseCpf), isTrue);
+        expect(AllValidations.isCpf(formattedCpf), isTrue);
       });
 
       test('should reject sequential and repeated CPFs', () {
@@ -55,7 +55,7 @@ void main() {
 
         for (final cpf in invalidPatterns) {
           expect(
-            validations.cpf(cpf),
+            AllValidations.isCpf(cpf),
             isFalse,
             reason: 'Patterned CPF $cpf should be invalid',
           );
@@ -73,7 +73,7 @@ void main() {
 
         for (final cpf in wrongLengthCpfs) {
           expect(
-            validations.cpf(cpf),
+            AllValidations.isCpf(cpf),
             isFalse,
             reason: 'CPF $cpf with wrong length should be invalid',
           );
@@ -548,7 +548,7 @@ void main() {
 
         // Validate 1000 CPFs
         for (int i = 0; i < 1000; i++) {
-          validations.cpf('11144477735');
+          AllValidations.isCpf('11144477735');
         }
 
         stopwatch.stop();
