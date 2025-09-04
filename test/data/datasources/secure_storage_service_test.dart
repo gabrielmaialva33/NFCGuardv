@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -12,6 +13,8 @@ import 'secure_storage_service_test.mocks.dart';
 
 @GenerateMocks([FlutterSecureStorage])
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  
   late SecureStorageService service;
   late MockFlutterSecureStorage mockStorage;
 
