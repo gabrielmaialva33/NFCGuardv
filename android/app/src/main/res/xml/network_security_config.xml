@@ -1,41 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Production configuration -->
+    <!-- Simplified configuration for development -->
     <domain-config cleartextTrafficPermitted="false">
-        <!-- Trusted domains with certificate pinning -->
+        <!-- Trusted domains -->
         <domain includeSubdomains="true">supabase.co</domain>
         <domain includeSubdomains="true">integrate.api.nvidia.com</domain>
         <domain includeSubdomains="true">viacep.com.br</domain>
         <domain includeSubdomains="false">pool.ntp.org</domain>
 
-        <!-- Certificate pinning for critical services -->
-        <pin-set expiration="2026-01-01">
-            <!-- Supabase certificate pin (actual) -->
-            <pin digest="SHA256">FpDGFxlaKbWCbMbuygVlgC3dJ0iLYNdfTa1IJdu6Vl8=</pin>
-            <!-- Let's Encrypt Authority X3 backup pin -->
-            <pin digest="SHA256">C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=</pin>
-            <!-- ISRG Root X1 backup pin -->
-            <pin digest="SHA256">C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=</pin>
-        </pin-set>
-
-        <!-- Enhanced trust anchors -->
+        <!-- Trust system certificates -->
         <trust-anchors>
             <certificates src="system" />
-            <!-- Custom certificates can be added here if needed -->
         </trust-anchors>
     </domain-config>
 
-    <!-- Debug configuration - allow localhost and HTTP for development -->
+    <!-- Debug configuration - allow localhost for development -->
     <debug-overrides>
         <domain-config cleartextTrafficPermitted="true">
             <domain includeSubdomains="true">localhost</domain>
             <domain includeSubdomains="true">127.0.0.1</domain>
             <domain includeSubdomains="true">10.0.2.2</domain>
-            <domain includeSubdomains="true">192.168.1.1</domain>
         </domain-config>
     </debug-overrides>
 
-    <!-- Base configuration - deny all cleartext by default -->
+    <!-- Base configuration - use system trust anchors -->
     <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
             <certificates src="system" />
