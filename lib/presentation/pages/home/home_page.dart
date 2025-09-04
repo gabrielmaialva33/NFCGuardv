@@ -58,10 +58,11 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   Widget _buildMainContent(BuildContext context, user) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Card(
             child: Padding(
@@ -134,6 +135,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             ],
           ),
         ],
+        ),
       ),
     );
   }

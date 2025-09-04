@@ -83,7 +83,7 @@ class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
                       Text(
                         'Utilize AI avançada para detectar fraudes e validar CPFs com alta precisão',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                       const SizedBox(height: AppConstants.defaultPadding),
@@ -180,7 +180,7 @@ class _CpfFraudAnalysisPageState extends ConsumerState<CpfFraudAnalysisPage> {
                     children: [
                       // Status geral
                       Card(
-                        color: _getRecommendationColor(recommendation).withOpacity(0.1),
+                        color: _getRecommendationColor(recommendation).withValues(alpha: 0.1),
                         child: Padding(
                           padding: const EdgeInsets.all(AppConstants.defaultPadding),
                           child: Row(
