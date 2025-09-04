@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,7 +15,7 @@ class NetworkSecurity {
   /// Creates a secure HTTP client with certificate pinning and security headers
   static http.Client createSecureClient() {
     final client = http.Client();
-    
+
     // In production, we would implement actual certificate pinning here
     // For now, we ensure HTTPS and validate hosts
     return _SecureHttpClient(client);
@@ -24,7 +25,7 @@ class NetworkSecurity {
   static bool isAllowedUrl(String url) {
     try {
       final uri = Uri.parse(url);
-      
+
       // Must be HTTPS in production
       if (!kDebugMode && uri.scheme != 'https') {
         return false;
@@ -45,7 +46,8 @@ class NetworkSecurity {
       'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
       'Cache-Control': 'no-cache',
       'Pragma': 'no-cache',
-      if (!kDebugMode) 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+      if (!kDebugMode)
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
     };
   }
 
@@ -53,43 +55,61 @@ class NetworkSecurity {
   static String sanitizeErrorMessage(String error) {
     // Remove sensitive information from error messages
     String sanitized = error;
-    
+
     // Remove API keys
-    sanitized = sanitized.replaceAll(RegExp(r'nvapi-[A-Za-z0-9_-]+'), '[API_KEY_REDACTED]');
-    sanitized = sanitized.replaceAll(RegExp(r'sbp_[A-Za-z0-9_-]+'), '[SUPABASE_KEY_REDACTED]');
-    sanitized = sanitized.replaceAll(RegExp(r'eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*'), '[JWT_REDACTED]');
-    
+    sanitized = sanitized.replaceAll(
+      RegExp(r'nvapi-[A-Za-z0-9_-]+'),
+      '[API_KEY_REDACTED]',
+    );
+    sanitized = sanitized.replaceAll(
+      RegExp(r'sbp_[A-Za-z0-9_-]+'),
+      '[SUPABASE_KEY_REDACTED]',
+    );
+    sanitized = sanitized.replaceAll(
+      RegExp(r'eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*'),
+      '[JWT_REDACTED]',
+    );
+
     // Remove database connection strings
-    sanitized = sanitized.replaceAll(RegExp(r'postgresql://[^@]*@[^/]*/'), 'postgresql://[REDACTED]/');
-    
+    sanitized = sanitized.replaceAll(
+      RegExp(r'postgresql://[^@]*@[^/]*/'),
+      'postgresql://[REDACTED]/',
+    );
+
     // Remove IP addresses
-    sanitized = sanitized.replaceAll(RegExp(r'\b(?:\d{1,3}\.){3}\d{1,3}\b'), '[IP_REDACTED]');
-    
+    sanitized = sanitized.replaceAll(
+      RegExp(r'\b(?:\d{1,3}\.){3}\d{1,3}\b'),
+      '[IP_REDACTED]',
+    );
+
     // Remove URLs with credentials
-    sanitized = sanitized.replaceAll(RegExp(r'https?://[^@]*@'), 'https://[CREDENTIALS_REDACTED]@');
-    
+    sanitized = sanitized.replaceAll(
+      RegExp(r'https?://[^@]*@'),
+      'https://[CREDENTIALS_REDACTED]@',
+    );
+
     // In production, provide generic error messages
     if (!kDebugMode) {
-      if (sanitized.toLowerCase().contains('network') || 
+      if (sanitized.toLowerCase().contains('network') ||
           sanitized.toLowerCase().contains('connection') ||
           sanitized.toLowerCase().contains('timeout')) {
         return 'Erro de conexão. Verifique sua internet.';
       }
-      
-      if (sanitized.toLowerCase().contains('auth') || 
+
+      if (sanitized.toLowerCase().contains('auth') ||
           sanitized.toLowerCase().contains('login') ||
           sanitized.toLowerCase().contains('password')) {
         return 'Erro de autenticação. Verifique suas credenciais.';
       }
-      
-      if (sanitized.toLowerCase().contains('permission') || 
+
+      if (sanitized.toLowerCase().contains('permission') ||
           sanitized.toLowerCase().contains('unauthorized')) {
         return 'Acesso negado.';
       }
-      
+
       return 'Erro interno do aplicativo.';
     }
-    
+
     return sanitized;
   }
 
@@ -138,7 +158,7 @@ class _SecureHttpClient extends http.BaseClient {
   }
 }
 
-/// Network validation result class  
+/// Network validation result class
 class NetworkValidationResult {
   final bool isValid;
   final String message;

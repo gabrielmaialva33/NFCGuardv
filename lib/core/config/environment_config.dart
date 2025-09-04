@@ -6,9 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 /// Handles API keys and sensitive configuration data
 class EnvironmentConfig {
   static const _secureStorage = FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
     iOptions: IOSOptions(
       accessibility: KeychainAccessibility.first_unlock_this_device,
     ),
@@ -20,7 +18,7 @@ class EnvironmentConfig {
   static const String _supabaseAnonKeyKey = 'supabase_anon_key_encrypted';
 
   // Default/fallback values for development
-  static const String _defaultNvidiaApiUrl = 
+  static const String _defaultNvidiaApiUrl =
       'https://integrate.api.nvidia.com/v1/chat/completions';
   static const String _defaultBestModel = 'qwen/qwen3-coder-480b-a35b-instruct';
 
@@ -29,11 +27,17 @@ class EnvironmentConfig {
     try {
       // Load .env file
       await dotenv.load(fileName: ".env");
-      
+
       // Get values from .env or environment variables
-      final nvidiaKey = dotenv.env['NVIDIA_API_KEY'] ?? const String.fromEnvironment('NVIDIA_API_KEY');
-      final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? const String.fromEnvironment('SUPABASE_URL');
-      final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? const String.fromEnvironment('SUPABASE_ANON_KEY');
+      final nvidiaKey =
+          dotenv.env['NVIDIA_API_KEY'] ??
+          const String.fromEnvironment('NVIDIA_API_KEY');
+      final supabaseUrl =
+          dotenv.env['SUPABASE_URL'] ??
+          const String.fromEnvironment('SUPABASE_URL');
+      final supabaseAnonKey =
+          dotenv.env['SUPABASE_ANON_KEY'] ??
+          const String.fromEnvironment('SUPABASE_ANON_KEY');
 
       // Store in secure storage if values are provided
       if (nvidiaKey.isNotEmpty) {
@@ -43,14 +47,23 @@ class EnvironmentConfig {
         await _secureStorage.write(key: _supabaseUrlKey, value: supabaseUrl);
       }
       if (supabaseAnonKey.isNotEmpty) {
-        await _secureStorage.write(key: _supabaseAnonKeyKey, value: supabaseAnonKey);
+        await _secureStorage.write(
+          key: _supabaseAnonKeyKey,
+          value: supabaseAnonKey,
+        );
       }
-      
+
       if (kDebugMode) {
         debugPrint('Environment configuration loaded successfully');
-        debugPrint('NVIDIA API Key: ${nvidiaKey.isNotEmpty ? "Loaded" : "Missing"}');
-        debugPrint('Supabase URL: ${supabaseUrl.isNotEmpty ? "Loaded" : "Missing"}');
-        debugPrint('Supabase Key: ${supabaseAnonKey.isNotEmpty ? "Loaded" : "Missing"}');
+        debugPrint(
+          'NVIDIA API Key: ${nvidiaKey.isNotEmpty ? "Loaded" : "Missing"}',
+        );
+        debugPrint(
+          'Supabase URL: ${supabaseUrl.isNotEmpty ? "Loaded" : "Missing"}',
+        );
+        debugPrint(
+          'Supabase Key: ${supabaseAnonKey.isNotEmpty ? "Loaded" : "Missing"}',
+        );
       }
     } catch (e) {
       if (kDebugMode) {
@@ -130,13 +143,13 @@ class EnvironmentConfig {
     final nvidiaKey = await getNvidiaApiKey();
     final supabaseUrl = await getSupabaseUrl();
     final supabaseKey = await getSupabaseAnonKey();
-    
-    return nvidiaKey != null && 
-           nvidiaKey.isNotEmpty && 
-           supabaseUrl != null && 
-           supabaseUrl.isNotEmpty &&
-           supabaseKey != null && 
-           supabaseKey.isNotEmpty;
+
+    return nvidiaKey != null &&
+        nvidiaKey.isNotEmpty &&
+        supabaseUrl != null &&
+        supabaseUrl.isNotEmpty &&
+        supabaseKey != null &&
+        supabaseKey.isNotEmpty;
   }
 
   /// Clear all configuration (for testing or reset)
@@ -151,7 +164,7 @@ class EnvironmentConfig {
   /// Validate API key format
   static bool isValidNvidiaApiKey(String? apiKey) {
     if (apiKey == null || apiKey.isEmpty) return false;
-    
+
     // NVIDIA API keys typically start with 'nvapi-' and are 64+ characters
     return apiKey.startsWith('nvapi-') && apiKey.length >= 64;
   }
@@ -159,12 +172,12 @@ class EnvironmentConfig {
   /// Validate Supabase URL format
   static bool isValidSupabaseUrl(String? url) {
     if (url == null || url.isEmpty) return false;
-    
+
     try {
       final uri = Uri.parse(url);
-      return uri.isAbsolute && 
-             uri.scheme == 'https' && 
-             uri.host.contains('supabase.co');
+      return uri.isAbsolute &&
+          uri.scheme == 'https' &&
+          uri.host.contains('supabase.co');
     } catch (e) {
       return false;
     }
@@ -173,9 +186,9 @@ class EnvironmentConfig {
   /// Validate Supabase anon key format
   static bool isValidSupabaseAnonKey(String? key) {
     if (key == null || key.isEmpty) return false;
-    
+
     // Supabase anon keys typically start with 'sbp_' or 'eyJ' (JWT format)
     return (key.startsWith('sbp_') && key.length >= 32) ||
-           (key.startsWith('eyJ') && key.length >= 100);
+        (key.startsWith('eyJ') && key.length >= 100);
   }
 }

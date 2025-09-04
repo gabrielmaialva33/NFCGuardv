@@ -7,7 +7,7 @@
         <domain includeSubdomains="true">integrate.api.nvidia.com</domain>
         <domain includeSubdomains="true">viacep.com.br</domain>
         <domain includeSubdomains="false">pool.ntp.org</domain>
-        
+
         <!-- Certificate pinning for critical services -->
         <pin-set expiration="2026-01-01">
             <!-- Supabase certificate pin (actual) -->
@@ -17,10 +17,10 @@
             <!-- ISRG Root X1 backup pin -->
             <pin digest="SHA256">C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=</pin>
         </pin-set>
-        
+
         <!-- Enhanced trust anchors -->
         <trust-anchors>
-            <certificates src="system"/>
+            <certificates src="system" />
             <!-- Custom certificates can be added here if needed -->
         </trust-anchors>
     </domain-config>
@@ -34,11 +34,11 @@
             <domain includeSubdomains="true">192.168.1.1</domain>
         </domain-config>
     </debug-overrides>
-    
+
     <!-- Base configuration - deny all cleartext by default -->
     <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
-            <certificates src="system"/>
+            <certificates src="system" />
         </trust-anchors>
     </base-config>
 </network-security-config>

@@ -121,12 +121,12 @@ class SupabaseAuth extends _$SupabaseAuth {
       if (!nameValidation.isValid) {
         throw Exception(nameValidation.message);
       }
-      
+
       final emailValidation = InputValidator.validateEmail(email);
       if (!emailValidation.isValid) {
         throw Exception(emailValidation.message);
       }
-      
+
       final phoneValidation = InputValidator.validatePhone(phone);
       if (!phoneValidation.isValid) {
         throw Exception(phoneValidation.message);
@@ -134,14 +134,15 @@ class SupabaseAuth extends _$SupabaseAuth {
 
       // Sanitize inputs
       final sanitizedName = nameValidation.sanitizedValue ?? fullName;
-      final sanitizedEmail = emailValidation.sanitizedValue ?? email.trim().toLowerCase();
+      final sanitizedEmail =
+          emailValidation.sanitizedValue ?? email.trim().toLowerCase();
       final sanitizedPhone = phoneValidation.sanitizedValue ?? phone;
-      
+
       // CPF validation (keeping existing logic for Brazilian context)
       if (cpf.length < 11) {
         throw Exception(AppConstants.invalidCpfMessage);
       }
-      
+
       // Rate limiting check for registration attempts
       if (InputValidator.isRateLimited('registration_$sanitizedEmail')) {
         throw Exception('Muitas tentativas. Aguarde alguns segundos.');
@@ -219,14 +220,15 @@ class SupabaseAuth extends _$SupabaseAuth {
       if (!emailValidation.isValid) {
         throw Exception(emailValidation.message);
       }
-      
-      final sanitizedEmail = emailValidation.sanitizedValue ?? email.trim().toLowerCase();
-      
+
+      final sanitizedEmail =
+          emailValidation.sanitizedValue ?? email.trim().toLowerCase();
+
       // Brute force protection
       if (InputValidator.isBruteForceAttempt('login_$sanitizedEmail')) {
         throw Exception('Muitas tentativas de login. Aguarde 15 minutos.');
       }
-      
+
       // Rate limiting
       if (InputValidator.isRateLimited('login_$sanitizedEmail')) {
         throw Exception('Muitas tentativas. Aguarde alguns segundos.');

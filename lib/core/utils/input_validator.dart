@@ -1,11 +1,9 @@
-
 /// Comprehensive input validation utilities for security
 class InputValidator {
   // Email validation regex - RFC 5322 compliant but practical
   static final RegExp _emailRegex = RegExp(
     r'^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$',
   );
-
 
   /// Validates email format with enhanced security checks
   static ValidationResult validateEmail(String email) {
@@ -21,10 +19,7 @@ class InputValidator {
 
     // Length check
     if (email.length > 254) {
-      return ValidationResult(
-        isValid: false,
-        message: 'Email muito longo',
-      );
+      return ValidationResult(isValid: false, message: 'Email muito longo');
     }
 
     // Basic format validation
@@ -46,10 +41,7 @@ class InputValidator {
     // Additional Brazilian context validation
     final parts = email.split('@');
     if (parts.length != 2) {
-      return ValidationResult(
-        isValid: false,
-        message: 'Email inválido',
-      );
+      return ValidationResult(isValid: false, message: 'Email inválido');
     }
 
     final localPart = parts[0];
@@ -71,10 +63,7 @@ class InputValidator {
       );
     }
 
-    return ValidationResult(
-      isValid: true,
-      message: 'Email válido',
-    );
+    return ValidationResult(isValid: true, message: 'Email válido');
   }
 
   /// Sanitizes user input to prevent injection attacks
@@ -101,7 +90,7 @@ class InputValidator {
     }
 
     final sanitized = sanitizeInput(name);
-    
+
     if (sanitized.length < 2) {
       return ValidationResult(
         isValid: false,
@@ -110,10 +99,7 @@ class InputValidator {
     }
 
     if (sanitized.length > 100) {
-      return ValidationResult(
-        isValid: false,
-        message: 'Nome muito longo',
-      );
+      return ValidationResult(isValid: false, message: 'Nome muito longo');
     }
 
     // Only allow letters, spaces, hyphens, and Brazilian diacritics
@@ -154,10 +140,7 @@ class InputValidator {
 
     // Check for obviously fake numbers
     if (RegExp(r'^(\d)\1{9,10}$').hasMatch(cleanPhone)) {
-      return ValidationResult(
-        isValid: false,
-        message: 'Telefone inválido',
-      );
+      return ValidationResult(isValid: false, message: 'Telefone inválido');
     }
 
     return ValidationResult(
@@ -184,10 +167,7 @@ class InputValidator {
     }
 
     if (password.length > 128) {
-      return ValidationResult(
-        isValid: false,
-        message: 'Senha muito longa',
-      );
+      return ValidationResult(isValid: false, message: 'Senha muito longa');
     }
 
     // Check for at least one lowercase, one uppercase, one digit
@@ -214,22 +194,25 @@ class InputValidator {
 
     // Check for common weak passwords
     final weakPasswords = [
-      '12345678', 'password', 'senha123', 'admin123',
-      'qwerty123', '123456789', 'password123'
+      '12345678',
+      'password',
+      'senha123',
+      'admin123',
+      'qwerty123',
+      '123456789',
+      'password123',
     ];
-    
-    if (weakPasswords.any((weak) => 
-        password.toLowerCase().contains(weak.toLowerCase()))) {
+
+    if (weakPasswords.any(
+      (weak) => password.toLowerCase().contains(weak.toLowerCase()),
+    )) {
       return ValidationResult(
         isValid: false,
         message: 'Senha muito comum, escolha uma senha mais forte',
       );
     }
 
-    return ValidationResult(
-      isValid: true,
-      message: 'Senha forte',
-    );
+    return ValidationResult(isValid: true, message: 'Senha forte');
   }
 
   /// Checks for suspicious email patterns
@@ -255,7 +238,7 @@ class InputValidator {
   /// Validates Brazilian ZIP code (CEP)
   static ValidationResult validateZipCode(String zipCode) {
     final clean = zipCode.replaceAll(RegExp(r'[^0-9]'), '');
-    
+
     if (clean.length != 8) {
       return ValidationResult(
         isValid: false,
@@ -265,10 +248,7 @@ class InputValidator {
 
     // Check for obviously fake CEPs
     if (RegExp(r'^(\d)\1{7}$').hasMatch(clean)) {
-      return ValidationResult(
-        isValid: false,
-        message: 'CEP inválido',
-      );
+      return ValidationResult(isValid: false, message: 'CEP inválido');
     }
 
     return ValidationResult(
@@ -280,41 +260,48 @@ class InputValidator {
 
   /// Rate limiting check for sensitive operations
   static final Map<String, DateTime> _lastAttempts = {};
-  
-  static bool isRateLimited(String operation, {Duration cooldown = const Duration(seconds: 5)}) {
+
+  static bool isRateLimited(
+    String operation, {
+    Duration cooldown = const Duration(seconds: 5),
+  }) {
     final lastAttempt = _lastAttempts[operation];
     final now = DateTime.now();
-    
+
     if (lastAttempt != null) {
       final timeDiff = now.difference(lastAttempt);
       if (timeDiff < cooldown) {
         return true; // Rate limited
       }
     }
-    
+
     _lastAttempts[operation] = now;
     return false;
   }
 
   /// Detect potential brute force attempts
   static final Map<String, List<DateTime>> _failedAttempts = {};
-  
-  static bool isBruteForceAttempt(String identifier, {int maxAttempts = 5, Duration window = const Duration(minutes: 15)}) {
+
+  static bool isBruteForceAttempt(
+    String identifier, {
+    int maxAttempts = 5,
+    Duration window = const Duration(minutes: 15),
+  }) {
     final now = DateTime.now();
     final attempts = _failedAttempts[identifier] ?? [];
-    
+
     // Clean old attempts outside the window
     attempts.removeWhere((attempt) => now.difference(attempt) > window);
-    
+
     // Check if we've exceeded the limit
     if (attempts.length >= maxAttempts) {
       return true;
     }
-    
+
     // Record this attempt
     attempts.add(now);
     _failedAttempts[identifier] = attempts;
-    
+
     return false;
   }
 

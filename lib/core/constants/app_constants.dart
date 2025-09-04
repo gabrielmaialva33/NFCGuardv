@@ -31,7 +31,7 @@ class AppConstants {
 
   // NVIDIA NIM API Configuration - Use EnvironmentConfig to access securely
   // API keys moved to secure storage - see EnvironmentConfig class
-  static const String deprecatedSecurityWarning = 
+  static const String deprecatedSecurityWarning =
       'SECURITY: API keys moved to EnvironmentConfig for secure storage';
 
   // Validation messages

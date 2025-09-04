@@ -5,11 +5,13 @@ import '../security/network_security.dart';
 
 class NvidiaNimService {
   static final _secureClient = NetworkSecurity.createSecureClient();
-  
+
   Future<String> _getApiKey() async {
     final apiKey = await EnvironmentConfig.getNvidiaApiKey();
     if (apiKey == null || apiKey.isEmpty) {
-      throw Exception('NVIDIA API key not configured. Use EnvironmentConfig.setNvidiaApiKey()');
+      throw Exception(
+        'NVIDIA API key not configured. Use EnvironmentConfig.setNvidiaApiKey()',
+      );
     }
     return apiKey;
   }
@@ -25,7 +27,7 @@ class NvidiaNimService {
       if (prompt.isEmpty || prompt.length > 10000) {
         throw ArgumentError('Invalid prompt length');
       }
-      
+
       final sanitizedPrompt = _sanitizePrompt(prompt);
       final apiKey = await _getApiKey();
       final baseUrl = EnvironmentConfig.getNvidiaApiUrl();
@@ -71,7 +73,7 @@ class NvidiaNimService {
         return _sanitizeResponse(content);
       } else {
         final sanitizedError = NetworkSecurity.sanitizeErrorMessage(
-          'API NVIDIA error: ${response.statusCode} - ${response.body}'
+          'API NVIDIA error: ${response.statusCode} - ${response.body}',
         );
         throw Exception(sanitizedError);
       }
@@ -85,7 +87,10 @@ class NvidiaNimService {
   String _sanitizePrompt(String prompt) {
     // Remove potential injection patterns
     return prompt
-        .replaceAll(RegExp(r'<script[^>]*>.*?</script>', caseSensitive: false), '')
+        .replaceAll(
+          RegExp(r'<script[^>]*>.*?</script>', caseSensitive: false),
+          '',
+        )
         .replaceAll(RegExp(r'javascript:', caseSensitive: false), '')
         .replaceAll(RegExp(r'data:', caseSensitive: false), '')
         .replaceAll(RegExp(r'vbscript:', caseSensitive: false), '')
@@ -108,7 +113,7 @@ class NvidiaNimService {
     }
 
     final sanitizedCode = code.replaceAll(RegExp(r'[^A-Za-z0-9]'), '');
-    
+
     const prompt = '''
 Analise este código de segurança NFC e forneça insights sobre:
 1. Força da segurança

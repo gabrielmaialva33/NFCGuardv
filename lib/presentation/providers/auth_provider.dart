@@ -57,13 +57,13 @@ class Auth extends _$Auth {
     if (kDebugMode) {
       debugPrint('🔄 _performAuthInit() started');
     }
-    
+
     try {
       // First try to set up auth state listener with error handling
       if (kDebugMode) {
         debugPrint('🔄 Setting up auth state listener');
       }
-      
+
       try {
         _supabaseClient.auth.onAuthStateChange.listen((data) {
           if (kDebugMode) {
@@ -82,7 +82,7 @@ class Auth extends _$Auth {
       if (kDebugMode) {
         debugPrint('🔄 Checking current user');
       }
-      
+
       User? currentUser;
       try {
         currentUser = _supabaseClient.auth.currentUser;
@@ -92,7 +92,7 @@ class Auth extends _$Auth {
         }
         currentUser = null;
       }
-      
+
       if (currentUser != null) {
         if (kDebugMode) {
           debugPrint('✅ Current user found: ${currentUser.id}');
@@ -144,7 +144,7 @@ class Auth extends _$Auth {
         _authRepository.getUserProfile(userId),
         Future.delayed(const Duration(seconds: 8), () => null),
       ]);
-      
+
       if (userProfile != null) {
         await _storageService.saveUser(userProfile);
         state = AsyncValue.data(userProfile);
@@ -175,7 +175,10 @@ class Auth extends _$Auth {
       // Add timeout for sign in
       final response = await Future.any([
         _authRepository.signIn(email: email, password: password),
-        Future.delayed(const Duration(seconds: 15), () => throw Exception('Timeout de conexão - verifique sua internet')),
+        Future.delayed(
+          const Duration(seconds: 15),
+          () => throw Exception('Timeout de conexão - verifique sua internet'),
+        ),
       ]);
 
       if (response.user != null) {

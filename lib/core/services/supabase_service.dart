@@ -15,7 +15,7 @@ class SupabaseService {
   static Future<void> initialize() async {
     final url = await EnvironmentConfig.getSupabaseUrl();
     final key = await EnvironmentConfig.getSupabaseAnonKey();
-    
+
     if (url != null && key != null) {
       await Supabase.initialize(
         url: url,

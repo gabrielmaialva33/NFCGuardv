@@ -157,16 +157,16 @@ class TrialGuardService {
       if (kDebugMode) {
         debugPrint('NTP failed, using local time: $sanitizedError');
       }
-      
+
       // In production, consider being more strict about time validation
       final localTime = DateTime.now();
-      
+
       // Basic sanity check - reject obviously wrong local times
       final year = localTime.year;
       if (year < 2024 || year > 2030) {
         throw Exception('Data do sistema inválida');
       }
-      
+
       return localTime;
     }
   }

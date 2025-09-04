@@ -19,12 +19,9 @@ void main() async {
   try {
     final supabaseUrl = await EnvironmentConfig.getSupabaseUrl();
     final supabaseKey = await EnvironmentConfig.getSupabaseAnonKey();
-    
+
     if (supabaseUrl != null && supabaseKey != null) {
-      await Supabase.initialize(
-        url: supabaseUrl,
-        anonKey: supabaseKey,
-      );
+      await Supabase.initialize(url: supabaseUrl, anonKey: supabaseKey);
     }
   } catch (e) {
     // If Supabase initialization fails, continue without it for offline mode
