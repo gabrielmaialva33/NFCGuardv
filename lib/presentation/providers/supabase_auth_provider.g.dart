@@ -6,7 +6,7 @@ part of 'supabase_auth_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$supabaseAuthHash() => r'54e972dd4c9c2b93236af1f94944a5d92033b599';
+String _$supabaseAuthHash() => r'7e2ab821a3926769bd47155dbf51fbcfa7924a7b';
 
 /// See also [SupabaseAuth].
 @ProviderFor(SupabaseAuth)

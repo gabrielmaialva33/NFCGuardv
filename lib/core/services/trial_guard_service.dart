@@ -7,6 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ntp/ntp.dart';
 
+import '../security/network_security.dart';
+
 /// Service responsible for managing trial period security
 /// Prevents tampering, reinstallation bypass, and date manipulation
 class TrialGuardService {
@@ -68,7 +70,11 @@ class TrialGuardService {
       return remainingDays > 0;
     } catch (e) {
       // In case of any error, be conservative and block
-      debugPrint('TrialGuard Error: $e');
+      // Sanitize error message to prevent sensitive data leakage
+      final sanitizedError = NetworkSecurity.sanitizeErrorMessage(e.toString());
+      if (kDebugMode) {
+        debugPrint('TrialGuard Error: $sanitizedError');
+      }
       return false;
     }
   }
