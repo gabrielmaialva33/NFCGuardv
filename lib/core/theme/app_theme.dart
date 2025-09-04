@@ -5,7 +5,6 @@ class AppTheme {
   static const Color _primaryBlue = Color(0xFF1976D2);
   static const Color _secondaryBlue = Color(0xFF42A5F5);
   static const Color _accentGreen = Color(0xFF4CAF50);
-  static const Color _warningOrange = Color(0xFFFF9800);
   static const Color _errorRed = Color(0xFFE53935);
   
   static ThemeData get lightTheme {
@@ -55,7 +54,7 @@ class AppTheme {
           side: BorderSide(color: lightColorScheme.outline),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 4,
         shadowColor: Colors.black12,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -138,7 +137,7 @@ class AppTheme {
           side: BorderSide(color: darkColorScheme.outline),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 8,
         shadowColor: Colors.black54,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
