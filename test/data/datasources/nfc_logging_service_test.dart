@@ -7,11 +7,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'nfc_logging_service_test.mocks.dart';
 
-@GenerateMocks([SupabaseService, User])
+@GenerateMocks([SupabaseService, User, SupabaseQueryBuilder, SupabaseFilterBuilder])
 void main() {
   late NfcLoggingService service;
   late MockSupabaseService mockSupabaseService;
   late MockUser mockUser;
+  late MockSupabaseQueryBuilder mockQueryBuilder;
+  late MockSupabaseFilterBuilder mockFilterBuilder;
 
   setUp(() {
     mockSupabaseService = MockSupabaseService();
