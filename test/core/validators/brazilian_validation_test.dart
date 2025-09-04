@@ -1,15 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-// import 'package:all_validations_br/all_validations_br.dart';
+import 'package:all_validations_br/all_validations_br.dart';
 import 'package:nfc_guard/core/constants/app_constants.dart';
-
-// import '../../helpers/test_fixtures.dart';
+import '../../helpers/test_helpers.dart';
 
 /// Tests for Brazilian-specific validation logic
-/// TODO: Re-enable when test fixtures are properly configured
 void main() {
-  // Temporarily disabled due to test fixture issues
-  // TODO: Fix test fixtures and re-enable these tests
-  /*
   group('Brazilian Validation', () {
     group('CPF Validation', () {
       test('should validate real CPF numbers using all_validations_br', () {
@@ -29,7 +24,7 @@ void main() {
       });
 
       test('should reject invalid CPF patterns', () {
-        for (final invalidCpf in TestFixtures.invalidCpfs) {
+        for (final invalidCpf in MockDataGenerators.generateInvalidCpfs()) {
           expect(
             AllValidationsBr.cpf(invalidCpf),
             isFalse,
@@ -88,7 +83,7 @@ void main() {
     group('Brazilian Phone Validation', () {
       test('should validate mobile phone patterns', () {
         // Brazilian mobile numbers have specific patterns
-        for (final phone in TestFixtures.validPhones) {
+        for (final phone in MockDataGenerators.generateValidPhones()) {
           if (phone.length == 11) {
             // Mobile number format: AA9XXXXXXXX (AA = area code, 9 = mobile indicator)
             expect(phone[2], equals('9'),
@@ -128,21 +123,21 @@ void main() {
 
     group('Brazilian Address Validation', () {
       test('should validate ZIP code format', () {
-        for (final zipCode in TestFixtures.validZipCodes) {
+        for (final zipCode in MockDataGenerators.generateValidZipCodes()) {
           expect(zipCode, matches(RegExp(r'^\d{8}$')));
           expect(zipCode.length, equals(8));
         }
       });
 
       test('should validate Brazilian state codes', () {
-        for (final state in TestFixtures.validStates) {
+        for (final state in MockDataGenerators.generateValidStates()) {
           expect(state, matches(RegExp(r'^[A-Z]{2}$')));
           expect(state.length, equals(2));
         }
       });
 
       test('should handle Brazilian city names with accents', () {
-        for (final city in TestFixtures.brazilianCities) {
+        for (final city in MockDataGenerators.generateBrazilianCities()) {
           expect(city, isNotEmpty);
           expect(city, isA<String>());
           // Brazilian cities can contain spaces, accents, and special characters
@@ -150,7 +145,7 @@ void main() {
       });
 
       test('should validate complete address structure', () {
-        final addressData = TestFixtures.createAddressData();
+        final addressData = TestHelpers.createAddressData();
         
         expect(addressData['address'], isNotEmpty);
         expect(addressData['neighborhood'], isNotEmpty);
@@ -219,7 +214,7 @@ void main() {
         for (final region in regionsByState.entries) {
           for (final state in region.value) {
             expect(
-              TestFixtures.validStates,
+              MockDataGenerators.generateValidStates(),
               contains(state),
               reason: 'State $state from region ${region.key} should be valid',
             );
@@ -451,7 +446,7 @@ void main() {
         expect(AppConstants.codeLength, equals(8));
         
         // Test with actual fixtures
-        final validCode = TestFixtures.validCpfs.first.substring(0, 8);
+        final validCode = MockDataGenerators.generateValidCpfs().first.substring(0, 8);
         if (RegExp(r'^\d{8}$').hasMatch(validCode)) {
           expect(validCode.length, equals(AppConstants.codeLength));
         }
