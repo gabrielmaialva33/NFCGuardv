@@ -185,27 +185,34 @@ class Nfc extends _$Nfc {
         },
         onDiscovered: (NfcTag tag) async {
           try {
-            // Try to read basic tag information
-            final data = tag.data as Map<String, dynamic>;
-            
-            // Extract tag information for display
+            // Try to read basic tag information using available NFC methods
             final buffer = StringBuffer();
             buffer.writeln('=== DADOS DO CARTÃO NFC ===');
-            if (data.containsKey('nfca')) {
-              final nfcaData = data['nfca'] as Map<String, dynamic>;
-              buffer.writeln('ID da Tag: ${_formatBytes(nfcaData['identifier'] ?? [])}');
-              if (nfcaData.containsKey('atqa')) {
-                buffer.writeln('ATQA: ${_formatBytes(nfcaData['atqa'])}');
-              }
-              if (nfcaData.containsKey('sak')) {
-                buffer.writeln('SAK: ${nfcaData['sak']}');
-              }
-              if (nfcaData.containsKey('maxTransceiveLength')) {
-                buffer.writeln('Max Length: ${nfcaData['maxTransceiveLength']}');
-              }
+            
+            // Try to get NFC-A information
+            final nfcA = NfcA.from(tag);
+            if (nfcA != null) {
+              buffer.writeln('ID da Tag: ${_formatBytes(nfcA.identifier)}');
+              buffer.writeln('ATQA: ${_formatBytes(nfcA.atqa)}');
+              buffer.writeln('SAK: ${nfcA.sak}');
+              buffer.writeln('Tecnologia: NFC-A');
             }
-            buffer.writeln('Tipo: ${data.keys.join(', ')}');
-            buffer.writeln('Tecnologia: NFC');
+            
+            // Try to get ISO-DEP information (common in credit cards)
+            final isoDep = IsoDep.from(tag);
+            if (isoDep != null) {
+              buffer.writeln('ISO-DEP suportado: Sim');
+              buffer.writeln('Histórico: ${_formatBytes(isoDep.historicalBytes)}');
+            }
+            
+            // Try to get MiFare Classic information  
+            final mifareClassic = MifareClassic.from(tag);
+            if (mifareClassic != null) {
+              buffer.writeln('Tipo: MiFare Classic');
+              buffer.writeln('Tamanho: ${mifareClassic.size} bytes');
+              buffer.writeln('Blocos: ${mifareClassic.blockCount}');
+            }
+            
             buffer.writeln('Data/Hora: ${DateTime.now()}');
             buffer.writeln('=== FIM DOS DADOS ===');
 
@@ -213,7 +220,9 @@ class Nfc extends _$Nfc {
               'payload': buffer.toString(),
               'type': 'credit_card',
               'readAt': DateTime.now().millisecondsSinceEpoch,
-              'rawData': data,
+              'hasNfcA': nfcA != null,
+              'hasIsoDep': isoDep != null,
+              'hasMifareClassic': mifareClassic != null,
             };
 
             state = const AsyncValue.data(NfcStatus.success);
