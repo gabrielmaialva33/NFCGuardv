@@ -2,6 +2,7 @@ import 'package:nfc_manager/nfc_manager.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../core/utils/code_generator.dart';
+import '../../data/datasources/nfc_logging_service.dart';
 import '../../data/datasources/secure_storage_service.dart';
 
 part 'nfc_provider.g.dart';
@@ -11,6 +12,7 @@ enum NfcStatus { idle, scanning, writing, success, error, unavailable }
 @riverpod
 class Nfc extends _$Nfc {
   final _storageService = SecureStorageService();
+  final _loggingService = NfcLoggingService();
 
   @override
   AsyncValue<NfcStatus> build() {
@@ -87,6 +89,14 @@ class Nfc extends _$Nfc {
 
             // Marcar código como usado
             await _storageService.addUsedCode(userCode);
+
+            // Log successful operation
+            await _loggingService.logNfcOperation(
+              operationType: NfcOperationType.write,
+              codeUsed: userCode,
+              datasetNumber: dataSet,
+              success: true,
+            );
 
             state = const AsyncValue.data(NfcStatus.success);
             await NfcManager.instance.stopSession();

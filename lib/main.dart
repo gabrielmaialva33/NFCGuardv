@@ -9,12 +9,12 @@ import 'presentation/pages/splash_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await Supabase.initialize(
     url: SupabaseConfig.supabaseUrl,
     anonKey: SupabaseConfig.supabaseAnonKey,
   );
-  
+
   runApp(const ProviderScope(child: NFCGuardApp()));
 }
 

@@ -28,7 +28,7 @@ class SupabaseAuth extends _$SupabaseAuth {
     _supabaseService.authStateChanges.listen((data) {
       final AuthChangeEvent event = data.event;
       final Session? session = data.session;
-      
+
       if (event == AuthChangeEvent.signedIn && session != null) {
         _syncUserFromSupabase(session.user);
       } else if (event == AuthChangeEvent.signedOut) {
@@ -57,21 +57,22 @@ class SupabaseAuth extends _$SupabaseAuth {
   Future<void> _syncUserFromSupabase(User supabaseUser) async {
     try {
       // Try to get user profile from Supabase
-      final profileResponse = await _supabaseService.from('profiles')
+      final profileResponse = await _supabaseService
+          .from('profiles')
           .select()
           .eq('id', supabaseUser.id)
           .single();
 
       final profile = profileResponse;
-      
+
       final user = UserModel(
         id: supabaseUser.id,
         fullName: profile['full_name'] ?? '',
         cpf: profile['cpf'] ?? '',
         email: supabaseUser.email ?? '',
         phone: profile['phone'] ?? '',
-        birthDate: profile['birth_date'] != null 
-            ? DateTime.parse(profile['birth_date']) 
+        birthDate: profile['birth_date'] != null
+            ? DateTime.parse(profile['birth_date'])
             : DateTime.now(),
         gender: profile['gender'] ?? '',
         zipCode: profile['zip_code'] ?? '',
@@ -80,8 +81,8 @@ class SupabaseAuth extends _$SupabaseAuth {
         city: profile['city'] ?? '',
         state: profile['state'] ?? '',
         eightDigitCode: profile['eight_digit_code'] ?? '',
-        createdAt: profile['created_at'] != null 
-            ? DateTime.parse(profile['created_at']) 
+        createdAt: profile['created_at'] != null
+            ? DateTime.parse(profile['created_at'])
             : DateTime.now(),
       );
 
@@ -181,10 +182,7 @@ class SupabaseAuth extends _$SupabaseAuth {
   }
 
   /// Signs in with email and password
-  Future<void> signIn({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> signIn({required String email, required String password}) async {
     try {
       state = const AsyncValue.loading();
 
@@ -218,13 +216,16 @@ class SupabaseAuth extends _$SupabaseAuth {
       // Update in Supabase
       final supabaseUser = _supabaseService.currentUser;
       if (supabaseUser != null) {
-        await _supabaseService.from('profiles').update({
-          'zip_code': zipCode,
-          'address': address,
-          'neighborhood': neighborhood,
-          'city': city,
-          'state': stateCode,
-        }).eq('id', supabaseUser.id);
+        await _supabaseService
+            .from('profiles')
+            .update({
+              'zip_code': zipCode,
+              'address': address,
+              'neighborhood': neighborhood,
+              'city': city,
+              'state': stateCode,
+            })
+            .eq('id', supabaseUser.id);
       }
 
       // Update locally
@@ -276,11 +277,12 @@ class SupabaseAuth extends _$SupabaseAuth {
 
       // Check in Supabase first, then fallback to local
       try {
-        final response = await _supabaseService.from('used_codes')
+        final response = await _supabaseService
+            .from('used_codes')
             .select('code')
             .eq('code', code)
             .single();
-        
+
         if (response != null) {
           throw Exception(AppConstants.codeAlreadyUsedMessage);
         }

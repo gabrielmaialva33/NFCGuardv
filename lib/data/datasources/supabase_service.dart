@@ -1,7 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../core/config/supabase_config.dart';
-
 class SupabaseService {
   static SupabaseService? _instance;
   late final SupabaseClient _client;
@@ -52,5 +50,6 @@ class SupabaseService {
   SupabaseQueryBuilder from(String table) => _client.from(table);
 
   // Real-time subscriptions
-  SupabaseStreamBuilder stream(String table) => _client.from(table).stream(primaryKey: ['id']);
+  SupabaseStreamBuilder stream(String table) =>
+      _client.from(table).stream(primaryKey: ['id']);
 }
