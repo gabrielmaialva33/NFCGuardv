@@ -62,7 +62,7 @@ class SupabaseAuth extends _$SupabaseAuth {
     try {
       // Try to get user profile from Supabase
       final profileResponse = await SupabaseService.client
-          .from('profiles')
+          .from('users')
           .select()
           .eq('id', supabaseUser.id)
           .single();
@@ -167,7 +167,7 @@ class SupabaseAuth extends _$SupabaseAuth {
 
       if (authResponse.user != null) {
         // Create profile in Supabase using sanitized data
-        await SupabaseService.client.from('profiles').insert({
+        await SupabaseService.client.from('users').insert({
           'id': authResponse.user!.id,
           'full_name': sanitizedName,
           'cpf': cpf.replaceAll(RegExp(r'[^0-9]'), ''),
@@ -269,7 +269,7 @@ class SupabaseAuth extends _$SupabaseAuth {
       final supabaseUser = SupabaseService.instance.currentUser;
       if (supabaseUser != null) {
         await SupabaseService.client
-            .from('profiles')
+            .from('users')
             .update({
               'zip_code': zipCode,
               'address': address,
