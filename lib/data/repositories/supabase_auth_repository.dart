@@ -119,7 +119,7 @@ class SupabaseAuthRepository {
   Future<bool> checkEmailExists(String email) async {
     try {
       final response = await _client
-          .from(SupabaseConfig.usersTable)
+          .from('users')
           .select('id')
           .eq('email', email)
           .limit(1);
