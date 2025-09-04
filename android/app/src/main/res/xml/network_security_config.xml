@@ -1,32 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Simplified configuration for development -->
-    <domain-config cleartextTrafficPermitted="false">
-        <!-- Trusted domains -->
-        <domain includeSubdomains="true">supabase.co</domain>
-        <domain includeSubdomains="true">integrate.api.nvidia.com</domain>
-        <domain includeSubdomains="true">viacep.com.br</domain>
-        <domain includeSubdomains="false">pool.ntp.org</domain>
-
-        <!-- Trust system certificates -->
-        <trust-anchors>
-            <certificates src="system" />
-        </trust-anchors>
-    </domain-config>
-
-    <!-- Debug configuration - allow localhost for development -->
-    <debug-overrides>
-        <domain-config cleartextTrafficPermitted="true">
-            <domain includeSubdomains="true">localhost</domain>
-            <domain includeSubdomains="true">127.0.0.1</domain>
-            <domain includeSubdomains="true">10.0.2.2</domain>
-        </domain-config>
-    </debug-overrides>
-
     <!-- Base configuration - use system trust anchors -->
     <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>
     </base-config>
+
+    <!-- Debug configuration - allow localhost for development -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </debug-overrides>
 </network-security-config>
