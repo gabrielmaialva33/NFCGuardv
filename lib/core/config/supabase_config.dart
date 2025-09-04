@@ -2,7 +2,7 @@ class SupabaseConfig {
   // NFCGuard Supabase Project Configuration
   static const String supabaseUrl = 'https://wfhecwwjfzxhwzfwfwbx.supabase.co';
   static const String supabaseAnonKey =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmaGVjd3dqZnp4aHd6Zndmd2J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU0MTA0MDAsImV4cCI6MjA0MDk4NjQwMH0.Kx8VGFJqY5YWb8Dj4R2LwQ9Xx3Vz7Nn8Pp0Mt6Ee8Zs';
+      'sbp_db7013246b0de8c2be1eaeba080cc90ac4520a4e';
 
   // Table names
   static const String usersTable = 'users';
