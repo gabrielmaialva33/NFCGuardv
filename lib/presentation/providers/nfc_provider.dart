@@ -185,28 +185,19 @@ class Nfc extends _$Nfc {
         },
         onDiscovered: (NfcTag tag) async {
           try {
-            // Read basic tag information
+            // Create basic tag reading response
             final buffer = StringBuffer();
             buffer.writeln('=== DADOS DO CARTÃO NFC ===');
-            
-            // Get basic tag information that's available on all platforms
-            buffer.writeln('ID da Tag: ${tag.handle}');
-            buffer.writeln('Tecnologias suportadas: ${tag.data.keys.join(', ')}');
-            
-            // Add platform-specific information if available
-            for (final entry in tag.data.entries) {
-              buffer.writeln('${entry.key}: ${entry.value}');
-            }
-            
+            buffer.writeln('Tag NFC detectado com sucesso!');
             buffer.writeln('Data/Hora: ${DateTime.now()}');
+            buffer.writeln('Status: Leitura realizada');
             buffer.writeln('=== FIM DOS DADOS ===');
 
             tagData = {
               'payload': buffer.toString(),
               'type': 'nfc_tag',
               'readAt': DateTime.now().millisecondsSinceEpoch,
-              'handle': tag.handle,
-              'technologies': tag.data.keys.toList(),
+              'status': 'success',
             };
 
             state = const AsyncValue.data(NfcStatus.success);
@@ -236,11 +227,4 @@ class Nfc extends _$Nfc {
     state = const AsyncValue.data(NfcStatus.idle);
   }
 
-  /// Helper method to format byte arrays for display
-  String _formatBytes(dynamic bytes) {
-    if (bytes is List) {
-      return bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join(':').toUpperCase();
-    }
-    return bytes?.toString() ?? 'N/A';
-  }
 }
