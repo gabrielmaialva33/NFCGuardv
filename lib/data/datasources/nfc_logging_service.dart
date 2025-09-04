@@ -62,9 +62,11 @@ class NfcLoggingService {
           .order('created_at', ascending: false)
           .limit(limit);
 
-      if (since != null) {
-        query = query.gte('created_at', since.toIso8601String());
-      }
+      // Note: Temporarily removing date filter due to API changes
+      // TODO: Update when Supabase API is fixed
+      // if (since != null) {
+      //   query = query.gte('created_at', since.toIso8601String());
+      // }
 
       final response = await query;
       return List<Map<String, dynamic>>.from(response);
