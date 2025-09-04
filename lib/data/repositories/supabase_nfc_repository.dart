@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../core/config/supabase_config.dart';
 import '../../core/services/supabase_service.dart';
 import '../datasources/nfc_logging_service.dart';
@@ -36,8 +38,9 @@ class SupabaseNfcRepository {
         'data_written': dataWritten,
       });
     } catch (e) {
-      // Log locally if Supabase fails
-      print('Failed to log to Supabase: $e');
+      if (kDebugMode) {
+        print('Failed to log to Supabase: $e');
+      }
     }
   }
 
@@ -57,8 +60,9 @@ class SupabaseNfcRepository {
         });
       }
     } catch (e) {
-      // Even if Supabase fails, local storage should work
-      print('Failed to sync used code to Supabase: $e');
+      if (kDebugMode) {
+        print('Failed to sync used code to Supabase: $e');
+      }
     }
   }
 
@@ -107,7 +111,9 @@ class SupabaseNfcRepository {
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      print('Failed to fetch used codes from Supabase: $e');
+      if (kDebugMode) {
+        print('Failed to fetch used codes from Supabase: $e');
+      }
       return [];
     }
   }
@@ -139,7 +145,9 @@ class SupabaseNfcRepository {
       final response = await orderedQuery;
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      print('Failed to fetch NFC logs from Supabase: $e');
+      if (kDebugMode) {
+        print('Failed to fetch NFC logs from Supabase: $e');
+      }
       return [];
     }
   }
@@ -171,7 +179,9 @@ class SupabaseNfcRepository {
         }
       }
     } catch (e) {
-      print('Failed to sync local data to Supabase: $e');
+      if (kDebugMode) {
+        print('Failed to sync local data to Supabase: $e');
+      }
     }
   }
 
@@ -192,7 +202,9 @@ class SupabaseNfcRepository {
         await _storageService.addUsedCode(codeData['code']);
       }
     } catch (e) {
-      print('Failed to sync Supabase data to local: $e');
+      if (kDebugMode) {
+        print('Failed to sync Supabase data to local: $e');
+      }
     }
   }
 
@@ -213,7 +225,9 @@ class SupabaseNfcRepository {
         'trial_days': trialDays,
       });
     } catch (e) {
-      print('Failed to store trial data: $e');
+      if (kDebugMode) {
+        print('Failed to store trial data: $e');
+      }
     }
   }
 
@@ -248,7 +262,9 @@ class SupabaseNfcRepository {
           .eq('user_id', userId)
           .eq('device_fingerprint', deviceFingerprint);
     } catch (e) {
-      print('Failed to update trial last check: $e');
+      if (kDebugMode) {
+        print('Failed to update trial last check: $e');
+      }
     }
   }
 }
