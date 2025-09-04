@@ -391,8 +391,8 @@ void main() {
       });
 
       test('should handle very long string fields', () {
-        const longName = 'A' * 100;
-        const longAddress = 'Rua com nome muito longo ' * 10;
+        final longName = 'A' * 100;
+        final longAddress = 'Rua com nome muito longo ' * 10;
 
         final user = _createTestUser().copyWith(
           fullName: longName,
