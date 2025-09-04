@@ -10,12 +10,12 @@
         
         <!-- Certificate pinning for critical services -->
         <pin-set expiration="2026-01-01">
-            <!-- Supabase certificate pins (example - replace with actual) -->
-            <pin digest="SHA256">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</pin>
-            <!-- NVIDIA API certificate pins (example - replace with actual) -->
-            <pin digest="SHA256">BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=</pin>
-            <!-- Backup certificate pin -->
-            <pin digest="SHA256">CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC=</pin>
+            <!-- Supabase certificate pin (actual) -->
+            <pin digest="SHA256">FpDGFxlaKbWCbMbuygVlgC3dJ0iLYNdfTa1IJdu6Vl8=</pin>
+            <!-- Let's Encrypt Authority X3 backup pin -->
+            <pin digest="SHA256">C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=</pin>
+            <!-- ISRG Root X1 backup pin -->
+            <pin digest="SHA256">C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=</pin>
         </pin-set>
         
         <!-- Enhanced trust anchors -->

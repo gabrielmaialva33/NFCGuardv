@@ -6,12 +6,6 @@ class InputValidator {
     r'^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$',
   );
 
-  // Brazilian domains for additional validation
-  static final List<String> _brazilianDomains = [
-    'gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com.br', 
-    'uol.com.br', 'bol.com.br', 'terra.com.br', 'globo.com',
-    'ig.com.br', 'r7.com', 'globomail.com', 'oi.com.br'
-  ];
 
   /// Validates email format with enhanced security checks
   static ValidationResult validateEmail(String email) {

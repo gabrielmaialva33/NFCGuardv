@@ -36,21 +36,21 @@ class EnvironmentConfig {
       final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? const String.fromEnvironment('SUPABASE_ANON_KEY');
 
       // Store in secure storage if values are provided
-      if (nvidiaKey != null && nvidiaKey.isNotEmpty) {
+      if (nvidiaKey.isNotEmpty) {
         await _secureStorage.write(key: _nvidiaApiKeyKey, value: nvidiaKey);
       }
-      if (supabaseUrl != null && supabaseUrl.isNotEmpty) {
+      if (supabaseUrl.isNotEmpty) {
         await _secureStorage.write(key: _supabaseUrlKey, value: supabaseUrl);
       }
-      if (supabaseAnonKey != null && supabaseAnonKey.isNotEmpty) {
+      if (supabaseAnonKey.isNotEmpty) {
         await _secureStorage.write(key: _supabaseAnonKeyKey, value: supabaseAnonKey);
       }
       
       if (kDebugMode) {
-        debugPrint('✅ Environment configuration loaded successfully');
-        debugPrint('📋 NVIDIA API Key: ${nvidiaKey != null && nvidiaKey.isNotEmpty ? "✓ Loaded" : "❌ Missing"}');
-        debugPrint('📋 Supabase URL: ${supabaseUrl != null && supabaseUrl.isNotEmpty ? "✓ Loaded" : "❌ Missing"}');
-        debugPrint('📋 Supabase Key: ${supabaseAnonKey != null && supabaseAnonKey.isNotEmpty ? "✓ Loaded" : "❌ Missing"}');
+        debugPrint('Environment configuration loaded successfully');
+        debugPrint('NVIDIA API Key: ${nvidiaKey.isNotEmpty ? "Loaded" : "Missing"}');
+        debugPrint('Supabase URL: ${supabaseUrl.isNotEmpty ? "Loaded" : "Missing"}');
+        debugPrint('Supabase Key: ${supabaseAnonKey.isNotEmpty ? "Loaded" : "Missing"}');
       }
     } catch (e) {
       if (kDebugMode) {

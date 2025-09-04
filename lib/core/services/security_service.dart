@@ -106,7 +106,7 @@ class SecurityService {
     final sanitized = <String, String>{};
     
     for (final entry in userData.entries) {
-      sanitized[entry.key] = InputValidator.sanitizeInput(entry.value);
+      sanitized[entry.key] = validator.InputValidator.sanitizeInput(entry.value);
     }
     
     return sanitized;
