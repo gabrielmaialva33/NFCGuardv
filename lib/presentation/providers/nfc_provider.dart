@@ -255,8 +255,8 @@ class Nfc extends _$Nfc {
     state = const AsyncValue.data(NfcStatus.idle);
   }
 
-  /// Helper method to write NDEF message to tag (cross-platform)
-  Future<void> _writeNdefMessage(NfcTag tag, NdefMessage ndefMessage) async {
+  /// Helper method to write simple text to tag (cross-platform)
+  Future<void> _writeSimpleText(NfcTag tag, String text) async {
     final ndef = Ndef.from(tag);
     
     if (ndef == null) {
@@ -267,15 +267,27 @@ class Nfc extends _$Nfc {
       throw Exception('Tag não é gravável');
     }
 
-    if (ndef.maxSize < ndefMessage.byteLength) {
-      throw Exception('Tag não tem espaço suficiente');
-    }
+    // Create a simple text record manually
+    final textBytes = utf8.encode(text);
+    final languageBytes = utf8.encode('en');
+    final payload = Uint8List.fromList([
+      languageBytes.length,
+      ...languageBytes,
+      ...textBytes,
+    ]);
+    
+    final textRecord = NdefRecord(
+      typeNameFormat: TypeNameFormat.wellKnown,
+      type: utf8.encode('T'),
+      identifier: Uint8List(0),
+      payload: payload,
+    );
 
-    await ndef.write(records: ndefMessage.records);
+    await ndef.write([textRecord]);
   }
 
   /// Helper method to read NDEF message from tag (cross-platform)
-  Future<NdefMessage?> _readNdefMessage(NfcTag tag) async {
+  Future<String?> _readSimpleText(NfcTag tag) async {
     final ndef = Ndef.from(tag);
     
     if (ndef == null) {
@@ -283,10 +295,20 @@ class Nfc extends _$Nfc {
     }
 
     final records = await ndef.read();
-    if (records == null) {
+    if (records == null || records.isEmpty) {
       throw Exception('Não foi possível ler dados da tag');
     }
     
-    return NdefMessage(records: records as List<NdefRecord>);
+    final record = records.first;
+    if (record.payload.length < 4) {
+      throw Exception('Formato de dados inválido');
+    }
+    
+    // Skip language code prefix and decode text
+    final languageCodeLength = record.payload[0];
+    final textStart = 1 + languageCodeLength;
+    final textBytes = record.payload.skip(textStart).toList();
+    
+    return utf8.decode(textBytes);
   }
 }
