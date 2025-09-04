@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
 import 'package:ndef_record/ndef_record.dart';
@@ -72,8 +75,19 @@ class Nfc extends _$Nfc {
             state = const AsyncValue.data(NfcStatus.writing);
 
             // Criar registro NDEF
-            final ndefRecord = NdefRecord.createText(
-              'NFCGuard Data Set $dataSet - Code: $userCode',
+            final textBytes = utf8.encode('NFCGuard Data Set $dataSet - Code: $userCode');
+            final languageBytes = utf8.encode('en');
+            final payload = Uint8List.fromList([
+              languageBytes.length,
+              ...languageBytes,
+              ...textBytes,
+            ]);
+            
+            final ndefRecord = NdefRecord(
+              typeNameFormat: NdefTypeNameFormat.nfcWellKnown,
+              type: Uint8List.fromList([84]), // 'T' for text
+              identifier: Uint8List(0),
+              payload: payload,
             );
 
             final ndefMessage = NdefMessage(records: [ndefRecord]);
@@ -213,6 +227,9 @@ class Nfc extends _$Nfc {
           try {
             // Tentar ler da tag (Android/iOS specific)
             final ndefMessage = await _readNdefMessage(tag);
+            if (ndefMessage == null) {
+              throw Exception('Tag não contém dados NDEF');
+            }
             if (ndefMessage.records.isNotEmpty) {
               final record = ndefMessage.records.first;
               final payload = String.fromCharCodes(
@@ -269,17 +286,22 @@ class Nfc extends _$Nfc {
       throw Exception('Tag não tem espaço suficiente');
     }
 
-    await ndef.write(ndefMessage);
+    await ndef.write(ndefMessage.records);
   }
 
   /// Helper method to read NDEF message from tag (cross-platform)
-  Future<NdefMessage> _readNdefMessage(NfcTag tag) async {
+  Future<NdefMessage?> _readNdefMessage(NfcTag tag) async {
     final ndef = Ndef.from(tag);
     
     if (ndef == null) {
       throw Exception('Tag não contém dados NDEF');
     }
 
-    return await ndef.read();
+    final records = await ndef.read();
+    if (records == null) {
+      throw Exception('Não foi possível ler dados da tag');
+    }
+    
+    return NdefMessage(records: records);
   }
 }
