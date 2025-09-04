@@ -248,7 +248,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     final isAvailable = await nfcNotifier.isNfcAvailable();
     if (!isAvailable) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        final localContext = context;
+        ScaffoldMessenger.of(localContext).showSnackBar(
           const SnackBar(
             content: Text('NFC não está disponível neste dispositivo'),
           ),
@@ -259,7 +260,8 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     // Mostrar dialog de instrução
     if (mounted) {
-      _showNfcInstructionDialog(context, 'Aproxime o dispositivo da tag NFC');
+      final localContext = context;
+      _showNfcInstructionDialog(localContext, 'Aproxime o dispositivo da tag NFC');
     }
 
     // Executar gravação
@@ -336,7 +338,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     final isAvailable = await nfcNotifier.isNfcAvailable();
     if (!isAvailable) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        final localContext = context;
+        ScaffoldMessenger.of(localContext).showSnackBar(
           const SnackBar(
             content: Text('NFC não está disponível neste dispositivo'),
           ),
@@ -346,7 +349,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
 
     if (mounted) {
-      _showNfcInstructionDialog(context, 'Aproxime o dispositivo da tag NFC');
+      final localContext = context;
+      _showNfcInstructionDialog(localContext, 'Aproxime o dispositivo da tag NFC');
     }
 
     if (isProtecting) {
