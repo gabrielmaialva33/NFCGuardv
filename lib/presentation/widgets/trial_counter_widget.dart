@@ -86,7 +86,9 @@ class _TrialCounterWidgetState extends State<TrialCounterWidget> {
     } else if (_remainingDays == 1) {
       return Colors.orange.withValues(alpha: 0.1);
     } else {
-      return Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3);
+      return Theme.of(
+        context,
+      ).colorScheme.primaryContainer.withValues(alpha: 0.3);
     }
   }
 

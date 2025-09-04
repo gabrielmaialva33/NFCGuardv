@@ -1,55 +1,52 @@
 import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mockito/mockito.dart';
 
 /// Test helper utilities for NFCGuard testing
 class TestHelpers {
-
   /// Creates a test ProviderContainer with common overrides
   static ProviderContainer createTestContainer({
     List<Override> overrides = const [],
   }) {
-    return ProviderContainer(
-      overrides: overrides,
-    );
+    return ProviderContainer(overrides: overrides);
   }
 
   /// Waits for async provider to complete and returns the result
-  static Future<T> waitForProvider<T>(ProviderContainer container,
-      Provider<AsyncValue<T>> provider, {
-        Duration timeout = const Duration(seconds: 5),
-      }) async {
+  static Future<T> waitForProvider<T>(
+    ProviderContainer container,
+    Provider<AsyncValue<T>> provider, {
+    Duration timeout = const Duration(seconds: 5),
+  }) async {
     final completer = Completer<T>();
     late final ProviderSubscription<AsyncValue<T>> subscription;
 
-    subscription = container.listen(
-      provider,
-          (previous, next) {
-        next.when(
-          data: (data) {
-            if (!completer.isCompleted) {
-              completer.complete(data);
-              subscription.close();
-            }
-          },
-          error: (error, stackTrace) {
-            if (!completer.isCompleted) {
-              completer.completeError(error, stackTrace);
-              subscription.close();
-            }
-          },
-          loading: () {}, // Continue waiting
-        );
-      },
-    );
+    subscription = container.listen(provider, (previous, next) {
+      next.when(
+        data: (data) {
+          if (!completer.isCompleted) {
+            completer.complete(data);
+            subscription.close();
+          }
+        },
+        error: (error, stackTrace) {
+          if (!completer.isCompleted) {
+            completer.completeError(error, stackTrace);
+            subscription.close();
+          }
+        },
+        loading: () {}, // Continue waiting
+      );
+    });
 
     return completer.future.timeout(timeout);
   }
 
   /// Verifies that a mock was called with specific parameters
   static void verifyMockCall(Mock mock, String methodName, List<dynamic> args) {
-    verify(mock.noSuchMethod(Invocation.method(Symbol(methodName), args)))
-        .called(1);
+    verify(
+      mock.noSuchMethod(Invocation.method(Symbol(methodName), args)),
+    ).called(1);
   }
 
   /// Creates a sample address data for testing
@@ -101,11 +98,7 @@ class BrazilianValidators {
 class MockDataGenerators {
   /// Generates a list of valid test CPF numbers
   static List<String> generateValidCpfs() {
-    return [
-      '11144477735',
-      '12345678909',
-      '98765432100',
-    ];
+    return ['11144477735', '12345678909', '98765432100'];
   }
 
   /// Generates a list of invalid CPF numbers for testing
@@ -113,7 +106,7 @@ class MockDataGenerators {
     return [
       '00000000000', // All zeros
       '11111111111', // All same digits
-      '123456789',   // Too short
+      '123456789', // Too short
       '12345678901', // Invalid checksum
       '123.456.789-10', // Formatted but invalid
     ];
@@ -123,28 +116,47 @@ class MockDataGenerators {
   static List<String> generateValidPhones() {
     return [
       '11987654321', // Mobile with area code
-      '1134567890',  // Landline with area code
+      '1134567890', // Landline with area code
       '21987654321', // Rio mobile
-      '8534567890',  // Northeastern landline
+      '8534567890', // Northeastern landline
     ];
   }
 
   /// Generates valid ZIP codes
   static List<String> generateValidZipCodes() {
-    return [
-      '01234567',
-      '12345678',
-      '87654321',
-      '98765432',
-    ];
+    return ['01234567', '12345678', '87654321', '98765432'];
   }
 
   /// Generates valid Brazilian state codes
   static List<String> generateValidStates() {
     return [
-      'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
-      'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
-      'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+      'AC',
+      'AL',
+      'AP',
+      'AM',
+      'BA',
+      'CE',
+      'DF',
+      'ES',
+      'GO',
+      'MA',
+      'MT',
+      'MS',
+      'MG',
+      'PA',
+      'PB',
+      'PR',
+      'PE',
+      'PI',
+      'RJ',
+      'RN',
+      'RS',
+      'RO',
+      'RR',
+      'SC',
+      'SP',
+      'SE',
+      'TO',
     ];
   }
 
@@ -190,27 +202,30 @@ class SecurityTestUtilities {
   /// Validates that a string doesn't contain sensitive patterns
   static bool containsSensitiveData(String input) {
     final sensitivePatterns = [
-      RegExp(r'\d{11}'),        // CPF-like patterns
-      RegExp(r'\d{8}'),         // Code-like patterns
-      RegExp(r'password'),      // Password references
-      RegExp(r'token'),         // Token references
-      RegExp(r'secret'),        // Secret references
-      RegExp(r'key'),           // Key references
+      RegExp(r'\d{11}'), // CPF-like patterns
+      RegExp(r'\d{8}'), // Code-like patterns
+      RegExp(r'password'), // Password references
+      RegExp(r'token'), // Token references
+      RegExp(r'secret'), // Secret references
+      RegExp(r'key'), // Key references
     ];
 
-    return sensitivePatterns.any((pattern) => pattern.hasMatch(input.toLowerCase()));
+    return sensitivePatterns.any(
+      (pattern) => pattern.hasMatch(input.toLowerCase()),
+    );
   }
 
   /// Generates a secure random string for testing
   static String generateSecureRandomString(int length) {
-    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const characters =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     final random = DateTime.now().millisecondsSinceEpoch;
     final buffer = StringBuffer();
-    
+
     for (int i = 0; i < length; i++) {
       buffer.write(characters[(random + i) % characters.length]);
     }
-    
+
     return buffer.toString();
   }
 }
@@ -226,7 +241,9 @@ class PerformanceTestUtilities {
   }
 
   /// Measures async execution time
-  static Future<Duration> measureAsyncExecutionTime(Future<void> Function() function) async {
+  static Future<Duration> measureAsyncExecutionTime(
+    Future<void> Function() function,
+  ) async {
     final stopwatch = Stopwatch()..start();
     await function();
     stopwatch.stop();
@@ -236,16 +253,16 @@ class PerformanceTestUtilities {
   /// Runs a function multiple times and returns average execution time
   static Duration benchmarkFunction(void Function() function, int iterations) {
     final times = <Duration>[];
-    
+
     for (int i = 0; i < iterations; i++) {
       times.add(measureExecutionTime(function));
     }
-    
+
     final totalMicroseconds = times.fold<int>(
-      0, 
+      0,
       (sum, duration) => sum + duration.inMicroseconds,
     );
-    
+
     return Duration(microseconds: totalMicroseconds ~/ iterations);
   }
 }

@@ -1,6 +1,7 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:all_validations_br/all_validations_br.dart' as validations;
+import 'package:flutter_test/flutter_test.dart';
 import 'package:nfc_guard/core/constants/app_constants.dart';
+
 import '../../helpers/test_helpers.dart';
 
 /// Tests for Brazilian-specific validation logic
@@ -37,7 +38,7 @@ void main() {
         // Test different formats of the same valid CPF
         const baseCpf = '11144477735';
         const formattedCpf = '111.444.777-35';
-        
+
         expect(validations.cpf(baseCpf), isTrue);
         expect(validations.cpf(formattedCpf), isTrue);
       });
@@ -63,11 +64,11 @@ void main() {
 
       test('should validate CPF length requirements', () {
         const wrongLengthCpfs = [
-          '123',           // Too short
-          '12345678',      // Still too short
-          '123456789',     // Still too short
-          '1234567890',    // Still too short
-          '123456789012',  // Too long
+          '123', // Too short
+          '12345678', // Still too short
+          '123456789', // Still too short
+          '1234567890', // Still too short
+          '123456789012', // Too long
         ];
 
         for (final cpf in wrongLengthCpfs) {
@@ -86,17 +87,23 @@ void main() {
         for (final phone in MockDataGenerators.generateValidPhones()) {
           if (phone.length == 11) {
             // Mobile number format: AA9XXXXXXXX (AA = area code, 9 = mobile indicator)
-            expect(phone[2], equals('9'),
-                reason: 'Mobile number $phone should have 9 as third digit');
-            expect(phone.substring(0, 2), matches(RegExp(r'^[1-9][1-9]$')),
-                reason: 'Area code in $phone should be valid');
+            expect(
+              phone[2],
+              equals('9'),
+              reason: 'Mobile number $phone should have 9 as third digit',
+            );
+            expect(
+              phone.substring(0, 2),
+              matches(RegExp(r'^[1-9][1-9]$')),
+              reason: 'Area code in $phone should be valid',
+            );
           }
         }
       });
 
       test('should validate landline phone patterns', () {
         const landlinePhones = ['1134567890', '2134567890', '8534567890'];
-        
+
         for (final phone in landlinePhones) {
           expect(phone.length, equals(10));
           expect(phone.substring(0, 2), matches(RegExp(r'^[1-9][1-9]$')));
@@ -106,9 +113,9 @@ void main() {
 
       test('should reject invalid area codes', () {
         const invalidAreaCodes = [
-          '0134567890',  // Area code starts with 0
-          '1034567890',  // Second digit is 0
-          '9934567890',  // Invalid area code
+          '0134567890', // Area code starts with 0
+          '1034567890', // Second digit is 0
+          '9934567890', // Invalid area code
         ];
 
         for (final phone in invalidAreaCodes) {
@@ -146,7 +153,7 @@ void main() {
 
       test('should validate complete address structure', () {
         final addressData = TestHelpers.createAddressData();
-        
+
         expect(addressData['address'], isNotEmpty);
         expect(addressData['neighborhood'], isNotEmpty);
         expect(addressData['city'], isNotEmpty);
@@ -157,9 +164,12 @@ void main() {
     group('Portuguese Language Support', () {
       test('should handle Portuguese error messages correctly', () {
         expect(AppConstants.invalidCpfMessage, equals('CPF inválido'));
-        expect(AppConstants.codeAlreadyUsedMessage, equals('CÓDIGO JÁ UTILIZADO'));
+        expect(
+          AppConstants.codeAlreadyUsedMessage,
+          equals('CÓDIGO JÁ UTILIZADO'),
+        );
         expect(AppConstants.invalidCodeMessage, equals('CÓDIGO INVÁLIDO'));
-        
+
         // Verify messages are in Portuguese
         expect(AppConstants.invalidCpfMessage, contains('inválido'));
         expect(AppConstants.codeAlreadyUsedMessage, contains('CÓDIGO'));
@@ -185,13 +195,13 @@ void main() {
 
       test('should handle Portuguese address terms', () {
         const addressTerms = [
-          'Rua',      // Street
-          'Avenida',  // Avenue
-          'Praça',    // Square
+          'Rua', // Street
+          'Avenida', // Avenue
+          'Praça', // Square
           'Travessa', // Alley
-          'Estrada',  // Road
-          'Alameda',  // Boulevard
-          'Rodovia',  // Highway
+          'Estrada', // Road
+          'Alameda', // Boulevard
+          'Rodovia', // Highway
         ];
 
         for (final term in addressTerms) {
@@ -239,7 +249,7 @@ void main() {
         for (final area in metropolitanAreas.entries) {
           final city = area.key;
           final states = area.value;
-          
+
           expect(city, isNotEmpty);
           for (final state in states) {
             expect(state, matches(RegExp(r'^[A-Z]{2}$')));
@@ -291,7 +301,10 @@ void main() {
         for (final formatted in formattedPhones) {
           final cleaned = formatted.replaceAll(RegExp(r'[^0-9]'), '');
           // Should result in either 10 or 11 digits after cleaning
-          expect(cleaned.length, inInclusiveRange(10, 13)); // May include country code
+          expect(
+            cleaned.length,
+            inInclusiveRange(10, 13),
+          ); // May include country code
         }
       });
     });
@@ -299,18 +312,22 @@ void main() {
     group('Business Logic Validation', () {
       test('should validate user age requirements', () {
         final today = DateTime.now();
-        
+
         // Minimum age scenarios
-        final minAgeUser = today.subtract(const Duration(days: 365 * 18)); // 18 years
-        final underageUser = today.subtract(const Duration(days: 365 * 17)); // 17 years
-        
+        final minAgeUser = today.subtract(
+          const Duration(days: 365 * 18),
+        ); // 18 years
+        final underageUser = today.subtract(
+          const Duration(days: 365 * 17),
+        ); // 17 years
+
         expect(minAgeUser.isBefore(today), isTrue);
         expect(underageUser.isBefore(today), isTrue);
-        
+
         // Calculate age
         final minAge = today.year - minAgeUser.year;
         final underAge = today.year - underageUser.year;
-        
+
         expect(minAge, greaterThanOrEqualTo(18));
         expect(underAge, lessThan(18));
       });
@@ -354,17 +371,20 @@ void main() {
         // Test code space and collision resistance
         const codeLength = AppConstants.codeLength;
         const totalPossibleCodes = 100000000; // 10^8
-        
+
         expect(codeLength, equals(8));
         expect(totalPossibleCodes, equals(100000000));
-        
+
         // Verify security assumptions
-        expect(totalPossibleCodes, greaterThan(1000000)); // At least 1M combinations
+        expect(
+          totalPossibleCodes,
+          greaterThan(1000000),
+        ); // At least 1M combinations
       });
 
       test('should validate maximum datasets per tag security', () {
         const maxDatasets = AppConstants.maxTagDataSets;
-        
+
         expect(maxDatasets, equals(8));
         expect(maxDatasets, inInclusiveRange(1, 10)); // Reasonable range
       });
@@ -378,10 +398,10 @@ void main() {
 
         for (final message in validationMessages) {
           // Should not contain sensitive patterns
-          expect(message, isNot(contains(RegExp(r'\d{8}'))));  // No codes
-          expect(message, isNot(contains(RegExp(r'\d{11}'))));  // No CPFs
-          expect(message, isNot(contains('@')));                // No emails
-          expect(message, isNot(contains('password')));         // No password refs
+          expect(message, isNot(contains(RegExp(r'\d{8}')))); // No codes
+          expect(message, isNot(contains(RegExp(r'\d{11}')))); // No CPFs
+          expect(message, isNot(contains('@'))); // No emails
+          expect(message, isNot(contains('password'))); // No password refs
         }
       });
     });
@@ -404,7 +424,7 @@ void main() {
       test('should handle Brazilian time zones correctly', () {
         // Brazil has multiple time zones
         final brazilianDateTime = DateTime.now();
-        
+
         expect(brazilianDateTime, isA<DateTime>());
         expect(brazilianDateTime.year, greaterThan(2020));
       });
@@ -422,7 +442,7 @@ void main() {
           // Should handle UTF-8 encoding
           final bytes = str.runes.toList();
           expect(bytes, isNotEmpty);
-          
+
           // Should recreate original string
           final reconstructed = String.fromCharCodes(bytes);
           expect(reconstructed, equals(str));
@@ -435,18 +455,25 @@ void main() {
         expect(AppConstants.invalidCpfMessage, isNotEmpty);
         expect(AppConstants.codeAlreadyUsedMessage, isNotEmpty);
         expect(AppConstants.invalidCodeMessage, isNotEmpty);
-        
+
         // All messages should be in Portuguese
         expect(AppConstants.invalidCpfMessage.toLowerCase(), contains('cpf'));
-        expect(AppConstants.codeAlreadyUsedMessage.toLowerCase(), contains('código'));
-        expect(AppConstants.invalidCodeMessage.toLowerCase(), contains('código'));
+        expect(
+          AppConstants.codeAlreadyUsedMessage.toLowerCase(),
+          contains('código'),
+        );
+        expect(
+          AppConstants.invalidCodeMessage.toLowerCase(),
+          contains('código'),
+        );
       });
 
       test('should maintain consistent code length validation', () {
         expect(AppConstants.codeLength, equals(8));
-        
+
         // Test with actual fixtures
-        final validCode = MockDataGenerators.generateValidCpfs().first.substring(0, 8);
+        final validCode = MockDataGenerators.generateValidCpfs().first
+            .substring(0, 8);
         if (RegExp(r'^\d{8}$').hasMatch(validCode)) {
           expect(validCode.length, equals(AppConstants.codeLength));
         }
@@ -455,7 +482,10 @@ void main() {
       test('should validate max datasets configuration', () {
         expect(AppConstants.maxTagDataSets, equals(8));
         expect(AppConstants.maxTagDataSets, greaterThan(0));
-        expect(AppConstants.maxTagDataSets, lessThanOrEqualTo(20)); // Reasonable upper bound
+        expect(
+          AppConstants.maxTagDataSets,
+          lessThanOrEqualTo(20),
+        ); // Reasonable upper bound
       });
     });
 
@@ -488,7 +518,7 @@ void main() {
         for (final field in maxLengths.entries) {
           final maxLength = field.value;
           final testString = 'A' * maxLength;
-          
+
           expect(testString.length, equals(maxLength));
           expect(testString, isA<String>());
         }
@@ -515,24 +545,24 @@ void main() {
     group('Performance and Scalability', () {
       test('should validate large datasets efficiently', () {
         final stopwatch = Stopwatch()..start();
-        
+
         // Validate 1000 CPFs
         for (int i = 0; i < 1000; i++) {
           validations.cpf('11144477735');
         }
-        
+
         stopwatch.stop();
         expect(stopwatch.elapsedMilliseconds, lessThan(1000));
       });
 
       test('should handle concurrent validation requests', () {
         final futures = <Future<bool>>[];
-        
+
         // Create 10 concurrent validation requests
         for (int i = 0; i < 10; i++) {
           futures.add(Future(() => validations.cpf('11144477735')));
         }
-        
+
         expect(() => Future.wait(futures), returnsNormally);
       });
     });

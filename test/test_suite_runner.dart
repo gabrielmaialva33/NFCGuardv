@@ -2,17 +2,18 @@ import 'package:flutter_test/flutter_test.dart';
 
 // Import all test files
 import 'core/utils/code_generator_test.dart' as code_generator_tests;
-import 'core/validators/brazilian_validation_test.dart' as brazilian_validation_tests;
-import 'data/datasources/secure_storage_service_test.dart' as storage_tests;
+import 'core/validators/brazilian_validation_test.dart'
+    as brazilian_validation_tests;
 import 'data/datasources/nfc_logging_service_test.dart' as logging_tests;
+import 'data/datasources/secure_storage_service_test.dart' as storage_tests;
 import 'data/models/user_model_test.dart' as user_model_tests;
 import 'domain/entities/user_entity_test.dart' as user_entity_tests;
+import 'integration/brazilian_validation_test.dart' as integration_tests;
 import 'presentation/providers/auth_provider_test.dart' as auth_provider_tests;
 import 'presentation/providers/nfc_provider_test.dart' as nfc_provider_tests;
-import 'integration/brazilian_validation_test.dart' as integration_tests;
 
 /// Comprehensive test suite for NFCGuard
-/// 
+///
 /// This file provides a centralized way to run all tests in the project
 /// and organize them by category for better reporting and debugging.
 void main() {
@@ -45,13 +46,13 @@ void main() {
   group('🚀 Performance Tests', () {
     test('should run complete test suite in reasonable time', () async {
       final stopwatch = Stopwatch()..start();
-      
+
       // This test measures the overall test suite performance
       // In a real scenario, you'd run the actual tests here
       await Future.delayed(const Duration(milliseconds: 100));
-      
+
       stopwatch.stop();
-      
+
       // Test suite should complete in under 30 seconds for CI/CD
       expect(stopwatch.elapsed, lessThan(const Duration(seconds: 30)));
     });
@@ -59,14 +60,14 @@ void main() {
     test('should handle memory efficiently during test execution', () {
       // Basic memory usage test
       final testObjects = <Object>[];
-      
+
       // Create 1000 test objects
       for (int i = 0; i < 1000; i++) {
         testObjects.add('test_object_$i');
       }
-      
+
       expect(testObjects.length, equals(1000));
-      
+
       // Clear objects
       testObjects.clear();
       expect(testObjects.isEmpty, isTrue);
@@ -145,22 +146,25 @@ void main() {
     test('should not expose sensitive data in test outputs', () {
       // Verify that test data doesn't contain real sensitive information
       const testStrings = [
-        'test@example.com',      // Use example domains
-        '12345678901',           // Use test CPF patterns
-        'test-user-123',         // Use test user IDs
-        '12345674',              // Use test codes
+        'test@example.com', // Use example domains
+        '12345678901', // Use test CPF patterns
+        'test-user-123', // Use test user IDs
+        '12345674', // Use test codes
       ];
 
       for (final testString in testStrings) {
         // Verify test data patterns
         expect(testString, isNotEmpty);
-        
+
         // Should not contain real user data
-        expect(testString, anyOf(
-          contains('test'),
-          contains('example'),
-          matches(RegExp(r'^[0-9]+$')), // Pure numeric test data
-        ));
+        expect(
+          testString,
+          anyOf(
+            contains('test'),
+            contains('example'),
+            matches(RegExp(r'^[0-9]+$')), // Pure numeric test data
+          ),
+        );
       }
     });
 

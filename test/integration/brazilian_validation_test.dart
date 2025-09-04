@@ -1,7 +1,7 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:all_validations_br/all_validations_br.dart' as validations;
-import 'package:search_cep/search_cep.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:nfc_guard/core/constants/app_constants.dart';
+import 'package:search_cep/search_cep.dart';
 
 /// Integration tests for Brazilian validation features
 void main() {
@@ -15,8 +15,11 @@ void main() {
         ];
 
         for (final cpf in validCpfs) {
-          expect(AllValidationsBr.cpf(cpf), isTrue,
-              reason: 'CPF $cpf should be valid');
+          expect(
+            AllValidationsBr.cpf(cpf),
+            isTrue,
+            reason: 'CPF $cpf should be valid',
+          );
         }
       });
 
@@ -24,22 +27,28 @@ void main() {
         const invalidCpfs = [
           '11111111111', // Sequential numbers
           '00000000000', // All zeros
-          '123',         // Too short
+          '123', // Too short
           '123456789012', // Too long
-          'abcdefghijk',  // Non-numeric
-          '',             // Empty
+          'abcdefghijk', // Non-numeric
+          '', // Empty
         ];
 
         for (final cpf in invalidCpfs) {
-          expect(AllValidationsBr.cpf(cpf), isFalse,
-              reason: 'CPF $cpf should be invalid');
+          expect(
+            AllValidationsBr.cpf(cpf),
+            isFalse,
+            reason: 'CPF $cpf should be invalid',
+          );
         }
       });
 
       test('should handle formatted CPF correctly', () {
         // The library should handle formatted CPFs
         expect(AllValidationsBr.cpf('111.444.777-35'), isTrue);
-        expect(AllValidationsBr.cpf('111 444 777 35'), isFalse); // Space format not supported
+        expect(
+          AllValidationsBr.cpf('111 444 777 35'),
+          isFalse,
+        ); // Space format not supported
       });
 
       test('should integrate with app validation messages', () {
@@ -56,11 +65,7 @@ void main() {
       });
 
       test('should validate CEP format before search', () {
-        const validCeps = [
-          '01234567',
-          '12345678',
-          '87654321',
-        ];
+        const validCeps = ['01234567', '12345678', '87654321'];
 
         for (final cep in validCeps) {
           expect(cep, matches(RegExp(r'^\d{8}$')));
@@ -70,11 +75,11 @@ void main() {
 
       test('should handle invalid CEP formats', () {
         const invalidCeps = [
-          '1234567',    // Too short
-          '123456789',  // Too long
-          'abcdefgh',   // Non-numeric
-          '12345-678',  // Formatted
-          '',           // Empty
+          '1234567', // Too short
+          '123456789', // Too long
+          'abcdefgh', // Non-numeric
+          '12345-678', // Formatted
+          '', // Empty
         ];
 
         for (final cep in invalidCeps) {
@@ -85,10 +90,13 @@ void main() {
       test('should handle real CEP search structure', () async {
         // Note: This is a structure test, not an actual API call
         final viaCepService = ViaCepSearchCep();
-        
+
         // Test that the service can be used for search
         // (Actual API calls would require network and should be mocked)
-        expect(() => viaCepService.searchInfoByCep(cep: '01234567'), returnsNormally);
+        expect(
+          () => viaCepService.searchInfoByCep(cep: '01234567'),
+          returnsNormally,
+        );
       });
 
       test('should handle CEP search response format', () {
@@ -144,10 +152,10 @@ void main() {
 
       test('should reject invalid Brazilian phone numbers', () {
         const invalidPhones = [
-          '123456789',   // Too short
+          '123456789', // Too short
           '123456789012', // Too long
-          '0134567890',  // Invalid area code (starts with 0)
-          '1004567890',  // Invalid area code (second digit 0)
+          '0134567890', // Invalid area code (starts with 0)
+          '1004567890', // Invalid area code (second digit 0)
           '11087654321', // Invalid mobile (doesn't start with 9)
         ];
 
@@ -160,12 +168,39 @@ void main() {
     group('Brazilian States and Cities', () {
       test('should validate all Brazilian state codes', () {
         const allBrazilianStates = [
-          'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
-          'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
-          'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+          'AC',
+          'AL',
+          'AP',
+          'AM',
+          'BA',
+          'CE',
+          'DF',
+          'ES',
+          'GO',
+          'MA',
+          'MT',
+          'MS',
+          'MG',
+          'PA',
+          'PB',
+          'PR',
+          'PE',
+          'PI',
+          'RJ',
+          'RN',
+          'RS',
+          'RO',
+          'RR',
+          'SC',
+          'SP',
+          'SE',
+          'TO',
         ];
 
-        expect(allBrazilianStates.length, equals(27)); // 26 states + 1 federal district
+        expect(
+          allBrazilianStates.length,
+          equals(27),
+        ); // 26 states + 1 federal district
 
         for (final state in allBrazilianStates) {
           expect(state, matches(RegExp(r'^[A-Z]{2}$')));
@@ -215,10 +250,10 @@ void main() {
 
         // Month boundaries
         final monthBoundaries = [
-          DateTime(1990, 1, 1),   // January 1st
+          DateTime(1990, 1, 1), // January 1st
           DateTime(1990, 12, 31), // December 31st
-          DateTime(1990, 2, 28),  // February 28th (non-leap)
-          DateTime(1992, 2, 29),  // February 29th (leap)
+          DateTime(1990, 2, 28), // February 28th (non-leap)
+          DateTime(1992, 2, 29), // February 29th (leap)
         ];
 
         for (final date in monthBoundaries) {
@@ -267,15 +302,21 @@ void main() {
         // 8-digit codes provide 100,000,000 combinations
         const totalCombinations = 100000000;
         const codeLength = 8;
-        
+
         expect(AppConstants.codeLength, equals(codeLength));
-        expect(totalCombinations, equals(10 * 10 * 10 * 10 * 10 * 10 * 10 * 10));
+        expect(
+          totalCombinations,
+          equals(10 * 10 * 10 * 10 * 10 * 10 * 10 * 10),
+        );
       });
 
       test('should validate maximum datasets per tag', () {
         expect(AppConstants.maxTagDataSets, equals(8));
         expect(AppConstants.maxTagDataSets, greaterThan(0));
-        expect(AppConstants.maxTagDataSets, lessThanOrEqualTo(10)); // Reasonable limit
+        expect(
+          AppConstants.maxTagDataSets,
+          lessThanOrEqualTo(10),
+        ); // Reasonable limit
       });
 
       test('should ensure sensitive data fields are present', () {

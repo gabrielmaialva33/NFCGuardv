@@ -30,7 +30,7 @@ class SupabaseService {
   /// Check if Supabase is connected
   Future<bool> checkConnection() async {
     try {
-      final response = await client.from('health_check').select().limit(1);
+      await client.from('health_check').select().limit(1);
       return true;
     } catch (e) {
       // If health_check table doesn't exist, try a simple query
