@@ -23,7 +23,6 @@ final nvidiaNimServiceProvider = AutoDisposeProvider<NvidiaNimService>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef NvidiaNimServiceRef = AutoDisposeProviderRef<NvidiaNimService>;
-
 String _$nvidiaNimStateHash() => r'3d02daa65ce4c9128a586a5b09370f3198191dc4';
 
 /// See also [NvidiaNimState].
@@ -40,7 +39,6 @@ final nvidiaNimStateProvider =
     );
 
 typedef _$NvidiaNimState = AutoDisposeNotifier<AsyncValue<String>>;
-
 String _$cpfValidationStateHash() =>
     r'3792b21bf21a5ae2799446b133c88a3b608a9fd7';
 
