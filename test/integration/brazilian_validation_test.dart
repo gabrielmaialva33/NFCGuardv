@@ -44,9 +44,9 @@ void main() {
 
       test('should handle formatted CPF correctly', () {
         // The library should handle formatted CPFs
-        expect(AllValidationsBr.cpf('111.444.777-35'), isTrue);
+        expect(AllValidations.isCpf('111.444.777-35'), isTrue);
         expect(
-          AllValidationsBr.cpf('111 444 777 35'),
+          AllValidations.isCpf('111 444 777 35'),
           isFalse,
         ); // Space format not supported
       });
