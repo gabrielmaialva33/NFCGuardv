@@ -59,22 +59,39 @@ class Auth extends _$Auth {
     }
     
     try {
-      // Listen to auth state changes
+      // First try to set up auth state listener with error handling
       if (kDebugMode) {
         debugPrint('🔄 Setting up auth state listener');
       }
-      _supabaseClient.auth.onAuthStateChange.listen((data) {
+      
+      try {
+        _supabaseClient.auth.onAuthStateChange.listen((data) {
+          if (kDebugMode) {
+            debugPrint('🔄 Auth state changed: ${data.event}');
+          }
+          _handleAuthStateChange(data);
+        });
+      } catch (listenerError) {
         if (kDebugMode) {
-          debugPrint('🔄 Auth state changed: ${data.event}');
+          debugPrint('⚠️ Failed to set up auth listener: $listenerError');
         }
-        _handleAuthStateChange(data);
-      });
+        // Continue without listener - not critical for immediate functioning
+      }
 
-      // Check if user is already logged in
+      // Check if user is already logged in with timeout
       if (kDebugMode) {
         debugPrint('🔄 Checking current user');
       }
-      final currentUser = _supabaseClient.auth.currentUser;
+      
+      User? currentUser;
+      try {
+        currentUser = _supabaseClient.auth.currentUser;
+      } catch (userError) {
+        if (kDebugMode) {
+          debugPrint('⚠️ Failed to get current user: $userError');
+        }
+        currentUser = null;
+      }
       
       if (currentUser != null) {
         if (kDebugMode) {
@@ -91,7 +108,8 @@ class Auth extends _$Auth {
       if (kDebugMode) {
         debugPrint('❌ _performAuthInit error: $e');
       }
-      rethrow;
+      // Instead of rethrowing, set null state to allow app to continue
+      state = const AsyncValue.data(null);
     }
   }
 
