@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
-import 'auth/login_page.dart';
+import 'auth_wrapper.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -22,7 +22,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LoginPage()),
+          MaterialPageRoute(builder: (context) => const AuthWrapper()),
         );
       }
     });
@@ -31,36 +31,66 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.nfc,
-              size: 100,
-              color: Theme.of(context).colorScheme.onPrimary,
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.secondary,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.nfc_outlined,
+                size: 56,
+                color: Colors.white,
+              ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 40),
             Text(
               AppConstants.appName,
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onPrimary,
-                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.w300,
+                letterSpacing: -1.0,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Text(
-              'Gravação segura de tags NFC',
+              'Segurança inteligente para NFC',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onPrimary.withValues(alpha: 0.8),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                letterSpacing: 0.5,
+                fontWeight: FontWeight.w400,
               ),
             ),
-            const SizedBox(height: 48),
-            CircularProgressIndicator(
-              color: Theme.of(context).colorScheme.onPrimary,
+            const SizedBox(height: 60),
+            SizedBox(
+              width: 32,
+              height: 32,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.5,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                ),
+              ),
             ),
           ],
         ),
