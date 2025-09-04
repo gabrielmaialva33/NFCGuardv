@@ -1,5 +1,3 @@
-// TODO: Fix undefined mock references before enabling this test
-/*
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -9,15 +7,15 @@ import 'package:nfc_guard/data/datasources/nfc_logging_service.dart';
 import 'package:nfc_guard/data/datasources/secure_storage_service.dart';
 import 'package:nfc_guard/presentation/providers/nfc_provider.dart';
 import 'package:nfc_manager/nfc_manager.dart';
-import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
 
 import 'nfc_provider_test.mocks.dart';
 
-@GenerateMocks([SecureStorageService, NfcLoggingService])
+@GenerateMocks([SecureStorageService, NfcLoggingService, NfcManager])
 void main() {
   late ProviderContainer container;
   late MockSecureStorageService mockStorageService;
   late MockNfcLoggingService mockLoggingService;
+  late MockNfcManager mockNfcManager;
 
   setUp(() {
     mockStorageService = MockSecureStorageService();

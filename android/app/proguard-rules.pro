@@ -51,3 +51,31 @@
   *** toJson();
   *** fromJson(...);
 }
+
+# Google Play Core classes (to fix missing class errors)
+-dontwarn com.google.android.play.core.**
+-keep class com.google.android.play.core.** { *; }
+
+# Flutter deferred components (Play Store Split)
+-dontwarn io.flutter.embedding.android.FlutterPlayStoreSplitApplication
+-dontwarn io.flutter.embedding.engine.deferredcomponents.PlayStoreDeferredComponentManager
+-keep class io.flutter.embedding.android.FlutterPlayStoreSplitApplication { *; }
+-keep class io.flutter.embedding.engine.deferredcomponents.PlayStoreDeferredComponentManager { *; }
+
+# Device info plus plugin
+-keep class dev.fluttercommunity.plus.device_info.** { *; }
+-dontwarn dev.fluttercommunity.plus.device_info.**
+
+# Secure storage plugin  
+-keep class com.it_nomads.fluttersecurestorage.** { *; }
+-dontwarn com.it_nomads.fluttersecurestorage.**
+
+# NTP plugin
+-keep class hu.webarticum.** { *; }
+-dontwarn hu.webarticum.**
+
+# Crypto related classes
+-keep class javax.crypto.** { *; }
+-keep class java.security.** { *; }
+-dontwarn javax.crypto.**
+-dontwarn java.security.**
