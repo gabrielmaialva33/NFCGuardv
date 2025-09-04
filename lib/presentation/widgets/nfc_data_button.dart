@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/utils/responsive_helper.dart';
 import '../providers/nfc_provider.dart';
-import 'optimized_button.dart';
 
 /// Optimized NFC data button for maximum responsiveness
 class NfcDataButton extends ConsumerWidget {
@@ -46,7 +45,7 @@ class NfcDataButton extends ConsumerWidget {
                 Icons.nfc,
                 size: ResponsiveHelper.isMobile(context) ? 24 : 32,
                 color: isLoading 
-                    ? theme.colorScheme.onSurface.withOpacity(0.5)
+                    ? theme.colorScheme.onSurface.withValues(alpha: 0.5)
                     : theme.colorScheme.primary,
               ),
               const SizedBox(height: AppConstants.smallPadding),
@@ -55,7 +54,7 @@ class NfcDataButton extends ConsumerWidget {
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontSize: ResponsiveHelper.getResponsiveFontSize(context, 16),
                   color: isLoading 
-                      ? theme.colorScheme.onSurface.withOpacity(0.5)
+                      ? theme.colorScheme.onSurface.withValues(alpha: 0.5)
                       : null,
                 ),
                 textAlign: TextAlign.center,

@@ -120,22 +120,22 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       final authNotifier = ref.read(authProvider.notifier);
 
       await authNotifier.register(
-        nomeCompleto: _nomeController.text.trim(),
+        fullName: _nomeController.text.trim(),
         cpf: _cpfController.text,
         email: _emailController.text.trim().toLowerCase(),
-        telefone: _telefoneController.text,
-        dataNascimento: _dataNascimento!,
-        sexo: _sexoSelecionado,
-        senha: _senhaController.text,
+        phone: _telefoneController.text,
+        birthDate: _dataNascimento!,
+        gender: _sexoSelecionado,
+        password: _senhaController.text,
       );
 
       // Atualizar endereço
       await authNotifier.updateAddress(
-        cep: _cepController.text,
-        endereco: _enderecoController.text.trim(),
-        bairro: _bairroController.text.trim(),
-        cidade: _cidadeController.text.trim(),
-        uf: _ufController.text.trim().toUpperCase(),
+        zipCode: _cepController.text,
+        address: _enderecoController.text.trim(),
+        neighborhood: _bairroController.text.trim(),
+        city: _cidadeController.text.trim(),
+        stateCode: _ufController.text.trim().toUpperCase(),
       );
 
       if (mounted) {

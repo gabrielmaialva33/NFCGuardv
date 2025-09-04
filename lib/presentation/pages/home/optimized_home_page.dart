@@ -5,7 +5,6 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/responsive_helper.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../providers/auth_provider.dart';
-import '../../providers/nfc_provider.dart';
 import '../../widgets/nfc_data_button.dart';
 import '../../widgets/optimized_button.dart';
 import '../auth/login_page.dart';
