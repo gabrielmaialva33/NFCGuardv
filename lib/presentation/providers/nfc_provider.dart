@@ -250,60 +250,77 @@ class Nfc extends _$Nfc {
 
   /// Helper method to write simple text to tag (cross-platform)
   Future<void> _writeSimpleText(NfcTag tag, String text) async {
-    final ndef = Ndef.from(tag);
+    final ndefTag = Ndef.from(tag);
 
-    if (ndef == null) {
+    if (ndefTag == null) {
       throw Exception('Tag não suporta NDEF');
     }
 
-    if (!ndef.isWritable) {
+    if (!ndefTag.isWritable) {
       throw Exception('Tag não é gravável');
     }
 
-    // Create a simple text record manually
-    final textBytes = utf8.encode(text);
-    final languageBytes = utf8.encode('en');
-    final payload = Uint8List.fromList([
-      languageBytes.length,
-      ...languageBytes,
-      ...textBytes,
-    ]);
-
-    final textRecord = NdefRecord(
-      typeNameFormat: TypeNameFormat.wellKnown,
-      type: utf8.encode('T'),
-      identifier: Uint8List(0),
-      payload: payload,
+    // Create a simple text record using the new ndef library
+    final textRecord = ndef.TextRecord(
+      text: text,
+      language: 'en',
+      encoding: ndef.TextEncoding.utf8,
     );
 
-    // Use the correct API - pass message as named parameter
-    final message = NdefMessage(records: [textRecord]);
-    await ndef.write(message: message);
+    // Create message with the text record
+    final message = ndef.NdefMessage([textRecord]);
+    await ndefTag.write(NdefMessage([
+      NdefRecord(
+        typeNameFormat: NdefTypeNameFormat.nfcWellknown,
+        type: textRecord.type,
+        identifier: Uint8List(0),
+        payload: textRecord.payload,
+      )
+    ]));
   }
 
   /// Helper method to read NDEF message from tag (cross-platform)
   Future<String?> _readSimpleText(NfcTag tag) async {
-    final ndef = Ndef.from(tag);
+    final ndefTag = Ndef.from(tag);
 
-    if (ndef == null) {
+    if (ndefTag == null) {
       throw Exception('Tag não contém dados NDEF');
     }
 
-    final message = await ndef.read();
+    final message = await ndefTag.read();
     if (message == null || message.records.isEmpty) {
       throw Exception('Não foi possível ler dados da tag');
     }
 
-    final record = message.records.first;
-    if (record.payload.length < 4) {
-      throw Exception('Formato de dados inválido');
+    // Try to parse the first record as text
+    for (final record in message.records) {
+      try {
+        final parsedRecord = ndef.Record.fromBytes(
+          record.typeNameFormat, 
+          record.type, 
+          record.payload
+        );
+        
+        if (parsedRecord is ndef.TextRecord) {
+          return parsedRecord.text;
+        }
+      } catch (e) {
+        // Continue to next record if parsing fails
+        continue;
+      }
     }
 
-    // Skip language code prefix and decode text
-    final languageCodeLength = record.payload[0];
-    final textStart = 1 + languageCodeLength;
-    final textBytes = record.payload.skip(textStart).toList();
+    // Fallback: try to decode raw payload as text
+    final record = message.records.first;
+    if (record.payload.length >= 4) {
+      final languageCodeLength = record.payload[0];
+      final textStart = 1 + languageCodeLength;
+      if (textStart < record.payload.length) {
+        final textBytes = record.payload.skip(textStart).toList();
+        return utf8.decode(textBytes);
+      }
+    }
 
-    return utf8.decode(textBytes);
+    return null;
   }
 }
