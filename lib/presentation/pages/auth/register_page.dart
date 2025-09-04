@@ -241,8 +241,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             validator: (value) {
               if (value?.isEmpty ?? true) return 'Telefone é obrigatório';
               final cleanPhone = value!.replaceAll(RegExp(r'[^0-9]'), '');
-              if (cleanPhone.length < 10)
+              if (cleanPhone.length < 10) {
                 return 'Telefone deve ter pelo menos 10 dígitos';
+              }
               return null;
             },
           ),
