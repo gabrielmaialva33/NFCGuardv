@@ -107,8 +107,8 @@ void main() {
 
     group('Edge Cases', () {
       test('should handle null or malformed input gracefully', () {
-        expect(() => CodeGenerator.validateCode(''), returnNormally);
-        expect(() => CodeGenerator.validateCode('12345678'), returnNormally);
+        expect(() => CodeGenerator.validateCode(''), returnsNormally);
+        expect(() => CodeGenerator.validateCode('12345678'), returnsNormally);
       });
 
       test('should be consistent across multiple validations', () {

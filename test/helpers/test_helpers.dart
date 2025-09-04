@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -47,34 +48,20 @@ class TestHelpers {
   }
 
   /// Verifies that a mock was called with specific parameters
-  static void verifyMockCall(Mock mock,
-      String methodName,
-      List<dynamic> positionalArguments, {
-        Map<Symbol, dynamic>? namedArguments,
-      }) {
-    verify(mock.noSuchMethod(
-      Invocation.method(
-        Symbol(methodName),
-        positionalArguments,
-        namedArguments,
-      ),
-    )).called(1);
+  static void verifyMockCall(Mock mock, String methodName, List<dynamic> args) {
+    verify(mock.noSuchMethod(Invocation.method(Symbol(methodName), args)))
+        .called(1);
   }
 
-  /// Creates mock responses for Brazilian address API
-  static Map<String, dynamic> createMockAddressResponse({
-    String? zipCode,
-    String? address,
-    String? neighborhood,
-    String? city,
-    String? state,
-  }) {
+  /// Creates a sample address data for testing
+  static Map<String, dynamic> createAddressData() {
     return {
-      'cep': zipCode ?? '01234567',
-      'logradouro': address ?? 'Rua das Flores',
-      'bairro': neighborhood ?? 'Centro',
-      'localidade': city ?? 'São Paulo',
-      'uf': state ?? 'SP',
+      'zipCode': '01234567',
+      'address': 'Rua das Flores, 123',
+      'complement': 'Apto 45',
+      'neighborhood': 'Centro',
+      'city': 'São Paulo',
+      'stateCode': 'SP',
       'ibge': '3550308',
       'gia': '1004',
       'ddd': '11',
@@ -83,219 +70,183 @@ class TestHelpers {
   }
 
   /// Validates Brazilian data formats
-  static
+  static bool isValidCpfFormat(String cpf) {
+    return RegExp(r'^\d{11}$').hasMatch(cpf);
+  }
+}
 
-  class BrazilianValidators {
+/// Validates Brazilian data formats
+class BrazilianValidators {
   /// Validates CPF format (11 digits, no formatting)
   static bool isValidCpfFormat(String cpf) {
-  return RegExp(r'^\d{11}$').hasMatch(cpf);
+    return RegExp(r'^\d{11}$').hasMatch(cpf);
   }
 
   /// Validates ZIP code format (8 digits, no formatting)
   static bool isValidZipCodeFormat(String zipCode) {
-  return RegExp(r'^\d{8}$').hasMatch(zipCode);
+    return RegExp(r'^\d{8}$').hasMatch(zipCode);
   }
 
   /// Validates Brazilian phone number format (10-11 digits)
   static bool isValidPhoneFormat(String phone) {
-  return RegExp(r'^\d{10,11}$').hasMatch(phone);
+    return RegExp(r'^\d{10,11}$').hasMatch(phone);
   }
 
   /// Validates Brazilian state code (2 uppercase letters)
   static bool isValidStateFormat(String state) {
-  return RegExp(r'^[A-Z]{2}$').hasMatch(state);
+    return RegExp(r'^[A-Z]{2}$').hasMatch(state);
+  }
+}
+
+/// Mock data generators for testing
+class MockDataGenerators {
+  /// Generates a list of valid test CPF numbers
+  static List<String> generateValidCpfs() {
+    return [
+      '11144477735',
+      '12345678909',
+      '98765432100',
+    ];
   }
 
-  /// Validates email format
-  static bool isValidEmailFormat(String email) {
-  return RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(email);
+  /// Generates a list of invalid CPF numbers for testing
+  static List<String> generateInvalidCpfs() {
+    return [
+      '00000000000', // All zeros
+      '11111111111', // All same digits
+      '123456789',   // Too short
+      '12345678901', // Invalid checksum
+      '123.456.789-10', // Formatted but invalid
+    ];
   }
 
-  /// Validates 8-digit code format
-  static bool isValidCodeFormat(String code) {
-  return RegExp(r'^\d{8}$').hasMatch(code);
-  }
-  }
-
-  /// Test data generators
-  static class Generators {
-  /// Generates a valid CPF for testing
-  static String generateValidCpf() {
-  return '12345678901';
+  /// Generates valid Brazilian phone numbers
+  static List<String> generateValidPhones() {
+    return [
+      '11987654321', // Mobile with area code
+      '1134567890',  // Landline with area code
+      '21987654321', // Rio mobile
+      '8534567890',  // Northeastern landline
+    ];
   }
 
-  /// Generates a valid ZIP code for testing
-  static String generateValidZipCode() {
-  return '01234567';
+  /// Generates valid ZIP codes
+  static List<String> generateValidZipCodes() {
+    return [
+      '01234567',
+      '12345678',
+      '87654321',
+      '98765432',
+    ];
   }
 
-  /// Generates a valid phone number for testing
-  static String generateValidPhone() {
-  return '11987654321';
+  /// Generates valid Brazilian state codes
+  static List<String> generateValidStates() {
+    return [
+      'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
+      'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
+      'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+    ];
   }
 
-  /// Generates a valid email for testing
-  static String generateValidEmail() {
-  final timestamp = DateTime.now().millisecondsSinceEpoch;
-  return 'test$timestamp@example.com';
+  /// Generates common Brazilian city names
+  static List<String> generateBrazilianCities() {
+    return [
+      'São Paulo',
+      'Rio de Janeiro',
+      'Belo Horizonte',
+      'Salvador',
+      'Fortaleza',
+      'Brasília',
+      'Curitiba',
+      'Recife',
+      'Manaus',
+      'Porto Alegre',
+    ];
+  }
+}
+
+/// Test utilities for async operations
+class AsyncTestUtilities {
+  /// Pumps the event loop to ensure async operations complete
+  static Future<void> pumpEventLoop([int times = 1]) async {
+    for (var i = 0; i < times; i++) {
+      await Future.delayed(Duration.zero);
+    }
   }
 
-  /// Generates test user data with unique identifiers
-  static Map<String, dynamic> generateUserData() {
-  final timestamp = DateTime.now().millisecondsSinceEpoch;
-  return {
-  'id': 'user-$timestamp',
-  'fullName': 'Test User $timestamp',
-  'cpf': generateValidCpf(),
-  'email': generateValidEmail(),
-  'phone': generateValidPhone(),
-  'birthDate': DateTime(1990, 1, 1),
-  'gender': 'Masculino',
-  'zipCode': generateValidZipCode(),
-  'address': 'Rua Teste, $timestamp',
-  'neighborhood': 'Bairro Teste',
-  'city': 'São Paulo',
-  'state': 'SP',
-  'eightDigitCode': '12345674',
-  'createdAt': DateTime.now(),
-  };
-  }
+  /// Creates a delayed future for testing timeout scenarios
+  static Future<T> createDelayedFuture<T>(T value, Duration delay) {
+    return Future.delayed(delay, () => value);
   }
 
-  /// Assertion helpers
-  static class Assertions {
-  /// Asserts that an async value contains expected data
-  static void assertAsyncData<T>(AsyncValue<T> asyncValue, T expectedData) {
-  expect(asyncValue, isA<AsyncData<T>>());
-  expect(asyncValue.value, equals(expectedData));
+  /// Creates a future that throws an error after a delay
+  static Future<T> createDelayedError<T>(dynamic error, Duration delay) {
+    return Future.delayed(delay, () => throw error);
+  }
+}
+
+/// Security testing utilities
+class SecurityTestUtilities {
+  /// Validates that a string doesn't contain sensitive patterns
+  static bool containsSensitiveData(String input) {
+    final sensitivePatterns = [
+      RegExp(r'\d{11}'),        // CPF-like patterns
+      RegExp(r'\d{8}'),         // Code-like patterns
+      RegExp(r'password'),      // Password references
+      RegExp(r'token'),         // Token references
+      RegExp(r'secret'),        // Secret references
+      RegExp(r'key'),           // Key references
+    ];
+
+    return sensitivePatterns.any((pattern) => pattern.hasMatch(input.toLowerCase()));
   }
 
-  /// Asserts that an async value is in error state
-  static void assertAsyncError<T>(AsyncValue<T> asyncValue) {
-  expect(asyncValue, isA<AsyncError<T>>());
-  expect(asyncValue.hasError, isTrue);
+  /// Generates a secure random string for testing
+  static String generateSecureRandomString(int length) {
+    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final random = DateTime.now().millisecondsSinceEpoch;
+    final buffer = StringBuffer();
+    
+    for (int i = 0; i < length; i++) {
+      buffer.write(characters[(random + i) % characters.length]);
+    }
+    
+    return buffer.toString();
   }
+}
 
-  /// Asserts that an async value is in loading state
-  static void assertAsyncLoading<T>(AsyncValue<T> asyncValue) {
-  expect(asyncValue, isA<AsyncLoading<T>>());
-  expect(asyncValue.isLoading, isTrue);
-  }
-
-  /// Asserts Brazilian data format compliance
-  static void assertBrazilianDataFormat(Map<String, dynamic> userData) {
-  expect(userData['cpf'], matches(RegExp(r'^\d{11}$')));
-  expect(userData['zipCode'], matches(RegExp(r'^\d{8}$')));
-  expect(userData['phone'], matches(RegExp(r'^\d{10,11}$')));
-  expect(userData['state'], matches(RegExp(r'^[A-Z]{2}$')));
-  expect(userData['email'], contains('@'));
-  expect(userData['eightDigitCode'], matches(RegExp(r'^\d{8}$')));
-  }
-
-  /// Asserts that NFC operation data is valid
-  static void assertNfcOperationFormat(Map<String, dynamic> operation) {
-  expect(operation['user_id'], isA<String>());
-  expect(operation['operation_type'], isIn(['write', 'protect', 'unprotect']));
-  expect(operation['code_used'], matches(RegExp(r'^\d{8}$')));
-  expect(operation['success'], isA<bool>());
-
-  if (operation['dataset_number'] != null) {
-  expect(operation['dataset_number'], inInclusiveRange(1, 8));
-  }
-  }
-  }
-
-  /// Mock response builders
-  static class MockResponses {
-  /// Creates a successful API response
-  static Map<String, dynamic> successResponse({
-  dynamic data,
-  String? message,
-  }) {
-  return {
-  'success': true,
-  'data': data,
-  'message': message ?? 'Operation successful',
-  'timestamp': DateTime.now().toIso8601String(),
-  };
-  }
-
-  /// Creates an error API response
-  static Map<String, dynamic> errorResponse({
-  required String error,
-  String? code,
-  dynamic details,
-  }) {
-  return {
-  'success': false,
-  'error': error,
-  'code': code ?? 'GENERIC_ERROR',
-  'details': details,
-  'timestamp': DateTime.now().toIso8601String(),
-  };
-  }
-
-  /// Creates a Supabase-style response
-  static List<Map<String, dynamic>> supabaseResponse(
-  List<Map<String, dynamic>> data
-  ) {
-  return data;
-  }
-  }
-
-  /// Performance testing utilities
-  static class Performance {
+/// Performance testing utilities
+class PerformanceTestUtilities {
   /// Measures execution time of a function
-  static Future<Duration> measureExecutionTime<T>(
-  Future<T> Function() operation
-  ) async {
-  final stopwatch = Stopwatch()..start();
-  await operation();
-  stopwatch.stop();
-  return stopwatch.elapsed;
+  static Duration measureExecutionTime(void Function() function) {
+    final stopwatch = Stopwatch()..start();
+    function();
+    stopwatch.stop();
+    return stopwatch.elapsed;
   }
 
-  /// Asserts that operation completes within time limit
-  static Future<void> assertExecutionTime<T>(
-  Future<T> Function() operation,
-  Duration maxDuration,
-  ) async {
-  final duration = await measureExecutionTime(operation);
-  expect(duration, lessThanOrEqualTo(maxDuration));
+  /// Measures async execution time
+  static Future<Duration> measureAsyncExecutionTime(Future<void> Function() function) async {
+    final stopwatch = Stopwatch()..start();
+    await function();
+    stopwatch.stop();
+    return stopwatch.elapsed;
   }
 
-  /// Tests memory usage patterns (basic)
-  static void assertNoMemoryLeaks(VoidCallback operation, int iterations) {
-  // Run operation multiple times to check for memory leaks
-  for (int i = 0; i < iterations; i++) {
-  operation();
-  }
-  // Note: Advanced memory testing would require more sophisticated tools
-  }
-  }
-
-  /// Date/Time testing utilities
-  static class DateHelpers {
-  /// Creates dates for Brazilian context testing
-  static DateTime createBrazilianDate(int year, int month, int day) {
-  return DateTime(year, month, day);
-  }
-
-  /// Creates a range of test dates
-  static List<DateTime> createDateRange({
-  required DateTime start,
-  required DateTime end,
-  required Duration interval,
-  }) {
-  final dates = <DateTime>[];
-  var current = start;
-
-  while (current.isBefore(end) || current.isAtSameMomentAs(end)) {
-  dates.add(current);
-  current = current.add(interval);
-  }
-
-  return dates;
-  }
+  /// Runs a function multiple times and returns average execution time
+  static Duration benchmarkFunction(void Function() function, int iterations) {
+    final times = <Duration>[];
+    
+    for (int i = 0; i < iterations; i++) {
+      times.add(measureExecutionTime(function));
+    }
+    
+    final totalMicroseconds = times.fold<int>(
+      0, 
+      (sum, duration) => sum + duration.inMicroseconds,
+    );
+    
+    return Duration(microseconds: totalMicroseconds ~/ iterations);
   }
 }
