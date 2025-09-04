@@ -6,12 +6,37 @@ import 'auth/login_page.dart';
 import 'home/home_page.dart';
 
 /// Widget that handles routing based on authentication state
-class AuthWrapper extends ConsumerWidget {
+class AuthWrapper extends ConsumerStatefulWidget {
   const AuthWrapper({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AuthWrapper> createState() => _AuthWrapperState();
+}
+
+class _AuthWrapperState extends ConsumerState<AuthWrapper> {
+  bool _hasTimedOut = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Set a fallback timeout
+    Future.delayed(const Duration(seconds: 8), () {
+      if (mounted && !_hasTimedOut) {
+        setState(() {
+          _hasTimedOut = true;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
+
+    // If we've timed out waiting, show login page
+    if (_hasTimedOut) {
+      return const LoginPage();
+    }
 
     return authState.when(
       data: (user) {
@@ -32,40 +57,20 @@ class AuthWrapper extends ConsumerWidget {
                 'Verificando autenticação...',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-            ],
-          ),
-        ),
-      ),
-      error: (error, stackTrace) => Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Erro na autenticação',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                error.toString(),
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => ref.invalidate(authProvider),
-                child: const Text('Tentar novamente'),
+              const SizedBox(height: 24),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _hasTimedOut = true;
+                  });
+                },
+                child: const Text('Pular verificação'),
               ),
             ],
           ),
         ),
       ),
+      error: (error, stackTrace) => const LoginPage(),
     );
   }
 }
