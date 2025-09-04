@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:all_validations_br/all_validations_br.dart';
+import 'package:all_validations_br/all_validations_br.dart' as validations;
 import 'package:search_cep/search_cep.dart';
 import 'package:nfc_guard/core/constants/app_constants.dart';
 
